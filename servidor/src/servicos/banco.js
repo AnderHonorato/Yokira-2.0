@@ -15,6 +15,9 @@ export const banco = JSON.parse(readFileSync(arquivoBanco, 'utf8'));
 const videoPadrao = process.env.VIDEO_PADRAO;
 if (videoPadrao) banco.animes.forEach((a) => a.episodios.forEach((ep) => { ep.urlVideo = videoPadrao; }));
 
+// Grava alterações feitas pelo painel admin
+export const salvarBanco = () => writeFileSync(arquivoBanco, JSON.stringify(banco, null, 2));
+
 export const acharAnime = (slug) => banco.animes.find((a) => a.slug === slug);
 
 // Comentários persistidos em arquivo JSON simples (troque por um banco real depois)

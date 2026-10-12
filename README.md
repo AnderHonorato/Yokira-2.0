@@ -27,22 +27,33 @@ npm run build && npm start   # http://localhost:3333
 | Top 100 | `/top100` | Ranking por nota com filtro por década |
 | Minha lista | `/minha-lista` | Lista, favoritos e histórico (salvos no navegador) |
 | Notícias | `/noticias`, `/noticias/:slug` | Destaque + lista e página de matéria |
+| Conta | modal "Entrar" | Cadastro e login (senha com scrypt, token assinado). **A primeira conta criada vira admin** |
+| Chat | botão flutuante | Tempo real (SSE): sala geral + uma por anime, online agora com tier, separador por dia |
+| Comunidade | `/comunidade` | Pódio, atividade ao vivo, top 10 XP, novos membros, últimas avaliações |
+| Ranking | `/ranking` | Tabela por XP e distribuição por tier (Novato → Mítico) |
+| Perfil | `/perfil/:id` | Tier, barra de XP, favoritos, lista, atividade, edição de nome/bio/cor |
+| Fórum | `/forum`, `/forum/:id` | Categorias, busca, ordenação, tópicos, respostas, votos |
+| Anime da semana | `/anime-da-semana` | 1 voto por conta por semana, barras animadas |
+| Admin | `/admin` | Fundo da tela principal (gradiente animado, imagem/GIF ou vídeo, upload), escurecimento, partículas, títulos no destaque, edição de animes e URLs de vídeo, papéis de usuários |
 | Busca | tecla `/` ou ícone | Sugestões enquanto digita |
 
 ## API (`/api`)
 
 `GET /inicio` · `GET /animes?q&genero&ano&temporada&formato&status&ordem&pagina&limite` · `GET /animes/:slug` · `GET /animes/:slug/episodios/:n` · `GET|POST /animes/:slug/comentarios` · `GET /agenda` · `GET /top?decada=2020|2010|2000|antigos` · `GET /noticias` · `GET /noticias/:slug` · `GET /ranking` · `GET /filtros` · `GET /capa/:slug.svg?tipo=poster|banner|ep&n=`
 
+## XP
+
+Cadastro +50 · episódio assistido +10 · avaliação +15 · tópico +20 · resposta +8 · voto +5 · mensagem no chat +2.
+
 ## Dados
 
 - `servidor/src/dados/gerar.js` cria um catálogo **fictício** (48 títulos, episódios, personagens, notícias). `npm run dados` regenera `banco.json`.
 - Capas são SVG geradas pelo slug (sem imagens de terceiros).
 - Vídeo: todos os episódios apontam para um vídeo de demonstração aberto. Troque `urlVideo` por episódio no `banco.json` ou defina `VIDEO_PADRAO` (veja `servidor/.env.exemplo`).
-- Comentários são gravados em `servidor/src/dados/comentarios.json`.
+- Contas, chat, fórum, votos, comentários e aparência ficam em `servidor/src/dados/*.json`; uploads em `servidor/uploads/`. Na primeira execução são criados membros e tópicos de exemplo.
 
 ## Próximos passos sugeridos
 
-1. Login (JWT) e mover lista/favoritos/progresso do `localStorage` para a API.
 2. Banco real (PostgreSQL/Prisma) no lugar do `banco.json`.
 3. Vídeo em HLS (`.m3u8`) com `hls.js` e legendas `.vtt`.
 4. Painel administrativo para cadastrar títulos e episódios.

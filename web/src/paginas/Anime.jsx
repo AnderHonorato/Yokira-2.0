@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Play, Plus, Check, Heart, Star, Lock, CheckCircle2 } from 'lucide-react';
 import { useApi } from '../ganchos/useApi.js';
 import { useBiblioteca } from '../ganchos/useBiblioteca.jsx';
+import { useAvisos } from '../ganchos/useAvisos.jsx';
 import { capa } from '../util/api.js';
 import { DIAS, ROTULO_STATUS, ROTULO_TEMPORADA, dataCurta, milhar } from '../util/formatos.js';
 import CartaoPoster from '../componentes/CartaoPoster.jsx';
@@ -54,6 +55,8 @@ export default function Anime() {
   const [aba, setAba] = useState('geral');
   const [sinopseAberta, setSinopseAberta] = useState(false);
   const bib = useBiblioteca();
+  const avisar = useAvisos();
+  const [explosao, setExplosao] = useState(0);
 
   if (carregando) return <Carregando />;
   if (erro) return <Erro mensagem={erro} />;
@@ -90,8 +93,8 @@ export default function Anime() {
               {disponiveis > 0
                 ? <Link className="btn btn-primario" to={`/assistir/${anime.slug}/${progresso?.numero ?? 1}`}><Play size={16} fill="currentColor" />{progresso ? `Continuar ep. ${progresso.numero}` : 'Assistir agora'}</Link>
                 : <span className="btn btn-contorno">Estreia em {dataCurta(anime.dataEstreia)}</span>}
-              <button className={`btn btn-contorno ${naLista ? 'btn-ativo' : ''}`} onClick={() => bib.alternarLista(anime)}>{naLista ? <Check size={16} /> : <Plus size={16} />}{naLista ? 'Na sua lista' : 'Adicionar à lista'}</button>
-              <button className={`btn btn-contorno btn-icone ${favorito ? 'btn-ativo' : ''}`} onClick={() => bib.alternarFavorito(anime)} aria-pressed={favorito} aria-label={favorito ? 'Remover dos favoritos' : 'Favoritar'}><Heart size={17} fill={favorito ? 'currentColor' : 'none'} /></button>
+              <button className={`btn btn-contorno ${naLista ? 'btn-ativo' : ''}`} onClick={() => { bib.alternarLista(anime); avisar(naLista ? 'Removido da sua lista' : 'Adicionado à sua lista'); }}><span key={String(naLista)} className={naLista ? 'icone-carimbo' : ''}>{naLista ? <Check size={16} /> : <Plus size={16} />}</span>{naLista ? 'Na sua lista' : 'Adicionar à lista'}</button>
+              <button className={`btn btn-contorno btn-icone ${favorito ? 'btn-ativo' : ''}`} onClick={() => { bib.alternarFavorito(anime); if (!favorito) setExplosao((n) => n + 1); }} aria-pressed={favorito} aria-label={favorito ? 'Remover dos favoritos' : 'Favoritar'}><span className="favorito-alvo"><Heart size={17} fill={favorito ? 'currentColor' : 'none'} className={favorito ? 'coracao-pulso' : ''} />{explosao > 0 && <span className="explosao" key={explosao} aria-hidden="true">{Array.from({ length: 8 }, (_, i) => <i key={i} style={{ '--a': `${i * 45}deg` }} />)}</span>}</span></button>
             </div>
           </div>
         </div>

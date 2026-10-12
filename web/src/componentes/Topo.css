@@ -38,3 +38,28 @@
   .topo-nav { display: none; }
   .topo-acoes .topo-menu-btn { display: inline-flex; }
 }
+
+.topo-suspenso { position: relative; }
+.topo-menu { position: absolute; top: calc(100% + 6px); left: 0; width: 300px; padding: 8px; border-radius: 16px; display: grid; gap: 2px;
+  background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .6); animation: menu-entra .22s cubic-bezier(.2, .9, .3, 1.2); }
+.topo-menu::before { content: ''; position: absolute; inset: -8px 0 auto; height: 8px; }
+.topo-menu-item { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; }
+.topo-menu-item:hover, .topo-menu-item.active { background: var(--cor-superficie); }
+.topo-menu-item strong { display: block; font-size: 14px; }
+.topo-menu-item small { color: var(--cor-texto-2); font-size: 12.5px; }
+@keyframes menu-entra { from { opacity: 0; transform: translateY(-6px) scale(.97); } }
+.topo-entrar { height: 40px; padding: 0 18px; border-radius: 12px; }
+.gaveta { overflow-y: auto; }
+.gaveta-entrar { justify-content: center; margin: 8px 0; }
+.topo-link { transition: background-color .15s, color .15s; }
+@media (max-width: 1240px) { .topo-link svg:first-child { display: none; } .topo-link { padding: 0 10px; } }
+@media (max-width: 560px) { .topo-entrar { padding: 0 14px; } .topo-acoes .btn-icone[aria-label^='Usar tema'] { display: none; } }
+.menu-usuario { position: relative; }
+.menu-usuario-botao { border-radius: 50%; display: grid; place-items: center; width: 40px; height: 40px; }
+.menu-usuario-painel { left: auto; right: 0; width: 260px; }
+.menu-usuario-painel .topo-menu-item { font-size: 14px; font-weight: 500; text-align: left; width: 100%; }
+.menu-usuario-topo { display: flex; gap: 12px; align-items: center; padding: 10px 10px 8px; }
+.menu-usuario-topo strong { display: block; }
+.menu-usuario-topo small { font-size: 12.5px; font-weight: 600; }
+.barra-xp { height: 6px; margin: 0 10px 8px; border-radius: 999px; background: var(--cor-superficie); overflow: hidden; }
+.barra-xp i { display: block; height: 100%; border-radius: inherit; transition: width .6s ease; }

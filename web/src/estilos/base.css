@@ -114,3 +114,23 @@ h1, h2, h3 { margin: 0; line-height: 1.15; }
 .pagina-titulo { font: 800 clamp(26px, 4vw, 40px)/1.1 var(--fonte-titulo); letter-spacing: -.02em; margin-top: 32px; }
 .anime-h2 { font: 700 18px var(--fonte-titulo); margin: 28px 0 14px; }
 .anime-h2:first-child { margin-top: 0; }
+
+/* Avatar e selo de tier */
+.avatar { position: relative; width: var(--t); height: var(--t); flex-shrink: 0; border-radius: 50%; display: grid; place-items: center;
+  font: 700 calc(var(--t) * .38) var(--fonte-titulo); color: #fff; background: var(--c);
+  box-shadow: 0 0 0 2px var(--cor-fundo-elevado), 0 0 0 4px var(--anel); }
+.avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.avatar-online { position: absolute; right: -1px; bottom: -1px; width: 30%; height: 30%; border-radius: 50%; background: var(--cor-vivo); border: 2px solid var(--cor-fundo-elevado); }
+.avatar-online::after { content: ''; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--cor-vivo); animation: ping 1.8s ease-out infinite; }
+.selo-tier { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600;
+  color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); }
+
+/* Animações compartilhadas */
+@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+@keyframes fade-sobe { from { opacity: 0; transform: translateY(10px); } }
+@keyframes brilho { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.esqueleto { border-radius: var(--raio); background: linear-gradient(90deg, var(--cor-superficie) 25%, var(--cor-superficie-hover) 50%, var(--cor-superficie) 75%); background-size: 200% 100%; animation: brilho 1.4s linear infinite; }
+.transicao-pagina { animation: pagina-entra .42s cubic-bezier(.2, .8, .2, 1); }
+@keyframes pagina-entra { from { opacity: 0; transform: translateY(14px); } }
+.revelar { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s cubic-bezier(.2, .8, .2, 1); }
+.revelar.visivel { opacity: 1; transform: none; }

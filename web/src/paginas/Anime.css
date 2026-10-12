@@ -62,3 +62,22 @@ a.ep-link:hover { border-color: var(--cor-marca); }
   .anime-poster { width: 132px; }
   .ep-link { grid-template-columns: 120px 1fr; }
 }
+
+.anime-poster { animation: poster-entra .7s cubic-bezier(.2, .9, .3, 1.15) both; }
+.anime-titulos > * { animation: fade-sobe .6s ease-out both; }
+.anime-titulos > :nth-child(2) { animation-delay: .05s; } .anime-titulos > :nth-child(3) { animation-delay: .1s; }
+.anime-titulos > :nth-child(4) { animation-delay: .15s; } .anime-titulos > :nth-child(5) { animation-delay: .2s; }
+@keyframes poster-entra { from { opacity: 0; transform: translateY(20px) rotate(-2deg) scale(.95); } }
+.anime-banner { animation: kenburns 30s ease-in-out infinite alternate; }
+@keyframes kenburns { from { transform: scale(1.03); } to { transform: scale(1.14) translate(-1.5%, -1%); } }
+.favorito-alvo { position: relative; display: grid; place-items: center; }
+.coracao-pulso { color: var(--cor-alerta); animation: coracao .5s cubic-bezier(.3, 1.6, .5, 1); }
+.explosao { position: absolute; inset: 0; pointer-events: none; }
+.explosao i { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: var(--cor-alerta);
+  animation: estilhaco .6s ease-out forwards; transform: rotate(var(--a)) translateY(0); }
+@keyframes estilhaco { to { transform: rotate(var(--a)) translateY(-26px) scale(.2); opacity: 0; } }
+@keyframes coracao { 40% { transform: scale(1.5); } }
+.ep-link { transition: border-color .2s, transform .2s; }
+a.ep-link:hover { transform: translateX(4px); }
+a.ep-link:hover .ep-miniatura img { transform: scale(1.08); }
+.ep-miniatura img { transition: transform .4s ease; }

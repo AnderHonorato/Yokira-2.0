@@ -1,0 +1,40 @@
+@import './Perfil.css';
+@import '../componentes/HeroTela.css';
+@import '../componentes/ModalEntrar.css';
+.admin-numeros { grid-template-columns: repeat(5, 1fr); margin: 20px 0 4px; }
+.admin-aparencia { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.admin-previa { position: sticky; top: calc(var(--topo) + 16px); aspect-ratio: 16 / 9; padding: 0; overflow: hidden; isolation: isolate; display: grid; place-items: end start; background: #07070a; color: #fff; }
+.admin-previa > video, .admin-previa > img, .admin-previa .hero-aurora { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.admin-previa-veu { position: absolute; inset: 0; z-index: -1; background: rgba(7, 7, 10, var(--escurecer)); }
+.admin-previa p { margin: 16px; font: 700 18px var(--fonte-titulo); }
+.admin-form { display: grid; gap: 14px; }
+.admin-form label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--cor-texto-2); }
+.admin-form input:not([type='range']):not([type='checkbox']):not([type='file']), .admin-editor input, .admin-editor textarea, .admin-editor select, .admin-filtro {
+  padding: 10px 12px; border-radius: 10px; border: 1px solid var(--cor-borda); background: var(--cor-fundo); color: var(--cor-texto); outline: none; width: 100%; }
+.admin-form input[type='range'] { accent-color: var(--cor-marca); }
+.admin-tipos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.admin-tipos button { display: grid; justify-items: center; gap: 6px; padding: 12px 8px; border-radius: 12px; border: 1px solid var(--cor-borda); font-size: 13px; font-weight: 600; transition: border-color .15s, background-color .15s; }
+.admin-tipos button[aria-checked='true'] { border-color: var(--cor-marca); background: var(--cor-marca-suave); color: var(--cor-marca); }
+.admin-upload { display: flex !important; grid-template-columns: none; align-items: center; gap: 10px !important; padding: 14px; border: 1px dashed var(--cor-borda); border-radius: 12px; cursor: pointer; }
+.admin-upload:hover { border-color: var(--cor-marca); color: var(--cor-marca); }
+.admin-upload input { display: none; }
+.admin-check { display: flex !important; align-items: center; gap: 8px !important; }
+.admin-check input { accent-color: var(--cor-marca); width: 16px; height: 16px; }
+.admin-destaques { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; max-height: 260px; overflow-y: auto; }
+.admin-destaques button { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 10px; border: 1px solid var(--cor-borda); text-align: left; font-size: 12.5px; }
+.admin-destaques button[aria-pressed='true'] { border-color: var(--cor-marca); background: var(--cor-marca-suave); }
+.admin-destaques img { width: 26px; height: 39px; border-radius: 5px; object-fit: cover; }
+.admin-filtro { max-width: 320px; margin-bottom: 12px; }
+.admin-tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-tabela th { text-align: left; color: var(--cor-texto-2); font-weight: 600; padding: 10px; border-bottom: 1px solid var(--cor-borda); }
+.admin-tabela td { padding: 8px 10px; border-bottom: 1px solid var(--cor-borda); }
+.admin-tabela td:first-child, .admin-tabela td:first-child a { display: flex; align-items: center; gap: 10px; }
+.admin-tabela img { width: 28px; height: 42px; border-radius: 5px; object-fit: cover; }
+.admin-tabela .btn { height: 34px; padding: 0 12px; font-size: 13px; }
+.admin-editor { width: min(820px, 100%); max-height: 88vh; overflow-y: auto; display: grid; gap: 12px; }
+.admin-editor h2 { margin-top: 0; font: 800 20px var(--fonte-titulo); }
+.admin-editor h3 { font-size: 15px; margin-top: 8px; }
+.admin-editor label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--cor-texto-2); }
+.admin-eps { display: grid; gap: 6px; }
+.admin-ep { display: grid; grid-template-columns: 28px 1fr 1.4fr auto; gap: 8px; align-items: center; font-size: 13px; }
+@media (max-width: 900px) { .admin-aparencia { grid-template-columns: 1fr; } .admin-previa { position: static; } .admin-numeros { grid-template-columns: repeat(2, 1fr); } .admin-ep { grid-template-columns: 24px 1fr; } .admin-tabela th:nth-child(2), .admin-tabela td:nth-child(2) { display: none; } }

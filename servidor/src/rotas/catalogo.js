@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { banco, acharAnime, lerComentarios, salvarComentarios } from '../servicos/banco.js';
 import { resumir } from '../servicos/resumo.js';
+import { exigirLogin, publico, ganharXP, XP } from '../servicos/usuarios.js';
 import { GENEROS, FORMATOS, TEMPORADAS, slugificar } from '../dados/gerar.js';
 
 export const rotasCatalogo = Router();
@@ -74,15 +75,25 @@ rotasCatalogo.get('/animes/:slug/comentarios', (req, res) => {
   res.json(lerComentarios()[req.params.slug] ?? []);
 });
 
-rotasCatalogo.post('/animes/:slug/comentarios', (req, res) => {
+rotasCatalogo.post('/animes/:slug/comentarios', exigirLogin, (req, res) => {
   if (!acharAnime(req.params.slug)) return res.status(404).json({ erro: 'Anime não encontrado.' });
-  const nome = String(req.body?.nome ?? '').trim().slice(0, 40) || 'Anônimo';
   const texto = String(req.body?.texto ?? '').trim().slice(0, 1000);
   const nota = Math.min(10, Math.max(0, Number(req.body?.nota) || 0)) || null;
   if (texto.length < 3) return res.status(400).json({ erro: 'Escreva pelo menos 3 caracteres.' });
   const todos = lerComentarios();
-  const novo = { id: Date.now(), nome, texto, nota, data: new Date().toISOString() };
+  const novo = { id: Date.now(), usuarioId: req.usuario.id, nome: req.usuario.nome, autor: publico(req.usuario), texto, nota, curtidas: [], data: new Date().toISOString() };
   todos[req.params.slug] = [novo, ...(todos[req.params.slug] ?? [])];
   salvarComentarios(todos);
+  ganharXP(req.usuario, XP.avaliacao, 'avaliou um anime', { slug: req.params.slug });
   res.status(201).json(novo);
+});
+
+rotasCatalogo.post('/animes/:slug/comentarios/:id/curtir', exigirLogin, (req, res) => {
+  const todos = lerComentarios();
+  const c = (todos[req.params.slug] ?? []).find((x) => String(x.id) === req.params.id);
+  if (!c) return res.status(404).json({ erro: 'Avaliação não encontrada.' });
+  c.curtidas = c.curtidas ?? [];
+  c.curtidas = c.curtidas.includes(req.usuario.id) ? c.curtidas.filter((u) => u !== req.usuario.id) : [...c.curtidas, req.usuario.id];
+  salvarComentarios(todos);
+  res.json({ curtidas: c.curtidas.length, curti: c.curtidas.includes(req.usuario.id) });
 });

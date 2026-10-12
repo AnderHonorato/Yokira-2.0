@@ -1,7 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { buscar, enviar } from '../util/api.js';
+import { useSessao } from './useSessao.jsx';
 
 // Lista, favoritos e progresso de episódios do usuário, salvos no navegador.
-// Quando houver login, troque o localStorage por chamadas à API.
+// Com login, a biblioteca é carregada da conta e sincronizada com a API.
 const CHAVE = 'yokira:biblioteca';
 const inicial = { lista: {}, favoritos: {}, progresso: {}, assistidos: {} };
 const Contexto = createContext(null);
@@ -12,7 +14,26 @@ function carregar() {
 
 export function ProvedorBiblioteca({ children }) {
   const [dados, setDados] = useState(carregar);
+  const { usuario } = useSessao();
+  const sincronizado = useRef(false);
   useEffect(() => { try { localStorage.setItem(CHAVE, JSON.stringify(dados)); } catch { /* sem espaço */ } }, [dados]);
+
+  // Ao entrar: junta o que estava no navegador com o que está na conta
+  useEffect(() => {
+    sincronizado.current = false;
+    if (!usuario) return;
+    buscar('/biblioteca', { semCache: true }).then((daConta) => {
+      setDados((local) => Object.fromEntries(Object.keys(inicial).map((c) => [c, { ...local[c], ...daConta[c] }])));
+      sincronizado.current = true;
+    }).catch(() => {});
+  }, [usuario?.id]);
+
+  // Depois de sincronizado, cada mudança vai para a conta (com atraso para agrupar)
+  useEffect(() => {
+    if (!usuario || !sincronizado.current) return;
+    const t = setTimeout(() => enviar('/biblioteca', dados, 'PUT').catch(() => {}), 800);
+    return () => clearTimeout(t);
+  }, [dados, usuario]);
 
   const alternar = useCallback((campo, anime) => setDados((d) => {
     const copia = { ...d[campo] };

@@ -1,0 +1,41 @@
+@import './MinhaLista.css';
+@import './Perfil.css';
+@import '../componentes/Comentarios.css';
+.forum-topo { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.forum-novo { display: grid; gap: 10px; margin-top: 20px; animation: fade-sobe .3s ease-out; }
+.forum-novo input, .forum-novo textarea, .forum-novo select { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--cor-borda); background: var(--cor-fundo); color: var(--cor-texto); outline: none; }
+.forum-novo select { justify-self: start; }
+.forum-grade { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; margin-top: 8px; }
+.forum-lateral { display: grid; gap: 2px; align-content: start; position: sticky; top: calc(var(--topo) + 16px); }
+.forum-busca { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; margin-top: 22px; border-radius: 10px; background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); color: var(--cor-texto-2); }
+.forum-busca input { flex: 1; min-width: 0; border: 0; background: none; outline: none; color: var(--cor-texto); }
+.forum-cat { text-align: left; padding: 8px 10px; border-radius: 8px; font-size: 14px; color: var(--cor-texto-2); }
+.forum-cat:hover { background: var(--cor-superficie); }
+.forum-cat[aria-current='true'] { background: var(--cor-marca-suave); color: var(--cor-marca); font-weight: 600; }
+.topicos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.topicos li { animation: fade-sobe .4s ease-out both; }
+.topico-linha { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px; border-radius: var(--raio); background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); transition: border-color .2s, transform .2s; }
+.topico-linha:hover { border-color: var(--cor-marca); transform: translateX(4px); }
+.topico-linha.fixado { border-color: color-mix(in srgb, var(--cor-ouro) 50%, transparent); }
+.topico-votos, .topico-resp { display: grid; justify-items: center; font-size: 13px; font-weight: 700; color: var(--cor-texto-2); }
+.topico-resp { display: flex; gap: 6px; }
+.topico-corpo { display: grid; gap: 6px; min-width: 0; }
+.topico-tags { display: flex; gap: 6px; }
+.topico-corpo strong { font-size: 15.5px; }
+.topico-corpo small { display: flex; align-items: center; gap: 6px; color: var(--cor-texto-3); font-size: 12.5px; }
+.topico { max-width: 860px; display: grid; gap: 16px; padding-top: 24px; justify-items: stretch; }
+.topico > .secao-link { justify-self: start; }
+.topico-post { display: grid; grid-template-columns: 56px 1fr; gap: 16px; }
+.topico-voto { display: grid; justify-items: center; align-content: start; gap: 2px; height: fit-content; padding: 8px 0; border-radius: 12px; color: var(--cor-texto-2); font-weight: 700; transition: color .15s, background-color .15s; }
+.topico-voto:hover { background: var(--cor-superficie); }
+.topico-voto.votado { color: var(--cor-marca); }
+.topico-voto.votado svg { animation: carimbo .4s cubic-bezier(.3, 1.6, .5, 1); }
+.topico-voto span { animation: fade-sobe .3s; }
+.topico-titulo { font: 800 clamp(22px, 3vw, 30px)/1.2 var(--fonte-titulo); margin: 10px 0; letter-spacing: -.01em; }
+.topico-autor { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0; font-size: 14px; font-weight: 600; }
+.topico-autor small { color: var(--cor-texto-3); font-weight: 400; }
+.topico-texto { margin: 10px 0 0; color: var(--cor-texto-2); white-space: pre-line; line-height: 1.65; }
+.respostas { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.resposta { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--cor-borda); animation: fade-sobe .4s ease-out both; }
+.forum-ordens { margin: 22px 0 14px; }
+@media (max-width: 800px) { .forum-grade { grid-template-columns: 1fr; } .forum-lateral { position: static; display: flex; flex-wrap: wrap; gap: 6px; } .forum-lateral .chat-rotulo { display: none; } .forum-busca { width: 100%; margin-top: 12px; } }

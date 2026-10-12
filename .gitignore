@@ -5,3 +5,8 @@ dist/
 .DS_Store
 servidor/src/dados/comentarios.json
 dist-demo/
+servidor/src/dados/*.json
+!servidor/src/dados/banco.json
+servidor/src/dados/segredo.txt
+servidor/uploads/*
+!servidor/uploads/.gitkeep

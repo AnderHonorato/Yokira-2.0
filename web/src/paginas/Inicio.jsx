@@ -1,23 +1,23 @@
 import { Link } from 'react-router-dom';
-import { CalendarDays, Trophy, Bookmark, LayoutGrid, Play } from 'lucide-react';
+import { CalendarDays, Trophy, Vote, MessagesSquare, Play } from 'lucide-react';
 import { useApi } from '../ganchos/useApi.js';
 import { useBiblioteca } from '../ganchos/useBiblioteca.jsx';
 import { capa } from '../util/api.js';
 import { dataCurta, diasAte } from '../util/formatos.js';
-import Destaque from '../componentes/Destaque.jsx';
-import PainelRanking from '../componentes/PainelRanking.jsx';
+import HeroTela from '../componentes/HeroTela.jsx';
 import CartaoPoster from '../componentes/CartaoPoster.jsx';
 import LinhaRolavel from '../componentes/LinhaRolavel.jsx';
 import Secao from '../componentes/Secao.jsx';
 import { Carregando, Erro } from '../componentes/Estado.jsx';
+import Revelar from '../componentes/Revelar.jsx';
 import './Inicio.css';
 
 const ATALHOS = [
   { para: '/agenda', Icone: CalendarDays, titulo: 'Agenda', texto: 'O que estreia em cada dia' },
-  { para: '/top100', Icone: Trophy, titulo: 'Top 100', texto: 'Os mais bem avaliados' },
-  { para: '/acervo', Icone: LayoutGrid, titulo: 'Acervo', texto: 'Filtre por gênero e ano' },
-  { para: '/minha-lista', Icone: Bookmark, titulo: 'Minha lista', texto: 'Salvos e favoritos' },
-];
+  { para: '/anime-da-semana', Icone: Vote, titulo: 'Anime da semana', texto: 'Vote no favorito da temporada' },
+  { para: '/forum', Icone: MessagesSquare, titulo: 'Fórum', texto: 'Teorias, dicas e recomendações' },
+  { para: '/ranking', Icone: Trophy, titulo: 'Ranking', texto: 'Suba de tier ganhando XP' },
+]
 
 function ContinuarAssistindo() {
   const { progresso } = useBiblioteca();
@@ -44,29 +44,23 @@ function ContinuarAssistindo() {
 
 export default function Inicio() {
   const { dados, erro, carregando } = useApi('/inicio');
-  if (carregando) return <Carregando />;
+  const { dados: aparencia } = useApi('/aparencia');
+  if (carregando) return <div className="hero esqueleto-hero" aria-busy="true"><Carregando /></div>;
   if (erro) return <Erro mensagem={erro} />;
-  const { estatisticas: est } = dados;
+  // O admin pode escolher quais títulos aparecem no destaque
+  const escolhidos = (aparencia?.destaques ?? []).map((slug) => [...dados.noAr, ...dados.top, ...dados.emAlta].find((a) => a.slug === slug)).filter(Boolean);
+  const destaques = escolhidos.length ? escolhidos : dados.destaques;
 
   return (
-    <div className="pagina casca inicio">
-      <div className="inicio-topo">
-        <Destaque itens={dados.destaques} />
-        <div className="inicio-lateral">
-          <PainelRanking ranking={dados.ranking} />
-          <dl className="inicio-numeros">
-            <div><dt>No ar</dt><dd>{est.noAr}</dd></div>
-            <div><dt>Episódios na temporada</dt><dd>{est.episodiosTemporada}</dd></div>
-            <div><dt>Títulos</dt><dd>{est.titulos}</dd></div>
-          </dl>
-        </div>
-      </div>
+    <>
+    <HeroTela itens={destaques} aparencia={aparencia} ranking={dados.ranking} estatisticas={dados.estatisticas} />
+    <div className="pagina casca inicio" id="conteudo">
 
-      <nav className="atalhos" aria-label="Atalhos">
+      <Revelar como="nav" className="atalhos" aria-label="Atalhos">
         {ATALHOS.map(({ para, Icone, titulo, texto }) => (
           <Link key={para} to={para} className="atalho"><span className="atalho-icone"><Icone size={18} /></span><span><strong>{titulo}</strong><small>{texto}</small></span></Link>
         ))}
-      </nav>
+      </Revelar>
 
       <ContinuarAssistindo />
 
@@ -117,5 +111,6 @@ export default function Inicio() {
         </div>
       </Secao>
     </div>
+    </>
   );
 }

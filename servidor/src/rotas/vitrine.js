@@ -4,6 +4,7 @@ import { banco } from '../servicos/banco.js';
 import { resumir } from '../servicos/resumo.js';
 import { gerarCapa } from '../servicos/capa.js';
 import { acharAnime } from '../servicos/banco.js';
+import { dados as contas, publico } from '../servicos/usuarios.js';
 
 export const rotasVitrine = Router();
 const ordenar = (lista, campo) => [...lista].sort((a, b) => (b[campo] ?? 0) - (a[campo] ?? 0));
@@ -21,7 +22,7 @@ rotasVitrine.get('/inicio', (_req, res) => {
     emBreve: emBreve.map(resumir),
     encerrando: encerrando.map(resumir),
     noticias: banco.noticias.slice(0, 4),
-    ranking: banco.ranking.slice(0, 5),
+    ranking: [...contas.usuarios].sort((a, b) => b.xp - a.xp).slice(0, 5).map((u, i) => ({ posicao: i + 1, ...publico(u) })),
     estatisticas: {
       noAr: noAr.length,
       episodiosTemporada: noAr.reduce((s, a) => s + a.episodios.filter((e) => e.disponivel).length, 0),
@@ -57,7 +58,6 @@ rotasVitrine.get('/noticias/:slug', (req, res) => {
   res.json(noticia);
 });
 
-rotasVitrine.get('/ranking', (_req, res) => res.json(banco.ranking));
 
 // /api/capa/:slug.svg?tipo=poster|banner|ep&n=3
 rotasVitrine.get('/capa/:arquivo', (req, res) => {

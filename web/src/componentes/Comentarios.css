@@ -9,3 +9,16 @@
 .comentario-topo { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 14px; }
 .comentario-topo small { color: var(--cor-texto-3); }
 .comentario-texto { margin: 4px 0 0; color: var(--cor-texto-2); white-space: pre-line; }
+.comentario-quem { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.estrelas button { transition: transform .2s cubic-bezier(.3, 1.6, .5, 1); }
+.estrelas button:hover { transform: scale(1.2); }
+.estrelas button.acesa svg { animation: carimbo .35s cubic-bezier(.3, 1.6, .5, 1); filter: drop-shadow(0 0 6px rgba(245, 197, 24, .5)); }
+.comentario-convite { width: 100%; padding: 18px; border-radius: var(--raio-g); border: 1px dashed var(--cor-borda); color: var(--cor-marca); font-weight: 600; }
+.comentario-convite:hover { background: var(--cor-marca-suave); }
+.comentario-topo { flex-wrap: wrap; }
+.curtir { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 4px 8px; border-radius: 8px; font-size: 13px; color: var(--cor-texto-2); }
+.curtir:hover { background: var(--cor-superficie); }
+.curtir.curtido { color: var(--cor-alerta); }
+.curtir.curtido svg { animation: coracao .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes coracao { 40% { transform: scale(1.5); } }
+@keyframes carimbo { from { transform: scale(1.9) rotate(-15deg); opacity: 0; } }
