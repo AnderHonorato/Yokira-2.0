@@ -1,0 +1,9 @@
+.rodape { border-top: 1px solid var(--cor-borda); background: var(--cor-fundo-elevado); padding: 48px 0 calc(24px + env(safe-area-inset-bottom, 0px)); }
+.rodape-grade { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
+.rodape-marca p { color: var(--cor-texto-2); max-width: 32ch; margin: 14px 0 0; }
+.rodape h2 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.rodape ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.rodape li a { color: var(--cor-texto-2); font-size: 14px; }
+.rodape li a:hover { color: var(--cor-marca); }
+.rodape-base { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--cor-borda); color: var(--cor-texto-3); font-size: 13px; }
+@media (max-width: 760px) { .rodape-grade { grid-template-columns: 1fr 1fr; } .rodape-marca { grid-column: 1 / -1; } }

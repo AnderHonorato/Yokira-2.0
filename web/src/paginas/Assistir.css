@@ -1,0 +1,30 @@
+.assistir { padding-top: 20px; }
+.assistir-grade { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+.assistir-info { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px; margin-top: 18px; }
+.assistir-anime { color: var(--cor-marca); font-weight: 600; font-size: 14px; }
+.assistir-titulo { font: 700 clamp(19px, 2.4vw, 26px)/1.2 var(--fonte-titulo); margin-top: 4px; letter-spacing: -.01em; }
+.assistir-meta { margin: 6px 0 0; color: var(--cor-texto-2); font-size: 14px; }
+.assistir-acoes { display: flex; gap: 8px; }
+.assistir-acoes .btn:disabled { opacity: .4; cursor: not-allowed; }
+.assistir-dica { color: var(--cor-texto-3); font-size: 13px; margin: 14px 0 0; }
+
+.assistir-lista { position: sticky; top: calc(var(--topo) + 16px); max-height: calc(100vh - var(--topo) - 32px); display: flex; flex-direction: column;
+  background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); border-radius: var(--raio-g); overflow: hidden; }
+.assistir-lista-titulo { padding: 16px; font-size: 15px; font-weight: 600; border-bottom: 1px solid var(--cor-borda); display: flex; justify-content: space-between; }
+.assistir-lista-titulo small { color: var(--cor-texto-2); font-weight: 400; }
+.assistir-lista ol { list-style: none; margin: 0; padding: 8px; overflow-y: auto; display: grid; gap: 4px; }
+.assistir-ep { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: center; padding: 6px; border-radius: 10px; }
+.assistir-ep:hover { background: var(--cor-superficie); }
+.assistir-ep[aria-current] { background: var(--cor-marca-suave); outline: 1px solid var(--cor-marca); }
+.assistir-ep img { width: 112px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 7px; }
+.assistir-ep small { color: var(--cor-texto-2); font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
+.assistir-ep small svg { color: var(--cor-vivo); }
+.assistir-ep strong { display: block; font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.assistir-ep-bloq { opacity: .5; }
+.assistir-ep-num { width: 112px; aspect-ratio: 16 / 9; border-radius: 7px; display: grid; place-items: center; background: var(--cor-superficie); font: 700 18px var(--fonte-titulo); color: var(--cor-texto-3); }
+
+@media (max-width: 1000px) {
+  .assistir-grade { grid-template-columns: 1fr; }
+  .assistir-lista { position: static; max-height: 460px; }
+}
+@media (max-width: 560px) { .assistir { padding-top: 0; } }

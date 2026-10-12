@@ -1,0 +1,40 @@
+.topo {
+  position: sticky; top: 0; z-index: 40;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--vidro); backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--cor-borda);
+}
+.topo-linha { height: var(--topo); display: flex; align-items: center; gap: 24px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; }
+.logo-marca {
+  width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+  background: var(--cor-marca); color: #fff; font: 800 16px var(--fonte-titulo);
+}
+.logo-nome { font: 700 18px var(--fonte-titulo); letter-spacing: -.02em; }
+.topo-nav { display: flex; gap: 2px; flex: 1; }
+.topo-link {
+  display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px; border-radius: 8px;
+  color: var(--cor-texto-2); font-size: 14px; font-weight: 500;
+}
+.topo-link:hover { color: var(--cor-texto); background: var(--cor-superficie); }
+.topo-link.active { color: var(--cor-texto); background: var(--cor-marca-suave); }
+.topo-link.active svg { color: var(--cor-marca); }
+.topo-acoes { display: flex; gap: 8px; margin-left: auto; }
+.topo-acoes .topo-menu-btn { display: none; }
+
+.gaveta-fundo { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .5); }
+.gaveta {
+  position: absolute; inset: 0 auto 0 0; width: min(84vw, 320px); padding: 16px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  background: var(--cor-fundo-elevado); border-right: 1px solid var(--cor-borda);
+  display: flex; flex-direction: column; gap: 4px; animation: gaveta-entra .2s ease-out;
+}
+.gaveta-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.gaveta-link { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; font-weight: 500; text-align: left; }
+.gaveta-link:hover, .gaveta-link.active { background: var(--cor-marca-suave); }
+@keyframes gaveta-entra { from { transform: translateX(-100%); } }
+
+@media (max-width: 1060px) {
+  .topo-nav { display: none; }
+  .topo-acoes .topo-menu-btn { display: inline-flex; }
+}

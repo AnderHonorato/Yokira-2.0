@@ -1,0 +1,11 @@
+.busca-fundo { position: fixed; inset: 0; z-index: 70; background: rgba(0, 0, 0, .55); display: flex; justify-content: center; padding: calc(72px + env(safe-area-inset-top, 0px)) 16px 16px; }
+.busca-caixa { width: min(640px, 100%); height: fit-content; background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); border-radius: var(--raio-g); overflow: hidden; }
+.busca-form { display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 18px; color: var(--cor-texto-2); }
+.busca-form input { flex: 1; height: 44px; border: 0; background: none; outline: none; font-size: 17px; color: var(--cor-texto); }
+.busca-lista { list-style: none; margin: 0; padding: 6px; border-top: 1px solid var(--cor-borda); }
+.busca-item { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 10px; }
+.busca-item:hover { background: var(--cor-superficie); }
+.busca-item img { border-radius: 6px; flex-shrink: 0; }
+.busca-item strong { display: block; font-weight: 600; }
+.busca-item small { color: var(--cor-texto-2); }
+.busca-vazio { margin: 0; padding: 16px 18px; border-top: 1px solid var(--cor-borda); color: var(--cor-texto-2); }

@@ -1,0 +1,13 @@
+.abas-simples { display: flex; gap: 6px; flex-wrap: wrap; margin: 22px 0 24px; }
+.abas-simples button { display: inline-flex; gap: 8px; align-items: center; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-fundo-elevado); font-weight: 500; font-size: 14px; }
+.abas-simples button span { font-size: 12px; color: var(--cor-texto-2); }
+.abas-simples button[aria-selected='true'] { border-color: var(--cor-marca); background: var(--cor-marca-suave); color: var(--cor-marca); }
+.biblioteca { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.biblioteca-item { position: relative; }
+.biblioteca-item a { display: grid; gap: 6px; }
+.biblioteca-item img { aspect-ratio: 2 / 3; width: 100%; object-fit: cover; border-radius: var(--raio); box-shadow: var(--sombra-capa); }
+.biblioteca-item strong { font-size: 14px; }
+.biblioteca-item small { color: var(--cor-texto-2); font-size: 12.5px; }
+.biblioteca-remover { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: rgba(8, 8, 11, .75); color: #fff; }
+.biblioteca-remover:hover { background: var(--cor-alerta); }
+.vazio .btn { margin-top: 12px; }

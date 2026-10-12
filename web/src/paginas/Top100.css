@@ -1,0 +1,15 @@
+@import './Acervo.css';
+.top-filtros { margin: 20px 0 24px; }
+.pilula-botao { padding: 0 16px; }
+.pilula-botao::after { display: none; }
+.top-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.top-item { display: grid; grid-template-columns: 56px 56px 1fr auto; align-items: center; gap: 16px; padding: 10px 16px 10px 8px; border-radius: var(--raio); background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); }
+.top-item:hover { border-color: var(--cor-marca); }
+.top-pos { font: 800 24px var(--fonte-titulo); text-align: center; color: var(--cor-texto-3); }
+li:nth-child(-n + 3) .top-pos { color: var(--cor-ouro); }
+.top-item img { width: 56px; height: 84px; object-fit: cover; border-radius: 8px; }
+.top-info { display: grid; gap: 2px; min-width: 0; }
+.top-info strong { font-size: 15.5px; }
+.top-info small { color: var(--cor-texto-2); font-size: 13px; }
+.top-nota { font-size: 18px; }
+@media (max-width: 560px) { .top-item { grid-template-columns: 34px 48px 1fr; gap: 10px; } .top-item img { width: 48px; height: 72px; } .top-nota { grid-column: 3; font-size: 14px; } }

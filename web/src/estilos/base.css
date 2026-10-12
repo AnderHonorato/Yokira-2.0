@@ -1,0 +1,116 @@
+/* Tokens Yōkira 2.0 — mesmos nomes do padrão estabelecido (artefato "Yōkira Animes — Telas") */
+:root,
+[data-tema='escuro'] {
+  --cor-fundo: #08080b;
+  --cor-fundo-elevado: #111116;
+  --cor-superficie: #16161d;
+  --cor-superficie-hover: #1e1e27;
+  --cor-borda: #26262f;
+  --cor-texto: #f2f1f6;
+  --cor-texto-2: #a1a1ac;
+  --cor-texto-3: #6f6f7c;
+  --cor-marca: #8b5cf6;
+  --cor-marca-forte: #7c3aed;
+  --cor-marca-suave: rgba(139, 92, 246, 0.16);
+  --cor-ouro: #f5c518;
+  --cor-vivo: #4ade80;
+  --cor-alerta: #fb7185;
+  --sombra-capa: 0 18px 40px -18px rgba(0, 0, 0, 0.8);
+  --vidro: rgba(8, 8, 11, 0.78);
+  color-scheme: dark;
+}
+
+[data-tema='claro'] {
+  --cor-fundo: #f6f5fa;
+  --cor-fundo-elevado: #ffffff;
+  --cor-superficie: #eeecf5;
+  --cor-superficie-hover: #e4e1ef;
+  --cor-borda: #dcd9e8;
+  --cor-texto: #16161d;
+  --cor-texto-2: #5c5a69;
+  --cor-texto-3: #8a889a;
+  --cor-marca: #7c3aed;
+  --cor-marca-forte: #6d28d9;
+  --cor-marca-suave: rgba(124, 58, 237, 0.1);
+  --cor-ouro: #b98a00;
+  --cor-vivo: #16a34a;
+  --cor-alerta: #e11d48;
+  --sombra-capa: 0 16px 32px -18px rgba(40, 20, 80, 0.45);
+  --vidro: rgba(246, 245, 250, 0.82);
+  color-scheme: light;
+}
+
+:root {
+  --fonte: 'Inter', system-ui, sans-serif;
+  --fonte-titulo: 'Unbounded', 'Inter', sans-serif;
+  --raio-p: 6px;
+  --raio: 10px;
+  --raio-g: 16px;
+  --largura: 1320px;
+  --topo: 64px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--topo) + env(safe-area-inset-top, 0px)); }
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font: 15px/1.55 var(--fonte);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .2s, color .2s;
+}
+img, video, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+:focus-visible { outline: 2px solid var(--cor-marca); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3 { margin: 0; line-height: 1.15; }
+
+.casca { width: min(100% - 32px, var(--largura)); margin-inline: auto; }
+.oculto-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Botões */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 42px; padding: 0 18px; border-radius: var(--raio);
+  font-weight: 600; font-size: 14px; white-space: nowrap;
+  border: 1px solid transparent; transition: background-color .15s, border-color .15s, transform .1s;
+}
+.btn:active { transform: scale(.98); }
+.btn-primario { background: var(--cor-marca); color: #fff; }
+.btn-primario:hover { background: var(--cor-marca-forte); }
+.btn-contorno { border-color: var(--cor-borda); background: var(--cor-fundo-elevado); }
+.btn-contorno:hover { background: var(--cor-superficie-hover); }
+.btn-ativo { border-color: var(--cor-marca); color: var(--cor-marca); background: var(--cor-marca-suave); }
+.btn-icone { width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: 50%; }
+
+/* Etiquetas */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px;
+  border-radius: 999px; font-size: 12.5px; font-weight: 500;
+  background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-2);
+}
+.nota { color: var(--cor-ouro); font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+
+/* Seções */
+.secao { margin-top: 48px; }
+.secao-cabecalho { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.secao-titulo { font-family: var(--fonte-titulo); font-size: clamp(17px, 2vw, 21px); font-weight: 700; letter-spacing: -.01em; }
+.secao-sub { color: var(--cor-texto-2); font-size: 13.5px; margin-top: 4px; }
+.secao-link { color: var(--cor-marca); font-size: 14px; font-weight: 600; white-space: nowrap; }
+.secao-link:hover { text-decoration: underline; }
+
+.grade-posters { display: grid; gap: 18px 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+@media (max-width: 560px) { .grade-posters { grid-template-columns: repeat(3, 1fr); gap: 14px 10px; } }
+
+.pagina { padding-bottom: 72px; }
+.vazio { padding: 48px 16px; text-align: center; color: var(--cor-texto-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+.pagina-titulo { font: 800 clamp(26px, 4vw, 40px)/1.1 var(--fonte-titulo); letter-spacing: -.02em; margin-top: 32px; }
+.anime-h2 { font: 700 18px var(--fonte-titulo); margin: 28px 0 14px; }
+.anime-h2:first-child { margin-top: 0; }

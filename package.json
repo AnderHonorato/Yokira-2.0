@@ -1,0 +1,14 @@
+{
+  "name": "yokira-2.0",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Yōkira Animes 2.0 — plataforma de streaming de animes (web + API)",
+  "workspaces": ["servidor", "web"],
+  "scripts": {
+    "dev": "concurrently -n api,web -c magenta,cyan \"npm run dev -w servidor\" \"npm run dev -w web\"",
+    "build": "npm run build -w web",
+    "start": "npm run start -w servidor",
+    "dados": "npm run dados -w servidor"
+  },
+  "devDependencies": { "concurrently": "^9.1.0" }
+}

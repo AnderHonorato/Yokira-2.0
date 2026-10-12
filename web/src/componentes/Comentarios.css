@@ -1,0 +1,11 @@
+.comentario-form { display: grid; gap: 10px; padding: 16px; border-radius: var(--raio-g); background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); }
+.comentario-form input, .comentario-form textarea { width: 100%; padding: 10px 12px; border-radius: var(--raio); border: 1px solid var(--cor-borda); background: var(--cor-fundo); outline: none; resize: vertical; }
+.comentario-form input:focus, .comentario-form textarea:focus { border-color: var(--cor-marca); }
+.comentario-form .btn { justify-self: start; }
+.estrelas { display: flex; gap: 4px; color: var(--cor-ouro); }
+.comentario-erro { margin: 0; color: var(--cor-alerta); font-size: 14px; }
+.comentario-lista { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 14px; }
+.comentario { display: flex; gap: 12px; }
+.comentario-topo { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.comentario-topo small { color: var(--cor-texto-3); }
+.comentario-texto { margin: 4px 0 0; color: var(--cor-texto-2); white-space: pre-line; }

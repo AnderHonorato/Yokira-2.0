@@ -1,0 +1,17 @@
+.linha { position: relative; }
+.linha-trilho {
+  display: grid; grid-auto-flow: column; grid-auto-columns: var(--largura-item); gap: 14px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 6px;
+}
+.linha-trilho::-webkit-scrollbar { display: none; }
+.linha-trilho > * { scroll-snap-align: start; }
+.linha-seta {
+  position: absolute; top: 34%; z-index: 2; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda);
+  opacity: 0; transition: opacity .15s;
+}
+.linha:hover .linha-seta, .linha-seta:focus-visible { opacity: 1; }
+.linha-seta-esq { left: -14px; }
+.linha-seta-dir { right: -14px; }
+@media (hover: none) { .linha-seta { display: none; } }
+@media (max-width: 560px) { .linha-trilho { grid-auto-columns: calc(var(--largura-item) * .78); gap: 10px; } }
