@@ -48,4 +48,8 @@ npm run build && npm start   # http://localhost:3333
 4. Painel administrativo para cadastrar títulos e episódios.
 5. Jogos da comunidade (quiz do dia, tier list, votação semanal) — previstos no layout de referência, não implementados aqui.
 
+## Demo estática
+
+`cd web && npx vite build -c vite.demo.config.js --mode demo` gera `web/dist-demo/index.html`: o site inteiro em um único arquivo, sem servidor (dados locais, rotas com `#`, vídeo de demonstração próprio embutido).
+
 Referência de organização: `docs/REFERENCIA.md`.
