@@ -40,7 +40,7 @@
 }
 
 .topo-suspenso { position: relative; }
-.topo-menu { position: absolute; top: calc(100% + 6px); left: 0; width: 300px; padding: 8px; border-radius: 16px; display: grid; gap: 2px;
+.topo-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 1; width: 300px; padding: 8px; border-radius: 16px; display: grid; gap: 2px;
   background: var(--cor-fundo-elevado); border: 1px solid var(--cor-borda); box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .6); animation: menu-entra .22s cubic-bezier(.2, .9, .3, 1.2); }
 .topo-menu::before { content: ''; position: absolute; inset: -8px 0 auto; height: 8px; }
 .topo-menu-item { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; }

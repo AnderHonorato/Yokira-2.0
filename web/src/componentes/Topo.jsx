@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Home, LayoutGrid, CalendarDays, Trophy, Newspaper, Bookmark, Search, Menu, X, Sun, Moon, Users, ChevronDown, MessagesSquare, Vote, Medal } from 'lucide-react';
 import { useSessao } from '../ganchos/useSessao.jsx';
@@ -49,6 +50,7 @@ export default function Topo() {
   }, []);
 
   return (
+    <>
     <header className="topo">
       <div className="casca topo-linha">
         <Logo />
@@ -77,19 +79,21 @@ export default function Topo() {
         </div>
       </div>
 
-      {menuAberto && (
-        <div className="gaveta-fundo" onClick={() => setMenuAberto(false)}>
-          <nav className="gaveta" aria-label="Menu" onClick={(e) => e.stopPropagation()}>
-            <div className="gaveta-topo"><Logo /><button className="btn btn-icone" onClick={() => setMenuAberto(false)} aria-label="Fechar menu"><X size={20} /></button></div>
-            {[...LINKS, ...COMUNIDADE].map(({ para, rotulo, Icone, fim }) => (
-              <NavLink key={para} to={para} end={fim} className="gaveta-link"><Icone size={18} />{rotulo}</NavLink>
-            ))}
-            {!usuario && <button className="btn btn-primario gaveta-entrar" onClick={() => { setMenuAberto(false); abrirLogin(); }}>Entrar ou criar conta</button>}
-            <button className="gaveta-link" onClick={alternarTema}>{tema === 'claro' ? <Moon size={18} /> : <Sun size={18} />}Tema {tema === 'claro' ? 'escuro' : 'claro'}</button>
-          </nav>
-        </div>
-      )}
       {buscaAberta && <BuscaRapida aoFechar={() => setBuscaAberta(false)} />}
     </header>
+    {menuAberto && createPortal(
+      <div className="gaveta-fundo" onClick={() => setMenuAberto(false)}>
+        <nav className="gaveta" aria-label="Menu" onClick={(e) => e.stopPropagation()}>
+          <div className="gaveta-topo"><Logo /><button className="btn btn-icone" onClick={() => setMenuAberto(false)} aria-label="Fechar menu"><X size={20} /></button></div>
+          {[...LINKS, ...COMUNIDADE].map(({ para, rotulo, Icone, fim }) => (
+            <NavLink key={para} to={para} end={fim} className="gaveta-link"><Icone size={18} />{rotulo}</NavLink>
+          ))}
+          {!usuario && <button className="btn btn-primario gaveta-entrar" onClick={() => { setMenuAberto(false); abrirLogin(); }}>Entrar ou criar conta</button>}
+          <button className="gaveta-link" onClick={alternarTema}>{tema === 'claro' ? <Moon size={18} /> : <Sun size={18} />}Tema {tema === 'claro' ? 'escuro' : 'claro'}</button>
+        </nav>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
