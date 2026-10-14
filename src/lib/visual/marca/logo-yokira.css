@@ -1,0 +1,38 @@
+/* Arquivo: src/lib/visual/marca/logo-yokira.css */
+/* A logo e so tipografia: "YOKIRA" com "IRA" em roxo e o subtitulo espacado embaixo. */
+
+.marca-logo {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 3px;
+}
+
+.marca-titulo {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  color: var(--cor-texto);
+}
+
+.marca-destaque {
+  color: var(--cor-marca);
+}
+
+.marca-subtitulo {
+  font-size: var(--texto-11);
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  color: var(--cor-marca);
+  padding-left: 2px;
+}
+
+.marca-compacta .marca-titulo {
+  font-size: 1.125rem;
+}
+
+@media (min-width: 1024px) {
+  .marca-titulo {
+    font-size: 1.5rem;
+  }
+}

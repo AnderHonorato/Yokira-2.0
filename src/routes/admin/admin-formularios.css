@@ -1,0 +1,141 @@
+/* Arquivo: src/routes/admin/admin-formularios.css */
+/* Campos, grupos e formularios do painel. Separado de admin-tabela.css porque
+   juntos passavam das 180 linhas. */
+
+.admin-busca,
+.admin-forma,
+.admin-forma-inline {
+  display: flex;
+  gap: var(--espaco-3);
+}
+
+.admin-busca,
+.admin-forma-inline {
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.admin-forma {
+  flex-direction: column;
+  padding: var(--espaco-4);
+  margin-bottom: var(--espaco-4);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+.admin-busca {
+  margin-bottom: var(--espaco-4);
+}
+
+.admin-forma-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+}
+
+.admin-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.admin-campo-largo {
+  flex: 1 1 220px;
+}
+
+.admin-campo input,
+.admin-campo select,
+.admin-campo textarea {
+  min-height: var(--alvo-toque);
+  padding: var(--espaco-2) var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-14);
+  color: var(--cor-texto);
+  font-family: inherit;
+}
+
+.admin-campo textarea {
+  resize: vertical;
+}
+
+/* Rotulo que existe pro leitor de tela e nao ocupa espaco na tela. */
+.admin-rotulo-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.admin-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-chip);
+}
+
+.admin-grupo legend {
+  padding: 0 var(--espaco-2);
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.admin-marcador {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-toque);
+  font-size: var(--texto-13);
+}
+
+/* Escolha da origem do video no envio: arquivo ou link. */
+.admin-origem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-4);
+  padding: var(--espaco-3);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-card);
+}
+
+.admin-origem legend {
+  padding: 0 var(--espaco-2);
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.admin-origem-opcao {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-toque);
+  font-size: var(--texto-14);
+}
+
+.admin-origem-opcao input {
+  accent-color: var(--cor-marca);
+}
+
+.admin-dica {
+  display: block;
+  margin-top: var(--espaco-2);
+  font-size: var(--texto-12);
+  line-height: 1.5;
+  color: var(--cor-texto-secundario);
+}
+
+/* As duas capas do titulo lado a lado quando cabe. */
+.admin-capas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--espaco-4);
+  margin-top: var(--espaco-4);
+}

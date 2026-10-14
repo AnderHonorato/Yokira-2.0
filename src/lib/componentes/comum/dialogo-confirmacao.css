@@ -1,0 +1,116 @@
+/* Arquivo: src/lib/componentes/comum/dialogo-confirmacao.css */
+
+.dialogo-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: var(--espaco-4);
+  background: var(--cor-cortina-dialogo);
+  animation: surgir var(--transicao-rapida) both;
+}
+
+.dialogo {
+  width: min(440px, 100%);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+  padding: var(--espaco-5);
+  box-shadow: var(--sombra-card);
+}
+
+.dialogo-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espaco-3);
+}
+
+.dialogo-passo {
+  font-size: var(--texto-11);
+  font-weight: 600;
+  color: var(--cor-marca);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dialogo-fechar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--raio-botao);
+  color: var(--cor-texto-secundario);
+}
+
+.dialogo-fechar:hover {
+  background: var(--cor-superficie-hover);
+  color: var(--cor-texto);
+}
+
+.dialogo-titulo {
+  font-size: var(--texto-16);
+  font-weight: 700;
+  margin-bottom: var(--espaco-3);
+}
+
+.dialogo-texto {
+  font-size: var(--texto-14);
+  color: var(--cor-texto-secundario);
+  line-height: 1.55;
+}
+
+.dialogo-aviso {
+  margin-top: var(--espaco-3);
+  padding: var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-erro-fundo);
+  border: 1px solid var(--cor-erro-borda);
+  font-size: var(--texto-13);
+  color: var(--cor-erro-texto);
+}
+
+.dialogo-rotulo {
+  display: block;
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  margin-bottom: var(--espaco-2);
+}
+
+.dialogo-campo {
+  width: 100%;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-14);
+  letter-spacing: 0.06em;
+}
+
+.dialogo-caixa {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espaco-3);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  line-height: 1.5;
+  cursor: pointer;
+  min-height: var(--alvo-toque);
+}
+
+.dialogo-caixa input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--cor-marca);
+}
+
+.dialogo-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espaco-2);
+  margin-top: var(--espaco-5);
+}

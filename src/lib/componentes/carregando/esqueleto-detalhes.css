@@ -1,0 +1,111 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-detalhes.css */
+/* Espelha detalhes.css: coluna unica no celular, principal + painel no desktop. */
+
+.esqueleto-detalhes {
+  display: grid;
+  gap: var(--espaco-6);
+  margin-top: var(--espaco-4);
+}
+
+/* O banner e deitado tambem no celular. Isso foi pedido; nao e engano de recorte. */
+.esqueleto-detalhes-banner {
+  aspect-ratio: 16 / 9;
+}
+
+.esqueleto-detalhes-nome {
+  height: var(--texto-28);
+  width: 65%;
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-detalhes-meta {
+  height: var(--texto-13);
+  width: 45%;
+  margin-top: var(--espaco-2);
+}
+
+.esqueleto-detalhes-acoes {
+  display: flex;
+  gap: var(--espaco-2);
+  overflow: hidden;
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-detalhes-acao {
+  flex: 0 0 auto;
+  height: var(--alvo-toque);
+  width: 108px;
+}
+
+.esqueleto-detalhes-abas {
+  display: flex;
+  gap: var(--espaco-4);
+  overflow: hidden;
+  margin-top: var(--espaco-6);
+  padding-bottom: var(--espaco-3);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.esqueleto-detalhes-aba {
+  flex: 0 0 auto;
+  height: var(--texto-14);
+  width: 84px;
+}
+
+.esqueleto-detalhes-episodios {
+  list-style: none;
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-episodio {
+  display: flex;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3) 0;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.esqueleto-episodio-miniatura {
+  flex: 0 0 auto;
+  width: 120px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--raio-card);
+  overflow: hidden;
+}
+
+.esqueleto-episodio-texto {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.esqueleto-episodio-nome {
+  height: var(--texto-14);
+  width: 70%;
+}
+
+.esqueleto-episodio-linha {
+  height: var(--texto-12);
+  width: 40%;
+  margin-top: var(--espaco-2);
+}
+
+.esqueleto-detalhes-trailer {
+  aspect-ratio: 16 / 9;
+}
+
+.esqueleto-detalhes-lateral {
+  height: 72px;
+  margin-top: var(--espaco-3);
+}
+
+@media (min-width: 1024px) {
+  .esqueleto-detalhes {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--espaco-8);
+  }
+  .esqueleto-detalhes-nome {
+    height: var(--texto-40);
+  }
+  .esqueleto-episodio-miniatura {
+    width: 168px;
+  }
+}

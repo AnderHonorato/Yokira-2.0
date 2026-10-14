@@ -1,0 +1,36 @@
+/* Arquivo: src/routes/assistir/[episodioId]/assistir.css */
+
+.assistir {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  padding-top: var(--espaco-4);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.assistir-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-toque);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.assistir-voltar:hover {
+  color: var(--cor-texto);
+}
+
+.assistir-titulo {
+  font-size: var(--texto-16);
+  font-weight: 700;
+}
+
+.assistir-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}

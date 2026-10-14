@@ -1,0 +1,84 @@
+/* Arquivo: src/routes/configuracoes/configuracoes.css */
+
+.config-titulo {
+  font-size: var(--texto-20);
+  font-weight: 700;
+  margin: var(--espaco-6) 0 var(--espaco-2);
+}
+
+.config-subtitulo {
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  margin-bottom: var(--espaco-5);
+}
+
+.config-recado {
+  padding: var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-marca-suave);
+  font-size: var(--texto-13);
+  margin-bottom: var(--espaco-4);
+}
+
+.config-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  max-width: 720px;
+}
+
+.config-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-4);
+  flex-wrap: wrap;
+  padding: var(--espaco-4);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+.config-item-titulo {
+  font-size: var(--texto-14);
+  font-weight: 600;
+  margin-bottom: var(--espaco-1);
+}
+
+.config-item-texto {
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  line-height: 1.5;
+  max-width: 46ch;
+}
+
+.config-sair {
+  margin-top: var(--espaco-6);
+}
+
+/* Faixa de e-mail nao confirmado. Some assim que a confirmacao acontece. */
+.config-verificacao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-4);
+  margin-bottom: var(--espaco-4);
+  background: var(--cor-marca-suave);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+/* Titulo de secao. A tela deixou de ser so "acoes da conta" quando a aparencia
+   entrou — e a aparencia aparece tambem pra quem nao tem conta. */
+.config-secao {
+  margin: var(--espaco-6) 0 var(--espaco-3);
+  font-size: var(--texto-16);
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+.config-secao:first-of-type {
+  margin-top: var(--espaco-4);
+}

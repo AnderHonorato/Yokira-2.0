@@ -1,0 +1,73 @@
+/* Arquivo: src/lib/componentes/comum/avisos.css */
+
+.avisos {
+  position: fixed;
+  z-index: 60;
+  left: var(--espaco-3);
+  right: var(--espaco-3);
+  /* Acima da barra inferior de 5 abas, senao o aviso nasce escondido atras dela. */
+  bottom: calc(var(--altura-barra-inferior) + var(--espaco-3));
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  pointer-events: none;
+}
+
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3) var(--espaco-4);
+  border-radius: var(--raio-painel);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-card);
+  font-size: var(--texto-13);
+  color: var(--cor-texto);
+  pointer-events: auto;
+}
+
+.aviso-sucesso {
+  border-color: var(--cor-sucesso);
+}
+
+.aviso-sucesso .aviso-icone {
+  display: inline-flex;
+  color: var(--cor-sucesso);
+}
+
+.aviso-erro {
+  border-color: var(--cor-erro-borda);
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}
+
+.aviso-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.aviso-fechar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--alvo-toque);
+  height: var(--alvo-toque);
+  margin: calc(var(--espaco-3) * -1) calc(var(--espaco-2) * -1) calc(var(--espaco-3) * -1) 0;
+  color: inherit;
+  opacity: 0.65;
+  border-radius: var(--raio-botao);
+}
+
+.aviso-fechar:hover {
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .avisos {
+    left: auto;
+    right: var(--espaco-5);
+    bottom: var(--espaco-5);
+    width: min(380px, calc(100vw - var(--espaco-8)));
+  }
+}

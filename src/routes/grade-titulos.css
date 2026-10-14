@@ -1,0 +1,75 @@
+/* Arquivo: src/routes/grade-titulos.css */
+/* Grade compartilhada por Catalogo, Novidades e Minha Lista. */
+
+.pagina-titulo {
+  font-size: var(--texto-20);
+  font-weight: 700;
+  margin: var(--espaco-6) 0 var(--espaco-4);
+}
+
+.pagina-subtitulo {
+  font-size: var(--texto-14);
+  color: var(--cor-texto-secundario);
+  margin-bottom: var(--espaco-5);
+}
+
+.filtros {
+  display: flex;
+  gap: var(--espaco-2);
+  overflow-x: auto;
+  margin-bottom: var(--espaco-5);
+  white-space: nowrap;
+}
+
+.filtro {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-4);
+  border-radius: var(--raio-botao);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  transition:
+    background var(--transicao-rapida),
+    color var(--transicao-rapida);
+}
+
+.filtro:hover {
+  background: var(--cor-superficie-hover);
+  color: var(--cor-texto);
+}
+
+.filtro-ativo {
+  background: var(--cor-marca);
+  border-color: var(--cor-marca);
+  color: var(--cor-texto);
+}
+
+.grade-titulos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+  gap: var(--espaco-4) var(--espaco-3);
+}
+
+/* Capa deitada precisa de coluna larga: com 126px a imagem viraria uma tarja de
+   70px de altura. Mesmo ponto de corte da moldura, senao grade e trilha divergem. */
+@media (min-width: 1024px) {
+  .grade-titulos {
+    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+    gap: var(--espaco-5) var(--espaco-4);
+  }
+}
+
+/* Na grade o card nao tem largura fixa: quem manda e a coluna. */
+.grade-titulos .cartao {
+  width: 100%;
+}
+
+.grade-vazia,
+.grade-rodape {
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  margin-top: var(--espaco-5);
+}

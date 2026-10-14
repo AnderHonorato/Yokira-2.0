@@ -1,0 +1,14 @@
+{
+  "name": "Yōkira Animes",
+  "short_name": "Yōkira",
+  "description": "Catálogo de animes com legendas em português.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08080b",
+  "theme_color": "#08080b",
+  "icons": [
+    { "src": "/marca/emblema-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/marca/emblema-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,96 @@
+/* Arquivo: src/routes/admin/admin.css */
+
+.admin-titulo {
+  font-size: var(--texto-20);
+  font-weight: 700;
+  margin: var(--espaco-6) 0 var(--espaco-2);
+}
+
+.admin-subtitulo {
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  margin-bottom: var(--espaco-5);
+}
+
+.admin-numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--espaco-3);
+  margin-bottom: var(--espaco-8);
+}
+
+.admin-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  padding: var(--espaco-4);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+.admin-cartao strong {
+  font-size: var(--texto-20);
+}
+
+.admin-cartao span {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.admin-ffmpeg {
+  color: var(--cor-texto-terciario);
+}
+
+.admin-ffmpeg-ok {
+  color: var(--cor-sucesso);
+}
+
+.admin-secao {
+  margin-bottom: var(--espaco-8);
+  max-width: 720px;
+}
+
+.admin-secao-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-16);
+  font-weight: 700;
+  margin-bottom: var(--espaco-2);
+}
+
+.admin-secao-texto {
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  line-height: 1.6;
+  margin-bottom: var(--espaco-4);
+}
+
+.admin-secao-texto code {
+  padding: 1px 5px;
+  border-radius: var(--raio-chip);
+  background: var(--cor-superficie);
+  font-size: var(--texto-12);
+}
+
+.admin-fila {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+}
+
+.admin-fila-item {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
+  padding: var(--espaco-3);
+  background: var(--cor-superficie);
+  border-radius: var(--raio-chip);
+  font-size: var(--texto-13);
+}
+
+.admin-fila-erro {
+  color: var(--cor-erro-texto);
+  font-size: var(--texto-12);
+}

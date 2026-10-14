@@ -1,0 +1,182 @@
+/* Arquivo: src/lib/componentes/detalhes/cabecalho-titulo.css */
+/* Mesmas medidas do hero da home; repetido de proposito porque aqui nao ha painel externo
+   nem dots — herdar do outro arquivo criaria acoplamento entre duas telas diferentes. */
+
+.titulo-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+  margin-bottom: var(--espaco-6);
+}
+
+/* Banner no topo, deitado em qualquer largura — inclusive no celular, onde e
+   justamente o formato que cabe. A altura vem da proporcao, entao o espaco fica
+   reservado antes da imagem chegar e o CLS continua zero. */
+.titulo-hero-arte {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  /* 42% pega a faixa do brilho: pelo centro exato o clarao encosta no topo. */
+  object-position: center 42%;
+  z-index: -2;
+}
+
+/* O degrade cobre EXATAMENTE a caixa da arte e termina na cor do painel. E ele
+   que costura imagem e texto: sem ele a arte acaba numa borda dura e o bloco vira
+   duas pecas soltas, uma em cima da outra. */
+.titulo-hero-veu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  aspect-ratio: 16 / 9;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    var(--cor-fundo-elevado) 0%,
+    color-mix(in srgb, var(--cor-fundo-elevado) 55%, transparent) 34%,
+    transparent 68%
+  );
+}
+
+.titulo-hero-selo {
+  position: absolute;
+  top: var(--espaco-3);
+  left: var(--espaco-3);
+  padding: 3px 7px;
+  border-radius: var(--raio-chip);
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+  font-size: var(--texto-11);
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.titulo-hero-texto {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  min-width: 0;
+  padding: 0 var(--espaco-4) var(--espaco-4);
+  /* 38% da LARGURA, e a arte tem 56,25% dela de altura: o texto comeca a dois
+     tercos do banner, ja dentro da parte opaca do degrade. Percentual e nao pixel
+     porque assim acompanha a largura da coluna sem media query. */
+  padding-top: 38%;
+}
+
+.titulo-hero-nome {
+  font-size: var(--texto-28);
+  /* Titulo longo em caixa alta estourava a borda direita em 360px. */
+  overflow-wrap: break-word;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.titulo-hero-gratuito {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-13);
+}
+
+.titulo-hero-coroa {
+  display: inline-flex;
+  color: var(--cor-coroa);
+}
+
+.titulo-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.titulo-hero-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--cor-estrela);
+}
+
+.titulo-hero-sinopse {
+  font-size: var(--texto-14);
+  line-height: 1.5;
+  color: var(--cor-texto-secundario);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.titulo-hero-acoes {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--espaco-2);
+  margin-top: var(--espaco-2);
+}
+
+.titulo-hero-recado {
+  font-size: var(--texto-12);
+  color: var(--cor-erro-texto);
+}
+
+/* Em 360px a palavra longa nao pode quebrar no meio. */
+@media (max-width: 399px) {
+  .titulo-hero-nome {
+    font-size: 1.375rem;
+    hyphens: auto;
+  }
+}
+
+/* Banner mais deitado conforme a tela cresce: em 16:9 numa coluna larga ele fica
+   alto demais e empurra os episodios pra fora da primeira dobra. Proporcao, veu e
+   recuo do texto andam juntos — mudar so um deles descola o texto do degrade. */
+@media (min-width: 768px) {
+  .titulo-hero-arte,
+  .titulo-hero-veu {
+    aspect-ratio: 21 / 9;
+  }
+  .titulo-hero-texto {
+    padding: 0 var(--espaco-6) var(--espaco-6);
+    padding-top: 29%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .titulo-hero-nome {
+    font-size: var(--texto-40);
+  }
+  .titulo-hero-texto {
+    gap: var(--espaco-3);
+  }
+}
+
+/* O invólucro existe porque a classe de curtido precisa alcançar o <button> que o
+   BotaoPill renderiza por dentro — e o componente não expõe classe extra. */
+.titulo-hero-curtir {
+  display: inline-flex;
+}
+
+.titulo-hero-curtir.pill-curtido .pill {
+  color: var(--cor-marca);
+  border-color: var(--cor-marca);
+  background: var(--cor-marca-suave);
+}
+
+.titulo-hero-curtir.pill-curtido .pill svg {
+  fill: currentColor;
+}

@@ -1,0 +1,39 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-grade.css */
+/* Espelha grade-titulos.css. Na grade o card nao tem largura fixa: quem manda e a coluna. */
+
+.esqueleto-grade-titulo {
+  height: var(--texto-20);
+  width: 180px;
+  margin: var(--espaco-6) 0 var(--espaco-4);
+}
+
+.esqueleto-grade-filtros {
+  display: flex;
+  gap: var(--espaco-2);
+  overflow: hidden;
+  margin-bottom: var(--espaco-5);
+}
+
+.esqueleto-grade-filtro {
+  flex: 0 0 auto;
+  height: var(--alvo-toque);
+  width: 92px;
+}
+
+.esqueleto-grade-itens {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+  gap: var(--espaco-4) var(--espaco-3);
+  list-style: none;
+}
+
+.esqueleto-grade-itens .esqueleto-cartao {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .esqueleto-grade-itens {
+    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+    gap: var(--espaco-5) var(--espaco-4);
+  }
+}

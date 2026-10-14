@@ -1,0 +1,37 @@
+/* Arquivo: src/routes/titulo/[slug]/detalhes.css */
+
+.detalhes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espaco-8);
+  padding-top: var(--espaco-4);
+}
+
+.detalhes-principal {
+  min-width: 0;
+}
+
+.detalhes-sobre {
+  margin-top: var(--espaco-5);
+  font-size: var(--texto-14);
+  line-height: 1.6;
+  color: var(--cor-texto-secundario);
+}
+
+.detalhes-sobre-meta {
+  margin-top: var(--espaco-3);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-terciario);
+}
+
+.detalhes-recomendacoes {
+  margin-top: var(--espaco-5);
+}
+
+@media (min-width: 1024px) {
+  .detalhes {
+    /* Duas colunas iguais as da imagem 3: conteudo largo + painel de ~360px. */
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: var(--espaco-10);
+  }
+}

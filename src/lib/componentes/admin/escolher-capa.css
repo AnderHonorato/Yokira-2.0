@@ -1,0 +1,62 @@
+/* Arquivo: src/lib/componentes/admin/escolher-capa.css */
+
+.capa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  padding: var(--espaco-4);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-card);
+  background: var(--cor-superficie);
+}
+
+.capa-titulo {
+  font-size: var(--texto-14);
+  font-weight: 700;
+}
+
+/* Altura fixa com contain: a capa vertical e a deitada convivem no mesmo bloco sem
+   uma esticar a outra. */
+.capa-atual {
+  width: 100%;
+  height: 132px;
+  object-fit: contain;
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo);
+}
+
+.capa-vazia {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.capa-origens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-4);
+}
+
+.capa-origem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-toque);
+  font-size: var(--texto-13);
+}
+
+.capa-origem input {
+  accent-color: var(--cor-marca);
+}
+
+.capa-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  font-size: var(--texto-13);
+}
+
+.capa-dica {
+  font-size: var(--texto-11);
+  line-height: 1.5;
+  color: var(--cor-texto-secundario);
+}

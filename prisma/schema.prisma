@@ -1,0 +1,479 @@
+// Arquivo: prisma/schema.prisma
+// Modelo de dados do Yokira. Nomes em portugues para manter coerencia com o projeto.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/lib/servidor/banco/gerado"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Papel {
+  ESPECTADOR
+  EDITOR
+  MODERADOR
+  ADMINISTRADOR
+}
+
+enum SituacaoTrabalho {
+  NA_FILA
+  PROCESSANDO
+  CONCLUIDO
+  FALHOU
+}
+
+enum TipoDeTitulo {
+  SERIE
+  FILME
+}
+
+enum SituacaoTitulo {
+  RASCUNHO
+  PUBLICADO
+  DESPUBLICADO
+}
+
+enum SituacaoComentario {
+  PUBLICADO
+  OCULTO
+  REMOVIDO
+}
+
+enum OrigemMidia {
+  ARQUIVO
+  LINK
+  EXTERNO
+}
+
+model Usuario {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  senhaHash         String
+  nome              String
+  papel             Papel    @default(ESPECTADOR)
+  emailVerificado   Boolean  @default(false)
+  tentativasFalhas  Int      @default(0)
+  bloqueadoAte      DateTime?
+  criadoEm          DateTime @default(now())
+  atualizadoEm      DateTime @updatedAt
+
+  perfis             Perfil[]
+  sessoes            Sessao[]
+  tokensVerificacao  TokenVerificacao[]
+  tokensRecuperacao  TokenRecuperacao[]
+  itensDaLista       ItemLista[]
+  progressos         Progresso[]
+  historico          Historico[]
+  avaliacoes         Avaliacao[]
+  sessoesAssistindo  SessaoAssistindo[]
+  sessoesConsumo     SessaoConsumo[]
+  curtidasTitulos    CurtidaTitulo[]
+  curtidasEpisodios  CurtidaEpisodio[]
+  comentarios        Comentario[]
+  denuncias          Denuncia[]
+  registros          RegistroAdministrativo[]
+  confirmacoes       TokenConfirmacao[]
+
+  @@index([papel])
+}
+
+model Perfil {
+  id             String   @id @default(cuid())
+  usuarioId      String
+  apelido        String
+  idiomaLegenda  String   @default("pt-BR")
+  autoplay       Boolean  @default(true)
+  criadoEm       DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+}
+
+model Sessao {
+  id             String   @id
+  usuarioId      String
+  expiraEm       DateTime
+  agenteUsuario  String?
+  criadaEm       DateTime @default(now())
+  revogadaEm     DateTime?
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([expiraEm])
+}
+
+model TokenVerificacao {
+  id        String   @id @default(cuid())
+  usuarioId String
+  token     String   @unique
+  expiraEm  DateTime
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+}
+
+model TokenRecuperacao {
+  id        String   @id @default(cuid())
+  usuarioId String
+  token     String   @unique
+  expiraEm  DateTime
+  usadoEm   DateTime?
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+}
+
+model TokenConfirmacao {
+  id        String   @id @default(cuid())
+  usuarioId String
+  token     String   @unique
+  acao      String
+  alvo      String?
+  expiraEm  DateTime
+  usadoEm   DateTime?
+  criadoEm  DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, acao])
+}
+
+model Genero {
+  id      String  @id @default(cuid())
+  nome    String  @unique
+  slug    String  @unique
+  titulos TituloGenero[]
+}
+
+model Titulo {
+  id                 String          @id @default(cuid())
+  slug               String          @unique
+  nome               String
+  sinopse            String
+  ano                Int
+  classificacao      String          @default("16")
+  tipo               TipoDeTitulo    @default(SERIE)
+  situacao           SituacaoTitulo  @default(PUBLICADO)
+  idiomaOriginal     String          @default("ja")
+  destaque           Boolean         @default(false)
+  novidade           Boolean         @default(false)
+  emAlta             Boolean         @default(false)
+  popularidade       Int             @default(0)
+  pontuacaoEmAlta    Float           @default(0)
+  rankingAtualizadoEm DateTime?
+  posterUrl          String?
+  arteHeroUrl        String?
+  criadoEm           DateTime        @default(now())
+  atualizadoEm       DateTime        @updatedAt
+
+  temporadas      Temporada[]
+  generos         TituloGenero[]
+  itensDaLista    ItemLista[]
+  avaliacoes      Avaliacao[]
+  curtidas        CurtidaTitulo[]
+  comentarios     Comentario[]
+
+  @@index([slug])
+  @@index([situacao, popularidade])
+  @@index([situacao, pontuacaoEmAlta])
+}
+
+model TituloGenero {
+  tituloId String
+  generoId String
+  titulo   Titulo @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+  genero   Genero @relation(fields: [generoId], references: [id], onDelete: Cascade)
+
+  @@id([tituloId, generoId])
+}
+
+model Temporada {
+  id       String @id @default(cuid())
+  tituloId String
+  numero   Int
+  nome     String
+
+  titulo    Titulo      @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+  episodios Episodio[]
+
+  @@unique([tituloId, numero])
+  @@index([tituloId])
+}
+
+model Episodio {
+  id                String   @id @default(cuid())
+  temporadaId       String
+  numero            Int
+  nome              String
+  duracaoSegundos   Int
+  miniaturaUrl      String?
+  publicadoEm       DateTime @default(now())
+
+  temporada          Temporada         @relation(fields: [temporadaId], references: [id], onDelete: Cascade)
+  arquivos           ArquivoMidia[]
+  legendas           Legenda[]
+  faixasAudio         FaixaAudio[]
+  progressos         Progresso[]
+  historico          Historico[]
+  visualizacoes      Visualizacao[]
+  sessoesAssistindo  SessaoAssistindo[]
+  sessoesConsumo     SessaoConsumo[]
+  curtidas           CurtidaEpisodio[]
+  comentarios        Comentario[]
+
+  @@unique([temporadaId, numero])
+  @@index([temporadaId])
+}
+
+model ArquivoMidia {
+  id            String      @id @default(cuid())
+  episodioId    String
+  caminho       String
+  tamanhoBytes  Int
+  provedor      String      @default("local")
+  chaveExterna  String?
+  origem        OrigemMidia @default(ARQUIVO)
+  criadoEm      DateTime    @default(now())
+
+  episodio  Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+  variantes VarianteHls[]
+  trabalhos TrabalhoProcessamento[]
+
+  @@index([episodioId])
+  @@index([provedor])
+}
+
+model VarianteHls {
+  id         String @id @default(cuid())
+  arquivoId  String
+  altura     Int
+  taxaBits   Int
+  playlist   String
+
+  arquivo ArquivoMidia @relation(fields: [arquivoId], references: [id], onDelete: Cascade)
+
+  @@index([arquivoId])
+}
+
+model Legenda {
+  id         String  @id @default(cuid())
+  episodioId String
+  idioma     String
+  rotulo     String
+  caminho    String
+  padrao     Boolean @default(false)
+
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@index([episodioId])
+}
+
+model FaixaAudio {
+  id         String  @id @default(cuid())
+  episodioId String
+  idioma     String
+  rotulo     String
+  caminho    String?
+  padrao     Boolean @default(false)
+
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@index([episodioId])
+}
+
+model TrabalhoProcessamento {
+  id           String            @id @default(cuid())
+  arquivoId    String
+  situacao     SituacaoTrabalho  @default(NA_FILA)
+  progresso    Int               @default(0)
+  mensagem     String?
+  criadoEm     DateTime          @default(now())
+  atualizadoEm DateTime          @updatedAt
+
+  arquivo ArquivoMidia @relation(fields: [arquivoId], references: [id], onDelete: Cascade)
+
+  @@index([situacao])
+}
+
+model ItemLista {
+  id        String   @id @default(cuid())
+  usuarioId String
+  tituloId  String
+  criadoEm  DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  titulo  Titulo  @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, tituloId])
+  @@index([usuarioId])
+}
+
+model Progresso {
+  id           String  @id @default(cuid())
+  usuarioId    String
+  episodioId   String
+  segundos     Int     @default(0)
+  concluido    Boolean @default(false)
+  atualizadoEm DateTime @updatedAt
+
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, episodioId])
+  @@index([usuarioId, episodioId])
+}
+
+model Historico {
+  id         String   @id @default(cuid())
+  usuarioId  String
+  episodioId String
+  vistoEm    DateTime @default(now())
+
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, vistoEm])
+}
+
+model Avaliacao {
+  id           String   @id @default(cuid())
+  usuarioId    String
+  tituloId     String
+  nota         Int
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  titulo  Titulo  @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, tituloId])
+  @@index([tituloId])
+}
+
+model CurtidaTitulo {
+  usuarioId String
+  tituloId  String
+  criadoEm  DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  titulo  Titulo  @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+
+  @@id([usuarioId, tituloId])
+  @@index([tituloId, criadoEm])
+}
+
+model CurtidaEpisodio {
+  usuarioId String
+  episodioId String
+  criadoEm  DateTime @default(now())
+
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@id([usuarioId, episodioId])
+  @@index([episodioId, criadoEm])
+}
+
+model Comentario {
+  id          String             @id @default(cuid())
+  usuarioId   String
+  tituloId    String?
+  episodioId  String?
+  corpo       String
+  situacao    SituacaoComentario @default(PUBLICADO)
+  criadoEm    DateTime           @default(now())
+  atualizadoEm DateTime          @updatedAt
+  editadoEm   DateTime?
+
+  usuario  Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  titulo   Titulo?   @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+  episodio Episodio? @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@index([tituloId, situacao, criadoEm])
+  @@index([episodioId, situacao, criadoEm])
+  @@index([usuarioId, criadoEm])
+}
+
+model Visualizacao {
+  id         String   @id @default(cuid())
+  episodioId String
+  criadoEm   DateTime @default(now())
+
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+
+  @@index([episodioId, criadoEm])
+}
+
+// Uma sessao de consumo por episodio + usuario/navegador + dia. O heartbeat pode chegar
+// varias vezes sem inflar views. Cada minuto assistido vira no maximo um intervalo.
+model SessaoConsumo {
+  id              String   @id @default(cuid())
+  episodioId      String
+  usuarioId       String?
+  chave           String
+  dia             DateTime
+  iniciadaEm      DateTime @default(now())
+  ultimaAtividade DateTime @default(now())
+
+  episodio  Episodio          @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+  usuario   Usuario?          @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  intervalos ConsumoIntervalo[]
+
+  @@unique([episodioId, chave, dia])
+  @@index([episodioId, dia])
+}
+
+model ConsumoIntervalo {
+  id             String   @id @default(cuid())
+  sessaoId       String
+  inicioSegundos Int
+  criadoEm       DateTime @default(now())
+
+  sessao SessaoConsumo @relation(fields: [sessaoId], references: [id], onDelete: Cascade)
+
+  @@unique([sessaoId, inicioSegundos])
+  @@index([inicioSegundos])
+}
+
+model SessaoAssistindo {
+  id           String   @id @default(cuid())
+  episodioId   String
+  usuarioId    String?
+  chaveAnonima String?
+  ultimoSinal  DateTime @default(now())
+
+  episodio Episodio @relation(fields: [episodioId], references: [id], onDelete: Cascade)
+  usuario  Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([episodioId, ultimoSinal])
+}
+
+model Denuncia {
+  id         String   @id @default(cuid())
+  usuarioId  String?
+  referencia String
+  motivo     String
+  resolvida  Boolean  @default(false)
+  criadoEm   DateTime @default(now())
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([resolvida])
+}
+
+model RegistroAdministrativo {
+  id        String   @id @default(cuid())
+  usuarioId String?
+  acao      String
+  alvo      String?
+  detalhe   String?
+  criadoEm  DateTime @default(now())
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([criadoEm])
+}

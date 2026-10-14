@@ -1,0 +1,44 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-painel.css */
+
+.esqueleto-painel-titulo {
+  height: var(--texto-28);
+  width: 260px;
+  margin: var(--espaco-6) 0 var(--espaco-2);
+}
+
+.esqueleto-painel-subtitulo {
+  height: var(--texto-13);
+  width: 200px;
+  margin-bottom: var(--espaco-5);
+}
+
+.esqueleto-painel-atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--espaco-3);
+}
+
+.esqueleto-painel-atalho {
+  height: 84px;
+}
+
+.esqueleto-painel-numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-5);
+}
+
+.esqueleto-painel-numero {
+  height: 76px;
+}
+
+.esqueleto-painel-linhas {
+  list-style: none;
+  margin-top: var(--espaco-6);
+}
+
+.esqueleto-painel-linha {
+  height: var(--alvo-toque);
+  margin-bottom: var(--espaco-2);
+}

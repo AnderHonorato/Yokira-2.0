@@ -1,0 +1,23 @@
+node_modules/
+.svelte-kit/
+build/
+.env
+.env.*
+!.env.exemplo
+*.db
+*.db-journal
+prisma/dev.db*
+prisma/*.db
+# Ancorado na raiz de proposito: sem a barra da frente o padrao casava tambem
+# com src/lib/servidor/midia/ e src/routes/api/midia/, e esse codigo-fonte nunca
+# chegou a ser versionado.
+/midia/
+static/uploads/
+static/hls/
+test-results/
+playwright-report/
+.vercel/
+.DS_Store
+*.log
+.vite/
+src/lib/servidor/banco/gerado/

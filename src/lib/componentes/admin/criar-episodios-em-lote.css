@@ -1,0 +1,64 @@
+/* Arquivo: src/lib/componentes/admin/criar-episodios-em-lote.css */
+
+.lote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-4);
+  padding: var(--espaco-4);
+  border: 1px dashed var(--cor-borda);
+  border-radius: var(--raio-card);
+}
+
+.lote-titulo {
+  font-size: var(--texto-14);
+  font-weight: 700;
+}
+
+.lote-modos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-4);
+}
+
+.lote-modo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-toque);
+  font-size: var(--texto-13);
+}
+
+.lote-modo input {
+  accent-color: var(--cor-marca);
+}
+
+.lote-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+}
+
+.lote-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  flex: 1 1 220px;
+  font-size: var(--texto-13);
+}
+
+.lote-campo-curto {
+  flex: 0 0 160px;
+}
+
+.lote-campo textarea {
+  font-family: var(--fonte-base);
+  font-size: var(--texto-13);
+  resize: vertical;
+}
+
+.lote-dica {
+  font-size: var(--texto-11);
+  line-height: 1.5;
+  color: var(--cor-texto-secundario);
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR" data-tema="%yokira.tema%">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    %yokira.metaTema%
+    <meta
+      name="description"
+      content="Yōkira Animes — catálogo de animes com legendas em português."
+    />
+
+    <link rel="icon" href="%sveltekit.assets%/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="%sveltekit.assets%/marca/emblema-32.png"
+    />
+    <link rel="apple-touch-icon" href="%sveltekit.assets%/marca/emblema-180.png" />
+    <link rel="manifest" href="%sveltekit.assets%/manifesto.webmanifest" />
+
+    <!--
+      Inter auto-hospedada (static/fontes/). Vinha do Google Fonts, e com o CDN lento o
+      load da pagina esperava o timeout — 12,7s numa navegacao medida. Sem terceiro,
+      a fonte tambem entra no cache do service worker e funciona offline.
+    -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="%sveltekit.assets%/fontes/inter-latin.woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="%sveltekit.assets%/fontes/inter.css" />
+
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

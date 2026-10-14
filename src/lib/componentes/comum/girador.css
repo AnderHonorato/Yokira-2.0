@@ -1,0 +1,5 @@
+/* Arquivo: src/lib/componentes/comum/girador.css */
+
+.girador {
+  animation: girar 780ms linear infinite;
+}

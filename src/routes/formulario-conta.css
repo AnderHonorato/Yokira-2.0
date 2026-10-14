@@ -1,0 +1,88 @@
+/* Arquivo: src/routes/formulario-conta.css */
+/* Compartilhado por entrar e cadastrar. */
+
+.conta {
+  width: min(400px, 100%);
+  margin: var(--espaco-10) auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-4);
+}
+
+.conta-marca {
+  display: flex;
+  justify-content: center;
+}
+
+.conta-titulo {
+  font-size: var(--texto-20);
+  font-weight: 700;
+  text-align: center;
+}
+
+.conta-forma {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-4);
+  padding: var(--espaco-5);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+.conta-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.conta-campo input {
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-14);
+  color: var(--cor-texto);
+}
+
+.conta-campo small {
+  font-size: var(--texto-11);
+  color: var(--cor-texto-terciario);
+}
+
+.conta-erro {
+  padding: var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-erro-fundo);
+  border: 1px solid var(--cor-erro-borda);
+  font-size: var(--texto-13);
+  color: var(--cor-erro-texto);
+}
+
+/* Aviso neutro/positivo: link enviado, e-mail confirmado, senha redefinida. */
+.conta-aviso {
+  padding: var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-marca-suave);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-13);
+  color: var(--cor-texto);
+}
+
+.conta-dica {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-terciario);
+}
+
+.conta-alternativa {
+  text-align: center;
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.conta-alternativa a {
+  color: var(--cor-marca);
+}

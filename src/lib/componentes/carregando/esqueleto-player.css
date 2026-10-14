@@ -1,0 +1,41 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-player.css */
+
+.esqueleto-player {
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-player-quadro {
+  aspect-ratio: 16 / 9;
+}
+
+.esqueleto-player-nome {
+  height: var(--texto-20);
+  width: 60%;
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-player-meta {
+  height: var(--texto-13);
+  width: 35%;
+  margin-top: var(--espaco-2);
+}
+
+.esqueleto-player-acoes {
+  display: flex;
+  gap: var(--espaco-2);
+  overflow: hidden;
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-player-acao {
+  flex: 0 0 auto;
+  height: var(--alvo-toque);
+  width: 116px;
+}
+
+@media (min-width: 1024px) {
+  .esqueleto-player-nome {
+    height: var(--texto-28);
+    width: 45%;
+  }
+}

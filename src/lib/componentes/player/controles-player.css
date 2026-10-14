@@ -1,0 +1,123 @@
+/* Arquivo: src/lib/componentes/player/controles-player.css */
+
+.controles {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  padding: var(--espaco-5) var(--espaco-3) var(--espaco-3);
+  /* O degrade existe pro texto branco sobreviver a um quadro claro do video. */
+  background: linear-gradient(to top, var(--veu-hero-forte), transparent);
+  color: #fff;
+}
+
+.controles-linha {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+}
+
+.controles-espaco {
+  flex: 1 1 auto;
+}
+
+.controles-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-1);
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--espaco-1);
+  border-radius: var(--raio-botao);
+  color: #fff;
+  background: none;
+  transition: background var(--transicao-rapida);
+}
+
+.controles-botao:hover,
+.controles-botao:focus-visible {
+  background: var(--veu-hero-medio);
+}
+
+.controles-botao-texto {
+  padding: 0 var(--espaco-2);
+  font-size: var(--texto-12);
+  font-weight: 600;
+}
+
+.controles-tempo {
+  font-size: var(--texto-12);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.controles-tempo-separador {
+  opacity: 0.6;
+}
+
+/* A faixa de volume some no celular: nao ha ponteiro pra ajustar e o botao de mudo
+   ja resolve. O espaco vai pro tempo e pra qualidade, que sao mais uteis ali. */
+.controles-volume {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-1);
+}
+
+.controles-volume-faixa {
+  display: none;
+  width: 80px;
+  accent-color: var(--cor-marca);
+}
+
+.controles-menu {
+  position: relative;
+}
+
+.controles-opcoes {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--espaco-2));
+  min-width: 132px;
+  padding: var(--espaco-1);
+  list-style: none;
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-card);
+  color: var(--cor-texto);
+}
+
+.controles-opcao {
+  display: block;
+  width: 100%;
+  padding: var(--espaco-2) var(--espaco-3);
+  text-align: left;
+  font-size: var(--texto-13);
+  border-radius: var(--raio-botao);
+  color: var(--cor-texto);
+  background: none;
+}
+
+.controles-opcao:hover,
+.controles-opcao:focus-visible {
+  background: var(--cor-superficie-hover);
+}
+
+.controles-opcao-ativa {
+  color: var(--cor-marca);
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .controles {
+    padding: var(--espaco-6) var(--espaco-4) var(--espaco-4);
+  }
+  .controles-volume-faixa {
+    display: block;
+  }
+}

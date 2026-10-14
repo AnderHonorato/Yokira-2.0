@@ -1,0 +1,78 @@
+/* Arquivo: src/lib/componentes/home/cartao-conteudo.css */
+
+.cartao {
+  flex: 0 0 auto;
+  width: 138px;
+  scroll-snap-align: start;
+}
+
+.cartao-link {
+  display: block;
+  position: relative;
+}
+
+.cartao-selo {
+  position: absolute;
+  top: var(--espaco-2);
+  left: var(--espaco-2);
+  padding: 3px 7px;
+  border-radius: var(--raio-chip);
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+  font-size: var(--texto-11);
+  font-weight: 600;
+}
+
+.cartao-titulo {
+  margin-top: var(--espaco-2);
+  font-size: var(--texto-13);
+  font-weight: 500;
+  color: var(--cor-texto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartao-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  /* Sem isso o chip "Legendas Br" vazava por cima do card seguinte na trilha. */
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: var(--espaco-1);
+  font-size: var(--texto-11);
+  color: var(--cor-texto-secundario);
+}
+
+.cartao-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--cor-texto-secundario);
+}
+
+.cartao-nota svg {
+  color: var(--cor-estrela);
+}
+
+@media (min-width: 768px) {
+  .cartao {
+    width: 160px;
+  }
+}
+
+/* A partir daqui a capa deita (16:9), entao o card precisa ser largo: com 178px
+   a capa deitada teria 100px de altura e viraria uma tarja. */
+@media (min-width: 1024px) {
+  .cartao {
+    width: 288px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .cartao {
+    width: 316px;
+  }
+}

@@ -1,0 +1,27 @@
+/* Arquivo: src/routes/generos/generos.css */
+
+.generos-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--espaco-3);
+}
+
+.genero-cartao {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  padding: 0 var(--espaco-4);
+  border-radius: var(--raio-card);
+  background: linear-gradient(135deg, var(--cor-superficie), var(--cor-marca-suave));
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-14);
+  font-weight: 600;
+  transition:
+    transform var(--transicao-rapida),
+    border-color var(--transicao-rapida);
+}
+
+.genero-cartao:hover {
+  transform: translateY(-2px);
+  border-color: var(--cor-marca);
+}

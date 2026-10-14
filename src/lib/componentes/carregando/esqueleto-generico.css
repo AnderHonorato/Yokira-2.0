@@ -1,0 +1,16 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-generico.css */
+
+.esqueleto-generico {
+  max-width: 520px;
+}
+
+.esqueleto-generico-titulo {
+  height: var(--texto-20);
+  width: 220px;
+  margin: var(--espaco-6) 0 var(--espaco-5);
+}
+
+.esqueleto-generico-linha {
+  height: var(--alvo-toque);
+  margin-bottom: var(--espaco-3);
+}

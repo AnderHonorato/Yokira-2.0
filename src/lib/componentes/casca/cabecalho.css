@@ -1,0 +1,130 @@
+/* Arquivo: src/lib/componentes/casca/cabecalho.css */
+/* Sticky com fundo solido: nas telas de referencia o conteudo passa por baixo sem borrar. */
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--cor-fundo);
+  padding: var(--espaco-3) var(--espaco-4) 0;
+}
+
+.cabecalho-faixa {
+  /* Grid em vez de flex: no mobile a navegacao cai pra segunda linha ocupando a
+     largura toda; no desktop ela entra na coluna do meio. Mesmo DOM nos dois casos. */
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'logo acoes'
+    'nav nav';
+  align-items: center;
+  column-gap: var(--espaco-4);
+  max-width: var(--largura-maxima);
+  margin: 0 auto;
+}
+
+.cabecalho-logo {
+  grid-area: logo;
+  min-height: var(--alvo-toque);
+  display: inline-flex;
+  align-items: center;
+}
+
+.cabecalho-navegacao {
+  grid-area: nav;
+  min-width: 0;
+  padding-top: var(--espaco-1);
+}
+
+.cabecalho-acoes {
+  grid-area: acoes;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+}
+
+.cabecalho-botao-icone,
+.cabecalho-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--alvo-toque);
+  height: var(--alvo-toque);
+  border-radius: var(--raio-botao);
+  color: var(--cor-texto);
+  transition: background var(--transicao-rapida);
+}
+
+.cabecalho-avatar {
+  background: var(--cor-superficie);
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--cor-borda);
+}
+
+.cabecalho-botao-icone:hover,
+.cabecalho-avatar:hover {
+  background: var(--cor-superficie-hover);
+}
+
+.cabecalho-painel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  height: var(--alvo-toque);
+  padding: 0 var(--espaco-3);
+  border-radius: var(--raio-botao);
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-superficie);
+  color: var(--cor-coroa);
+  font-size: var(--texto-13);
+  font-weight: 600;
+  transition: background var(--transicao-rapida);
+}
+
+.cabecalho-painel:hover {
+  background: var(--cor-superficie-hover);
+}
+
+/* No celular so o icone: com o rotulo, a faixa de 360px empurrava o avatar pra fora. */
+.cabecalho-painel-rotulo {
+  display: none;
+}
+
+.cabecalho-assinar {
+  display: none;
+  align-items: center;
+  height: 40px;
+  padding: 0 var(--espaco-5);
+  border-radius: var(--raio-botao);
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+  font-size: var(--texto-13);
+  font-weight: 600;
+  transition: background var(--transicao-rapida);
+}
+
+.cabecalho-assinar:hover {
+  background: var(--cor-marca-forte);
+}
+
+@media (min-width: 1024px) {
+  .cabecalho {
+    padding: var(--espaco-3) var(--espaco-8);
+  }
+  .cabecalho-faixa {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'logo nav acoes';
+    column-gap: var(--espaco-8);
+  }
+  .cabecalho-navegacao {
+    padding-top: 0;
+  }
+  .cabecalho-assinar {
+    display: inline-flex;
+  }
+  .cabecalho-painel-rotulo {
+    display: inline;
+  }
+}

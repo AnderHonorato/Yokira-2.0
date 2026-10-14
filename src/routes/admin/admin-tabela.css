@@ -1,0 +1,128 @@
+/* Arquivo: src/routes/admin/admin-tabela.css */
+/* Linhas de listagem, temporadas e episodios. */
+
+.admin-tabela {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+}
+
+.admin-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-3);
+  background: var(--cor-superficie);
+  border-radius: var(--raio-chip);
+}
+
+.admin-linha-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--texto-14);
+  color: var(--cor-texto);
+}
+
+.admin-linha-meta {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-terciario);
+}
+
+.admin-linha-marcas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-2);
+  align-items: center;
+}
+
+/* --- Temporadas e episodios --- */
+
+.admin-temporada {
+  padding: var(--espaco-4);
+  margin-top: var(--espaco-3);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+.admin-temporada-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espaco-3);
+}
+
+.admin-temporada-cabecalho h3 {
+  font-size: var(--texto-16);
+}
+
+.admin-episodios {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-3);
+}
+
+.admin-episodio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-3);
+  background: var(--cor-superficie);
+  border-radius: var(--raio-chip);
+  font-size: var(--texto-13);
+}
+
+.admin-episodio-nome {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-episodio-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-2);
+  align-items: center;
+}
+
+/* --- Zona de risco e abas --- */
+
+.admin-secao-perigo {
+  border: 1px solid var(--cor-erro-borda);
+}
+
+.admin-perigo-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+}
+
+.admin-abas {
+  display: flex;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-4);
+}
+
+.admin-aba {
+  min-height: var(--alvo-toque);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--espaco-4);
+  border-radius: var(--raio-botao);
+  background: var(--cor-superficie);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.admin-aba-ativa {
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+}

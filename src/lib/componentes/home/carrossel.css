@@ -1,0 +1,137 @@
+/* Arquivo: src/lib/componentes/home/carrossel.css */
+
+.carrossel {
+  position: relative;
+}
+
+.carrossel-trilha {
+  display: flex;
+  gap: var(--espaco-3);
+  overflow-x: auto;
+  /* Snap so no mobile: no desktop as setas ja dao o passo certo. */
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  padding-bottom: var(--espaco-1);
+}
+
+/* A seta e uma faixa de borda, nao um botao solto: o alvo passa a ser "chegar perto
+   da borda", que e como se pega essa seta sem mirar. Ela mora DENTRO do carrossel —
+   em left: -12px o overflow-x: hidden do body cortava a da esquerda na primeira
+   trilha da tela. */
+.carrossel-seta {
+  position: absolute;
+  top: 0;
+  bottom: var(--espaco-1);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  width: 56px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  /* Visivel por padrao: no toque nao existe hover pra revelar o controle. */
+  opacity: 1;
+  transition: opacity var(--transicao-rapida);
+  /* No celular so o disco recebe o toque. A faixa inteira cobre a capa do card da
+     ponta: se ela capturasse o toque, o titulo da ponta ficaria inabrivel. */
+  pointer-events: none;
+}
+
+/* O degrade desenhado por baixo: e ele que avisa que ali existe um controle. */
+.carrossel-seta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.carrossel-seta-esquerda {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: var(--espaco-1);
+}
+
+.carrossel-seta-direita {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: var(--espaco-1);
+}
+
+.carrossel-seta-esquerda::before {
+  background: linear-gradient(to right, var(--veu-hero-forte), transparent);
+}
+
+.carrossel-seta-direita::before {
+  background: linear-gradient(to left, var(--veu-hero-forte), transparent);
+}
+
+.carrossel-seta-disco {
+  display: grid;
+  place-items: center;
+  width: var(--alvo-toque);
+  height: var(--alvo-toque);
+  border-radius: var(--raio-botao);
+  background: var(--cor-seta-carrossel);
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-card);
+  pointer-events: auto;
+  transition: transform var(--transicao-rapida);
+}
+
+.carrossel-seta:active:not(:disabled) .carrossel-seta-disco {
+  transform: scale(0.94);
+}
+
+/* Ponta da trilha: nao ha pra onde ir, entao o controle sai da tela e do toque. */
+.carrossel-seta:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  /* O overflow-x: auto recorta nos DOIS eixos. Sem esta folga o painel de hover
+     era cortado embaixo — a reserva fica dentro da trilha e a margem negativa
+     devolve o espaco pro layout, pra trilha seguinte nao descer. */
+  .carrossel-trilha {
+    scroll-snap-type: none;
+    gap: var(--espaco-4);
+    padding-bottom: 96px;
+    margin-bottom: -88px;
+  }
+
+  /* No desktop a faixa inteira volta a ser clicavel e o disco e maior. Aqui existe
+     hover, entao a seta pode ficar escondida ate o cursor chegar perto — no celular
+     isso a tornaria invisivel pra sempre, e por isso a regra vive so neste tamanho. */
+  .carrossel-seta {
+    width: 68px;
+    opacity: 0;
+    pointer-events: auto;
+  }
+
+  .carrossel-seta-esquerda {
+    padding-left: var(--espaco-2);
+  }
+
+  .carrossel-seta-direita {
+    padding-right: var(--espaco-2);
+  }
+
+  .carrossel-seta-disco {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Aparece ao passar o mouse na propria faixa, e tambem quando o carrossel inteiro
+     esta sob o cursor — quem ja esta olhando a trilha nao deveria procurar o controle. */
+  .carrossel-seta:hover:not(:disabled),
+  .carrossel:hover .carrossel-seta:not(:disabled),
+  .carrossel-seta:focus-visible {
+    opacity: 1;
+  }
+
+  .carrossel-seta:hover:not(:disabled) .carrossel-seta-disco {
+    transform: scale(1.08);
+  }
+}

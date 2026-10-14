@@ -1,0 +1,93 @@
+/* Arquivo: src/lib/componentes/player/player-video.css */
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+}
+
+/* O quadro e o container de posicionamento dos controles e o alvo da tela cheia.
+   O overflow recorta a barra no cantinho arredondado. */
+.player-quadro {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--raio-card);
+  background: #000;
+}
+
+.player-quadro:focus-visible {
+  outline: 2px solid var(--cor-marca);
+  outline-offset: 2px;
+}
+
+/* Sem controles na tela, o cursor tambem sai: sobra so o video. */
+.player-quadro-limpo {
+  cursor: none;
+}
+
+.player-quadro-limpo .controles {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.controles {
+  transition: opacity var(--transicao-media);
+}
+
+.player-video,
+.player-vazio {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--raio-card);
+  background: #000;
+}
+
+/* Em tela cheia o quadro ocupa a tela toda: a proporcao fixa deixaria tarja preta
+   em cima e embaixo alem da que o proprio video ja tem. */
+.player-quadro:fullscreen .player-video {
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  object-fit: contain;
+}
+
+.player-vazio {
+  display: grid;
+  place-content: center;
+  gap: var(--espaco-2);
+  text-align: center;
+  padding: var(--espaco-5);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-14);
+  color: var(--cor-texto-secundario);
+}
+
+.player-vazio-dica {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-terciario);
+}
+
+/* Erro de midia (link expirado, sessao caida, video em processamento). */
+.player-erro {
+  margin: var(--espaco-2) 0 0;
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.player-audiencia {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.player-ponto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cor-sucesso);
+  animation: pulsar-ponto 1.6s ease-in-out infinite;
+}

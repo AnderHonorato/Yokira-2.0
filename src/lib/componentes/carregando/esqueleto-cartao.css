@@ -1,0 +1,48 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-cartao.css */
+
+.esqueleto-cartao {
+  flex: 0 0 auto;
+  width: 138px;
+  list-style: none;
+}
+
+.esqueleto-cartao-capa {
+  /* Em pe no celular, igual a .moldura-card. */
+  aspect-ratio: 2 / 3;
+  border-radius: var(--raio-card);
+  overflow: hidden;
+}
+
+.esqueleto-cartao-nome {
+  height: 13px;
+  margin-top: var(--espaco-2);
+}
+
+.esqueleto-cartao-meta {
+  height: 11px;
+  width: 60%;
+  margin-top: var(--espaco-1);
+}
+
+@media (min-width: 768px) {
+  .esqueleto-cartao {
+    width: 160px;
+  }
+}
+
+/* Mesmo ponto de corte de cartao-conteudo.css e moldura-card.css: no desktop a capa
+   deita e o card alarga junto. */
+@media (min-width: 1024px) {
+  .esqueleto-cartao {
+    width: 288px;
+  }
+  .esqueleto-cartao-capa {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (min-width: 1280px) {
+  .esqueleto-cartao {
+    width: 316px;
+  }
+}

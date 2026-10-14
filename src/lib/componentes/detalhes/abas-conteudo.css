@@ -1,0 +1,30 @@
+/* Arquivo: src/lib/componentes/detalhes/abas-conteudo.css */
+
+.abas {
+  display: flex;
+  gap: var(--espaco-6);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--cor-borda);
+  white-space: nowrap;
+}
+
+.aba {
+  min-height: var(--alvo-toque);
+  padding: 0 0 var(--espaco-2);
+  font-size: var(--texto-13);
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--transicao-rapida),
+    border-color var(--transicao-rapida);
+}
+
+.aba:hover {
+  color: var(--cor-texto);
+}
+
+.aba-ativa {
+  color: var(--cor-texto);
+  border-bottom-color: var(--cor-marca);
+}

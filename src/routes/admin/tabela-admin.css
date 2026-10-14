@@ -1,0 +1,72 @@
+/* Arquivo: src/routes/admin/tabela-admin.css */
+/* Avisos, abas, zona de risco e atalhos do painel. Campos ficam em
+   admin-formularios.css e listagens em admin-tabela.css — o arquivo unico
+   tinha chegado a 295 linhas, contra o teto de 180 do projeto. */
+
+.admin-voltar {
+  display: inline-block;
+  margin-bottom: var(--espaco-3);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.admin-recado {
+  padding: var(--espaco-3);
+  margin-bottom: var(--espaco-4);
+  border-radius: var(--raio-chip);
+  background: var(--cor-marca-suave);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-13);
+}
+
+.admin-erro {
+  padding: var(--espaco-3);
+  border-radius: var(--raio-chip);
+  background: var(--cor-erro-fundo);
+  border: 1px solid var(--cor-erro-borda);
+  font-size: var(--texto-13);
+  color: var(--cor-erro-texto);
+}
+
+.admin-secao-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espaco-3);
+}
+
+/* --- Atalhos da home do painel --- */
+
+.admin-atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--espaco-3);
+  margin-bottom: var(--espaco-5);
+}
+
+.admin-atalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  padding: var(--espaco-4);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+  transition: background var(--transicao-rapida);
+}
+
+.admin-atalho:hover {
+  background: var(--cor-superficie-hover);
+}
+
+.admin-atalho strong {
+  font-size: var(--texto-14);
+  color: var(--cor-texto);
+}
+
+.admin-atalho span {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}

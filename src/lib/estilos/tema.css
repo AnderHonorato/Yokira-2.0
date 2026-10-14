@@ -1,0 +1,93 @@
+/* Arquivo: src/lib/estilos/tema.css */
+/* Tokens tirados direto das telas de referencia do Yokira. */
+/* O ESCURO e o padrao da marca e mora aqui. O claro fica em tema-claro.css, que
+   so remapeia as cores — tipografia, ritmo e medidas nao mudam com o tema. */
+
+:root {
+  color-scheme: dark;
+
+  /* Superficies */
+  --cor-fundo: #08080b;
+  --cor-fundo-elevado: #111116;
+  --cor-superficie: #16161d;
+  --cor-superficie-hover: #1e1e27;
+  --cor-borda: #26262f;
+
+  /* Marca */
+  --cor-marca: #8b5cf6;
+  --cor-marca-forte: #7c3aed;
+  --cor-marca-suave: rgba(139, 92, 246, 0.16);
+
+  /* Texto */
+  --cor-texto: #ffffff;
+  --cor-texto-secundario: #a1a1ac;
+  --cor-texto-terciario: #8a8a96;
+
+  /* Apoio */
+  --cor-estrela: #f5c518;
+  --cor-coroa: #f0b429;
+  --cor-marca-clara: #c4b5fd;
+  --cor-sucesso: #4ade80;
+
+  /* Fundo dos controles preenchidos, separado do acento. --cor-marca serve pra
+     texto, borda e icone sobre fundo escuro; como FUNDO de botao ela nao alcanca
+     4.5:1 com branco por cima (4.23). Um passo mais escura resolve sem mudar a
+     leitura da marca. E o texto por cima vira token proprio porque --cor-texto
+     inverte com o tema e a superficie colorida nao: no claro isso dava quase-preto
+     sobre roxo escuro, 2.58:1. */
+  --cor-marca-superficie: #7c3aed;
+  --cor-texto-sobre-marca: #ffffff;
+  --cor-sucesso-superficie: #4ade80;
+  --cor-texto-sobre-sucesso: #06210f;
+
+  /* Estado de erro. Estava cru em seis arquivos; sem token, o tema claro
+     mostraria texto rosa-claro sobre fundo branco. */
+  --cor-erro-texto: #fca5a5;
+  --cor-erro-fundo: rgba(220, 38, 38, 0.12);
+  --cor-erro-borda: rgba(220, 38, 38, 0.35);
+
+  /* Veus e sobreposicoes. O veu do hero termina na cor de fundo da pagina:
+     no tema claro ele precisa clarear, nao escurecer. */
+  --veu-arte: rgba(8, 8, 11, 0.35);
+  --veu-hero-forte: rgba(8, 8, 11, 0.72);
+  --veu-hero-medio: rgba(8, 8, 11, 0.35);
+  --veu-hero-nulo: rgba(8, 8, 11, 0);
+  --cor-cortina-dialogo: rgba(4, 4, 6, 0.72);
+  --cor-seta-carrossel: rgba(17, 17, 22, 0.92);
+  --brilho-esqueleto: rgba(255, 255, 255, 0.06);
+
+  /* Tipografia — escala propositalmente pequena */
+  --fonte-base: 'Inter', system-ui, sans-serif;
+  --texto-11: 0.6875rem; /* chips, meta dos cards */
+  --texto-12: 0.75rem; /* legendas, rotulos da barra inferior */
+  --texto-13: 0.8125rem; /* titulo de card, itens de navegacao */
+  --texto-14: 0.875rem; /* sinopse, corpo */
+  --texto-16: 1rem; /* titulo de secao no mobile */
+  --texto-20: 1.25rem; /* titulo de secao no desktop */
+  --texto-28: 1.75rem; /* titulo do hero no mobile */
+  --texto-40: 2.5rem; /* titulo do hero no desktop */
+
+  /* Ritmo */
+  --espaco-1: 4px;
+  --espaco-2: 8px;
+  --espaco-3: 12px;
+  --espaco-4: 16px;
+  --espaco-5: 20px;
+  --espaco-6: 24px;
+  --espaco-8: 32px;
+  --espaco-10: 40px;
+
+  --raio-chip: 6px;
+  --raio-card: 10px;
+  --raio-painel: 14px;
+  --raio-botao: 999px;
+
+  --sombra-card: 0 8px 28px rgba(0, 0, 0, 0.55);
+  --transicao-rapida: 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transicao-media: 280ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Medidas de layout que aparecem em varios lugares */
+  --altura-barra-inferior: 62px;
+  --largura-maxima: 1600px;
+  --alvo-toque: 44px;
+}

@@ -1,0 +1,140 @@
+/* Arquivo: src/lib/componentes/comum/botao-pill.css */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-2);
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-5);
+  border-radius: var(--raio-botao);
+  font-size: var(--texto-13);
+  font-weight: 600;
+  /* Resposta visual em menos de 100ms mesmo antes do servidor responder. */
+  transition:
+    background var(--transicao-rapida),
+    transform var(--transicao-rapida);
+}
+
+.pill:active {
+  transform: scale(0.97);
+}
+
+.pill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pill-marca {
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+}
+
+.pill-marca:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.pill-neutro {
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+}
+
+.pill-neutro:hover:not(:disabled) {
+  background: var(--cor-superficie-hover);
+}
+
+.pill-circular {
+  width: var(--alvo-toque);
+  height: var(--alvo-toque);
+  padding: 0;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+}
+
+.pill-circular:hover:not(:disabled) {
+  background: var(--cor-superficie-hover);
+}
+
+/* Estado confirmado. Antes so o texto mudava ("Minha Lista" -> "Na Minha Lista"),
+   o que ninguem percebe: a cor e o pulo sao o que diz que deu certo. */
+.pill-sucesso {
+  background: var(--cor-sucesso-superficie);
+  border-color: var(--cor-sucesso-superficie);
+  color: var(--cor-texto-sobre-sucesso);
+}
+
+.pill-sucesso:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.pill-ativo {
+  animation: pulo-confirmacao 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* O icone entra girando de leve — sem isso a troca de simbolo passa despercebida. */
+.pill-ativo svg {
+  animation: entrada-do-visto 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pulo-confirmacao {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.07);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes entrada-do-visto {
+  0% {
+    transform: scale(0.4) rotate(-18deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+/* Curtir: o polegar enche e pula. */
+.pill-curtido {
+  color: var(--cor-marca);
+  border-color: var(--cor-marca);
+  background: var(--cor-marca-suave);
+}
+
+.pill-curtido svg {
+  fill: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill-ativo,
+  .pill-ativo svg {
+    animation: none;
+  }
+}
+
+/* Em tela estreita os pills encolhem pra as acoes do hero caberem numa linha so.
+   Com o padding cheio, "Assistir agora" + "Minha Lista" + curtir passam de 380px
+   em 390px de tela e o curtir caia sozinho pra linha de baixo. */
+@media (max-width: 599px) {
+  .pill {
+    padding: 0 var(--espaco-3);
+    font-size: var(--texto-12);
+    gap: var(--espaco-1);
+    min-width: 0;
+    /* Sem isto o rotulo quebra dentro do proprio botao ("Assistir / agora") em vez
+       de o botao encolher: cabe na linha, mas fica com duas alturas de texto. */
+    white-space: nowrap;
+  }
+
+  .pill-circular {
+    padding: 0;
+  }
+}

@@ -1,0 +1,79 @@
+/* Arquivo: src/lib/componentes/comum/seletor-de-tema.css */
+
+.tema-forma {
+  margin-bottom: var(--espaco-4);
+}
+
+.tema-grupo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--espaco-3);
+  padding: var(--espaco-4);
+  background: var(--cor-fundo-elevado);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-painel);
+}
+
+.tema-legenda {
+  padding: 0 var(--espaco-2);
+  font-size: var(--texto-13);
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+.tema-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espaco-3);
+  min-height: var(--alvo-toque);
+  padding: var(--espaco-3);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-chip);
+  cursor: pointer;
+  transition: border-color var(--transicao-rapida);
+}
+
+.tema-opcao:hover {
+  background: var(--cor-superficie-hover);
+}
+
+/* Marca a escolhida pela borda, e nao so pelo radio: num toque rapido o ponto
+   do radio e pequeno demais pra ler qual esta ativa. */
+.tema-opcao-ativa {
+  border-color: var(--cor-marca);
+}
+
+.tema-opcao input {
+  margin-top: 2px;
+  accent-color: var(--cor-marca);
+}
+
+.tema-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tema-nome {
+  font-size: var(--texto-14);
+  color: var(--cor-texto);
+}
+
+.tema-descricao {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}
+
+.tema-salvar {
+  margin-top: var(--espaco-3);
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-5);
+  border: none;
+  border-radius: var(--raio-botao);
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+  font-size: var(--texto-13);
+  font-family: inherit;
+  cursor: pointer;
+}

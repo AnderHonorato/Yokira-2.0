@@ -1,0 +1,146 @@
+/* Arquivo: src/lib/estilos/tema-claro.css */
+/* Tema claro. So remapeia COR — tipografia, ritmo, raios e medidas continuam
+   vindo do tema.css e nao mudam com a preferencia.
+ *
+ * Os valores moram uma vez so, em `--claro-*`. Os dois blocos de baixo apenas
+ * apontam os tokens da interface pra eles: um para a escolha explicita
+ * (`data-tema="claro"`) e outro para quem deixou no automatico e esta com o
+ * sistema no claro. Trocar uma cor continua sendo uma edicao so.
+ *
+ * O automatico e resolvido por media query, e nao por JavaScript, pra funcionar
+ * na primeira pintura e tambem com o script desligado.
+ *
+ * Contraste conferido contra o fundo (#f4f4f7) e contra o card (#fff): todos os
+ * pares de texto passam de 4.5:1 (AA). O menor e o texto terciario, com 4.80.
+ */
+
+:root {
+  --claro-fundo: #f4f4f7;
+  --claro-fundo-elevado: #ffffff;
+  --claro-superficie: #ffffff;
+  --claro-superficie-hover: #ebebf1;
+  --claro-borda: #d9d9e2;
+
+  /* Roxo mais fundo que o do escuro: o #8b5cf6 da marca nao alcanca 4.5:1
+     sobre branco, entao viraria botao bonito e ilegivel. */
+  --claro-marca: #6d28d9;
+  --claro-marca-forte: #5b21b6;
+  --claro-marca-suave: rgba(109, 40, 217, 0.12);
+  --claro-marca-clara: #5b21b6;
+
+  --claro-texto: #14141a;
+  --claro-texto-secundario: #55555f;
+  --claro-texto-terciario: #6b6b75;
+
+  --claro-estrela: #8f5a04;
+  --claro-coroa: #8f5a04;
+  --claro-sucesso: #15803d;
+
+  /* No claro o roxo ja e escuro o bastante pra branco por cima (7.10:1), e o verde
+     precisa de branco em vez do verde-quase-preto do escuro (3.40:1 -> 5.02:1). */
+  --claro-marca-superficie: #6d28d9;
+  --claro-texto-sobre-marca: #ffffff;
+  --claro-sucesso-superficie: #15803d;
+  --claro-texto-sobre-sucesso: #ffffff;
+
+  --claro-erro-texto: #b91c1c;
+  --claro-erro-fundo: rgba(220, 38, 38, 0.1);
+  --claro-erro-borda: rgba(220, 38, 38, 0.3);
+
+  /* O veu do hero termina na cor de fundo da pagina: aqui ele clareia. Sobre a
+     arte do poster continua havendo escurecimento leve, senao o texto branco
+     que fica por cima some. */
+  --claro-veu-arte: rgba(10, 10, 20, 0.28);
+  --claro-veu-hero-forte: rgba(244, 244, 247, 0.94);
+  --claro-veu-hero-medio: rgba(244, 244, 247, 0.5);
+  --claro-veu-hero-nulo: rgba(244, 244, 247, 0);
+  --claro-cortina-dialogo: rgba(20, 20, 26, 0.45);
+  --claro-seta-carrossel: rgba(255, 255, 255, 0.94);
+  --claro-brilho-esqueleto: rgba(20, 20, 26, 0.06);
+
+  --claro-sombra-card: 0 8px 24px rgba(20, 20, 40, 0.12);
+}
+
+:root[data-tema='claro'] {
+  color-scheme: light;
+
+  --cor-fundo: var(--claro-fundo);
+  --cor-fundo-elevado: var(--claro-fundo-elevado);
+  --cor-superficie: var(--claro-superficie);
+  --cor-superficie-hover: var(--claro-superficie-hover);
+  --cor-borda: var(--claro-borda);
+
+  --cor-marca: var(--claro-marca);
+  --cor-marca-forte: var(--claro-marca-forte);
+  --cor-marca-suave: var(--claro-marca-suave);
+  --cor-marca-clara: var(--claro-marca-clara);
+
+  --cor-texto: var(--claro-texto);
+  --cor-texto-secundario: var(--claro-texto-secundario);
+  --cor-texto-terciario: var(--claro-texto-terciario);
+
+  --cor-estrela: var(--claro-estrela);
+  --cor-coroa: var(--claro-coroa);
+  --cor-sucesso: var(--claro-sucesso);
+  --cor-marca-superficie: var(--claro-marca-superficie);
+  --cor-texto-sobre-marca: var(--claro-texto-sobre-marca);
+  --cor-sucesso-superficie: var(--claro-sucesso-superficie);
+  --cor-texto-sobre-sucesso: var(--claro-texto-sobre-sucesso);
+
+  --cor-erro-texto: var(--claro-erro-texto);
+  --cor-erro-fundo: var(--claro-erro-fundo);
+  --cor-erro-borda: var(--claro-erro-borda);
+
+  --veu-arte: var(--claro-veu-arte);
+  --veu-hero-forte: var(--claro-veu-hero-forte);
+  --veu-hero-medio: var(--claro-veu-hero-medio);
+  --veu-hero-nulo: var(--claro-veu-hero-nulo);
+  --cor-cortina-dialogo: var(--claro-cortina-dialogo);
+  --cor-seta-carrossel: var(--claro-seta-carrossel);
+  --brilho-esqueleto: var(--claro-brilho-esqueleto);
+
+  --sombra-card: var(--claro-sombra-card);
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-tema='automatico'] {
+    color-scheme: light;
+
+    --cor-fundo: var(--claro-fundo);
+    --cor-fundo-elevado: var(--claro-fundo-elevado);
+    --cor-superficie: var(--claro-superficie);
+    --cor-superficie-hover: var(--claro-superficie-hover);
+    --cor-borda: var(--claro-borda);
+
+    --cor-marca: var(--claro-marca);
+    --cor-marca-forte: var(--claro-marca-forte);
+    --cor-marca-suave: var(--claro-marca-suave);
+    --cor-marca-clara: var(--claro-marca-clara);
+
+    --cor-texto: var(--claro-texto);
+    --cor-texto-secundario: var(--claro-texto-secundario);
+    --cor-texto-terciario: var(--claro-texto-terciario);
+
+    --cor-estrela: var(--claro-estrela);
+    --cor-coroa: var(--claro-coroa);
+    --cor-sucesso: var(--claro-sucesso);
+    --cor-marca-superficie: var(--claro-marca-superficie);
+    --cor-texto-sobre-marca: var(--claro-texto-sobre-marca);
+    --cor-sucesso-superficie: var(--claro-sucesso-superficie);
+    --cor-texto-sobre-sucesso: var(--claro-texto-sobre-sucesso);
+
+    --cor-erro-texto: var(--claro-erro-texto);
+    --cor-erro-fundo: var(--claro-erro-fundo);
+    --cor-erro-borda: var(--claro-erro-borda);
+
+    --veu-arte: var(--claro-veu-arte);
+    --veu-hero-forte: var(--claro-veu-hero-forte);
+    --veu-hero-medio: var(--claro-veu-hero-medio);
+    --veu-hero-nulo: var(--claro-veu-hero-nulo);
+    --cor-cortina-dialogo: var(--claro-cortina-dialogo);
+    --cor-seta-carrossel: var(--claro-seta-carrossel);
+    --brilho-esqueleto: var(--claro-brilho-esqueleto);
+
+    --sombra-card: var(--claro-sombra-card);
+  }
+}

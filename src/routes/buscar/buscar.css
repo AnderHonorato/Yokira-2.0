@@ -1,0 +1,25 @@
+/* Arquivo: src/routes/buscar/buscar.css */
+
+.busca-forma {
+  position: relative;
+  margin-bottom: var(--espaco-6);
+  max-width: 520px;
+}
+
+.busca-icone {
+  position: absolute;
+  left: var(--espaco-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-texto-secundario);
+}
+
+.busca-campo {
+  width: 100%;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-4) 0 var(--espaco-10);
+  border-radius: var(--raio-botao);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-14);
+}

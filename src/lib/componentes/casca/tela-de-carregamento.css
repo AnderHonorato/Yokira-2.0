@@ -1,0 +1,36 @@
+/* Arquivo: src/lib/componentes/casca/tela-de-carregamento.css */
+
+.carregando {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-5);
+  background: var(--cor-fundo);
+}
+
+.carregando-marca {
+  animation: surgir var(--transicao-media) both;
+}
+
+.carregando-barra {
+  width: min(260px, 70vw);
+  height: 4px;
+  border-radius: var(--raio-botao);
+  background: var(--cor-superficie);
+  overflow: hidden;
+}
+
+.carregando-preenchimento {
+  height: 100%;
+  background: var(--cor-marca);
+  transition: width var(--transicao-media);
+}
+
+.carregando-rotulo {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-secundario);
+}

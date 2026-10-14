@@ -1,0 +1,140 @@
+/* Arquivo: src/lib/componentes/home/banner-destaque-estilo.css */
+/* Nome com sufixo "-estilo" porque banner-destaque.css ja e o modulo de logica .ts do par. */
+
+.hero {
+  margin-top: var(--espaco-4);
+}
+
+.hero-painel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--raio-painel);
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-fundo-elevado);
+}
+
+/* No celular a arte e um banner no topo e o texto entra por baixo, dentro do
+   degrade — mesmo desenho da pagina de titulo. Sobrepor o texto num quadro
+   estreito obrigava o painel a ficar em pe pra tudo caber. */
+.hero-arte {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  /* 42% e onde o brilho do gerador procedural fica: recortar pelo centro exato
+     deixava o clarao alto demais e o texto brigava com ele. */
+  object-position: center 42%;
+  z-index: -2;
+}
+
+/* O veu cobre exatamente a caixa da arte e termina na cor do painel: e ele que
+   costura imagem e texto em vez de deixar a arte parar numa borda dura. */
+.hero-veu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  aspect-ratio: 16 / 9;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    var(--cor-fundo-elevado) 0%,
+    color-mix(in srgb, var(--cor-fundo-elevado) 55%, transparent) 34%,
+    transparent 68%
+  );
+}
+
+.hero-selo {
+  position: absolute;
+  top: var(--espaco-3);
+  left: var(--espaco-3);
+  padding: 3px 7px;
+  border-radius: var(--raio-chip);
+  background: var(--cor-marca-superficie);
+  color: var(--cor-texto-sobre-marca);
+  font-size: var(--texto-11);
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.hero-texto {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  min-width: 0;
+  width: 100%;
+  padding: 0 var(--espaco-4) var(--espaco-4);
+  /* 38% da LARGURA: a arte tem 56,25% dela de altura, entao o texto comeca a dois
+     tercos do banner, ja dentro da parte opaca do degrade. */
+  padding-top: 38%;
+}
+
+.hero-titulo {
+  font-size: var(--texto-28);
+  /* Titulo longo em caixa alta estourava a borda direita em 360px. */
+  overflow-wrap: break-word;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.hero-gratuito {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-13);
+  color: var(--cor-texto);
+}
+
+.hero-coroa {
+  display: inline-flex;
+  color: var(--cor-coroa);
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.hero-sinopse {
+  font-size: var(--texto-14);
+  line-height: 1.5;
+  color: var(--cor-texto-secundario);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hero-acoes {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--espaco-2);
+  margin-top: var(--espaco-2);
+}
+
+/* Abaixo de 400px o titulo encolhe: uma palavra longa em caixa alta como
+   "CREPUSCULO" quebrava no meio e o bloco ficava ilegivel. */
+@media (max-width: 399px) {
+  .hero-titulo {
+    font-size: 1.375rem;
+    hyphens: auto;
+  }
+  .hero-selo {
+    font-size: 0.625rem;
+    padding: 2px 5px;
+  }
+}

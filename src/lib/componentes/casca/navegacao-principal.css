@@ -1,0 +1,40 @@
+/* Arquivo: src/lib/componentes/casca/navegacao-principal.css */
+
+.nav-principal {
+  overflow-x: auto;
+}
+
+.nav-principal-lista {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-4);
+  white-space: nowrap;
+}
+
+.nav-principal-item {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-toque);
+  font-size: var(--texto-13);
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--transicao-rapida),
+    border-color var(--transicao-rapida);
+}
+
+.nav-principal-item:hover {
+  color: var(--cor-texto);
+}
+
+.nav-principal-ativo {
+  color: var(--cor-texto);
+  border-bottom-color: var(--cor-marca);
+}
+
+@media (min-width: 1024px) {
+  .nav-principal-lista {
+    gap: var(--espaco-8);
+  }
+}

@@ -1,0 +1,60 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-home.css */
+/* Espelha banner-destaque-estilo.css: arte 16:9 no topo e o texto entrando por baixo. */
+
+.esqueleto-hero {
+  margin-top: var(--espaco-4);
+  border-radius: var(--raio-painel);
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-fundo-elevado);
+  overflow: hidden;
+}
+
+.esqueleto-hero-arte {
+  aspect-ratio: 16 / 9;
+}
+
+.esqueleto-hero-texto {
+  padding: var(--espaco-4);
+}
+
+.esqueleto-hero-nome {
+  height: var(--texto-28);
+  width: 70%;
+  margin-bottom: var(--espaco-3);
+}
+
+.esqueleto-hero-linha {
+  height: var(--texto-13);
+  margin-bottom: var(--espaco-2);
+}
+
+.esqueleto-hero-curta {
+  width: 55%;
+}
+
+.esqueleto-hero-acoes {
+  display: flex;
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-4);
+}
+
+.esqueleto-hero-botao {
+  height: var(--alvo-toque);
+  width: 148px;
+}
+
+@media (min-width: 1024px) {
+  .esqueleto-hero-texto {
+    padding: var(--espaco-6) var(--espaco-8) var(--espaco-8);
+  }
+  .esqueleto-hero-nome {
+    height: var(--texto-40);
+    width: 45%;
+  }
+  .esqueleto-hero-linha {
+    width: 60%;
+  }
+  .esqueleto-hero-curta {
+    width: 40%;
+  }
+}

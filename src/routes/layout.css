@@ -1,0 +1,24 @@
+/* Arquivo: src/routes/layout.css */
+
+.casca {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.casca-conteudo {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: var(--largura-maxima);
+  margin: 0 auto;
+  padding: 0 var(--espaco-4);
+  /* Espaco pra barra inferior nao cobrir o ultimo card. */
+  padding-bottom: calc(var(--altura-barra-inferior) + var(--espaco-8));
+}
+
+@media (min-width: 1024px) {
+  .casca-conteudo {
+    padding: 0 var(--espaco-8);
+    padding-bottom: var(--espaco-10);
+  }
+}

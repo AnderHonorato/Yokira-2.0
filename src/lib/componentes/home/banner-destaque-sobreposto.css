@@ -1,0 +1,134 @@
+/* Arquivo: src/lib/componentes/home/banner-destaque-sobreposto.css */
+/* O que muda quando o texto passa a viver POR CIMA da arte, e nao ao lado dela.
+   Separado do estilo base porque juntos passavam das 180 linhas do projeto. */
+
+/* A partir daqui a arte volta a cobrir o painel inteiro com o texto POR CIMA:
+   numa tela larga o banner e alto o bastante pra sustentar o bloco de texto, e
+   sobrepor rende muito mais imagem visivel. Arte, veu e painel mudam juntos. */
+@media (min-width: 768px) {
+  .hero-painel {
+    aspect-ratio: 21 / 9;
+    display: flex;
+    align-items: flex-end;
+  }
+  .hero-arte,
+  .hero-veu {
+    inset: 0;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  .hero-veu {
+    background: linear-gradient(
+      to top,
+      var(--veu-hero-forte) 0%,
+      var(--veu-hero-medio) 42%,
+      var(--veu-hero-nulo) 78%
+    );
+  }
+  .hero-texto {
+    padding: var(--espaco-6);
+    padding-top: var(--espaco-6);
+    /* O texto ocupa a metade esquerda: sobre arte deitada, linha corrida de ponta
+       a ponta fica longa demais pra ler e ainda tapa o assunto da imagem. */
+    max-width: 60%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-painel {
+    aspect-ratio: 24 / 9;
+  }
+  .hero-titulo {
+    font-size: var(--texto-40);
+  }
+  .hero-texto {
+    gap: var(--espaco-3);
+    padding: var(--espaco-8);
+    padding-top: var(--espaco-8);
+    max-width: 52%;
+  }
+}
+
+/* Sobre imagem, o texto secundario precisa de mais peso do que sobre painel liso. */
+.hero-sinopse,
+.hero-meta {
+  color: var(--cor-texto);
+  opacity: 0.88;
+}
+
+.hero-titulo,
+.hero-gratuito {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Contagem ate o proximo destaque. Dois pixels de proposito: informa quem procura
+   e desaparece pra quem nao. Fica na borda de baixo do painel, onde o veu ja e solido. */
+.hero-progresso {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 3;
+  width: 100%;
+  height: 2px;
+  background: var(--cor-marca);
+  opacity: 0.7;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: preencher-progresso var(--duracao-do-destaque) linear forwards;
+}
+
+/* Parada com o cursor em cima: a contagem tambem para, entao a barra para junto. */
+.hero-progresso-pausado {
+  animation-play-state: paused;
+}
+
+.hero-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--espaco-2);
+}
+
+/* O botao e so o alvo de toque de 44px; quem desenha o ponto e o ::before. Antes o
+   proprio botao era pintado com content-box, o que dava uma barra de 22x4px — e com
+   gap: 0 as barras se emendavam num bloco unico que parecia uma barra de progresso
+   quebrada. A contagem ate o proximo destaque agora e a linha de 2px no painel;
+   estes aqui voltaram a ser o que sao, um por destaque. */
+.hero-dot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: var(--alvo-toque);
+  background: none;
+}
+
+.hero-dot::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cor-borda);
+  transition:
+    background var(--transicao-rapida),
+    width var(--transicao-rapida);
+}
+
+/* O ativo vira pilula: da pra saber em qual destaque voce esta sem contar os pontos. */
+.hero-dot-ativo::before {
+  width: 22px;
+  background: var(--cor-marca);
+}
+
+.hero-curtir {
+  display: inline-flex;
+}
+
+.hero-curtir.pill-curtido .pill {
+  color: var(--cor-marca);
+  border-color: var(--cor-marca);
+  background: var(--cor-marca-suave);
+}
+
+.hero-curtir.pill-curtido .pill svg {
+  fill: currentColor;
+}

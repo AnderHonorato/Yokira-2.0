@@ -1,0 +1,70 @@
+/* Arquivo: src/lib/componentes/player/barra-de-busca.css */
+
+/* O alvo tem 20px de altura mesmo com o trilho de 4px: mirar 4px com o dedo e
+   impossivel, e no celular a barra e o controle mais usado depois do play. */
+.busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.busca-trilho {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--veu-hero-medio);
+  overflow: hidden;
+  transition: height var(--transicao-rapida);
+}
+
+.busca:hover .busca-trilho,
+.busca:focus-visible .busca-trilho,
+.busca-arrastando .busca-trilho {
+  height: 6px;
+}
+
+.busca-carregado,
+.busca-assistido {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+/* O que ja baixou fica atras do que ja passou: e a leitura de "quanto da pra avancar
+   sem esperar". */
+.busca-carregado {
+  background: var(--veu-hero-forte);
+}
+
+.busca-assistido {
+  background: var(--cor-marca);
+}
+
+.busca-marcador {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: var(--cor-marca);
+  transform: translateY(-50%) scale(0);
+  transition: transform var(--transicao-rapida);
+}
+
+.busca:hover .busca-marcador,
+.busca:focus-visible .busca-marcador,
+.busca-arrastando .busca-marcador {
+  transform: translateY(-50%) scale(1);
+}
+
+.busca:focus-visible {
+  outline: 2px solid var(--cor-marca);
+  outline-offset: 4px;
+  border-radius: 999px;
+}

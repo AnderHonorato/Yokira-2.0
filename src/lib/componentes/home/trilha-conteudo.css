@@ -1,0 +1,41 @@
+/* Arquivo: src/lib/componentes/home/trilha-conteudo.css */
+
+.trilha {
+  margin-top: var(--espaco-8);
+}
+
+.trilha-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-4);
+  margin-bottom: var(--espaco-3);
+}
+
+.trilha-titulo {
+  font-size: var(--texto-16);
+  font-weight: 700;
+}
+
+.trilha-ver-mais {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-1);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+  min-height: var(--alvo-toque);
+  transition: color var(--transicao-rapida);
+}
+
+.trilha-ver-mais:hover {
+  color: var(--cor-texto);
+}
+
+@media (min-width: 1024px) {
+  .trilha {
+    margin-top: var(--espaco-10);
+  }
+  .trilha-titulo {
+    font-size: var(--texto-20);
+  }
+}

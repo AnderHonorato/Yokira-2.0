@@ -1,0 +1,117 @@
+/* Arquivo: src/lib/componentes/detalhes/painel-trailers.css */
+
+.painel-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-8);
+}
+
+.painel-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-size: var(--texto-16);
+  font-weight: 700;
+  margin-bottom: var(--espaco-3);
+  color: var(--cor-texto);
+}
+
+.trailer {
+  display: block;
+}
+
+.trailer-arte {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--raio-card);
+  overflow: hidden;
+  background: var(--cor-superficie);
+}
+
+.trailer-arte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trailer-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--veu-arte);
+  color: var(--cor-texto);
+}
+
+.trailer-nome {
+  display: block;
+  margin-top: var(--espaco-2);
+  font-size: var(--texto-13);
+}
+
+.trailer-duracao {
+  display: block;
+  font-size: var(--texto-12);
+  color: var(--cor-texto-terciario);
+}
+
+.painel-episodios {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+}
+
+.painel-episodio {
+  display: flex;
+  gap: var(--espaco-3);
+  align-items: flex-start;
+}
+
+.painel-episodio img {
+  flex: 0 0 auto;
+  width: 92px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--raio-chip);
+}
+
+.painel-episodio-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.painel-episodio-nome {
+  font-size: var(--texto-13);
+  line-height: 1.35;
+}
+
+.painel-episodio-duracao {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-terciario);
+}
+
+.painel-episodio-chips {
+  display: flex;
+  gap: var(--espaco-2);
+  margin-top: 2px;
+}
+
+.painel-ver-todos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alvo-toque);
+  margin-top: var(--espaco-4);
+  border-radius: var(--raio-card);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-13);
+  transition: background var(--transicao-rapida);
+}
+
+.painel-ver-todos:hover {
+  background: var(--cor-superficie-hover);
+}

@@ -1,0 +1,42 @@
+/* Arquivo: src/lib/componentes/detalhes/lista-episodios.css */
+
+.lista-episodios-controles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-4);
+  margin: var(--espaco-4) 0 var(--espaco-3);
+}
+
+.seletor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  color: var(--cor-texto);
+  font-size: var(--texto-14);
+}
+
+.seletor select {
+  appearance: none;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-5) 0 0;
+  background: transparent;
+  border: none;
+  font-size: var(--texto-14);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.seletor svg {
+  position: absolute;
+  right: 0;
+  pointer-events: none;
+  color: var(--cor-texto-secundario);
+}
+
+.lista-episodios-itens {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+}

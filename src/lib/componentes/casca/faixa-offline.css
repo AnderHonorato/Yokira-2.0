@@ -1,0 +1,13 @@
+/* Arquivo: src/lib/componentes/casca/faixa-offline.css */
+
+.faixa-offline {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: var(--espaco-2) var(--espaco-4);
+  background: var(--cor-marca-suave);
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-marca-clara);
+  font-size: var(--texto-12);
+  text-align: center;
+}

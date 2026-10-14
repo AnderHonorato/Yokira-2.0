@@ -1,0 +1,33 @@
+/* Arquivo: src/lib/componentes/carregando/esqueleto-trilha.css */
+/* Espelha trilha-conteudo.css: mesma margem de topo e mesma altura de titulo. */
+
+.esqueleto-trilha {
+  margin-top: var(--espaco-8);
+}
+
+.esqueleto-trilha-titulo {
+  height: var(--texto-16);
+  width: 140px;
+  margin-bottom: var(--espaco-3);
+}
+
+.esqueleto-trilha-fila {
+  display: flex;
+  gap: var(--espaco-3);
+  /* Sem rolagem: o esqueleto nao e navegavel, so ocupa o espaco certo. */
+  overflow: hidden;
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .esqueleto-trilha {
+    margin-top: var(--espaco-10);
+  }
+  .esqueleto-trilha-titulo {
+    height: var(--texto-20);
+    width: 200px;
+  }
+  .esqueleto-trilha-fila {
+    gap: var(--espaco-4);
+  }
+}

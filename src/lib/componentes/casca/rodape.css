@@ -1,0 +1,38 @@
+/* Arquivo: src/lib/componentes/casca/rodape.css */
+
+.rodape {
+  display: none;
+  border-top: 1px solid var(--cor-borda);
+  margin-top: var(--espaco-10);
+  padding: var(--espaco-8) var(--espaco-8) var(--espaco-10);
+}
+
+.rodape-conteudo {
+  max-width: var(--largura-maxima);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-4);
+}
+
+.rodape-links {
+  display: flex;
+  gap: var(--espaco-5);
+  font-size: var(--texto-13);
+  color: var(--cor-texto-secundario);
+}
+
+.rodape-links a:hover {
+  color: var(--cor-texto);
+}
+
+.rodape-nota {
+  font-size: var(--texto-12);
+  color: var(--cor-texto-terciario);
+}
+
+@media (min-width: 1024px) {
+  .rodape {
+    display: block;
+  }
+}

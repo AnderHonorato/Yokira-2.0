@@ -1,0 +1,29 @@
+/* Arquivo: src/lib/visual/molduras/moldura-card.css */
+
+.moldura-card {
+  position: relative;
+  /* Em pe no celular, como na tela de referencia. */
+  aspect-ratio: 2 / 3;
+  border-radius: var(--raio-card);
+  overflow: hidden;
+  background: var(--cor-superficie);
+  /* aspect-ratio reserva o espaco antes da imagem chegar: e assim que o CLS fica em zero. */
+}
+
+.moldura-card-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 42% pega a faixa onde o brilho do poster procedural mora. Recorte pelo centro
+     exato deixava a capa deitada com o clarao encostado no topo. */
+  object-position: center 42%;
+}
+
+/* No desktop a capa deita. Trilha de retratos altos em tela larga vira uma parede
+   de pilares estreitos; deitada, cabe mais titulo por linha e a leitura acompanha
+   o sentido em que a trilha rola. */
+@media (min-width: 1024px) {
+  .moldura-card {
+    aspect-ratio: 16 / 9;
+  }
+}
