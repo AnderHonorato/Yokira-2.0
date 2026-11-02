@@ -56,3 +56,7 @@ Arquivo público de amostra: https://storage.googleapis.com/gtv-videos-bucket/sa
 Licença: https://creativecommons.org/licenses/by/3.0/ .
 O filme é usado apenas para demonstrar o reprodutor. Nenhuma entrada de anime aponta para ele como se fosse um episódio ou uma adaptação da obra.
 
+
+## Vídeo local de demonstração
+
+A URL Google anterior passou a retornar HTTP 403 no teste desta entrega. O Site agora serve um trecho local de 30 segundos de Big Buck Bunny (01:00–01:30), recodificado em H.264/AAC com faststart, e um quadro de prévia extraído desse trecho. Fonte oficial: https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4.zip . Crédito: (c) 2008 Blender Foundation / www.bigbuckbunny.org, licença CC BY 3.0 https://creativecommons.org/licenses/by/3.0/ . Alterações: recorte, recodificação e extração de quadro para prévia. Não há conteúdo de episódio dos títulos do catálogo.

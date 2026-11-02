@@ -29,3 +29,23 @@ test('limite diário é atômico e dados pessoais usam chave por pessoa',()=>{
  assert.equal(db.prepare('SELECT segundos FROM progresso WHERE usuario_id=? AND titulo_id=?').get('b','t1').segundos,10);
  db.close();
 });
+test('migração de acompanhamento preserva títulos, usuários e datas da lista antiga',()=>{
+ const db=new DatabaseSync(':memory:');db.exec('PRAGMA foreign_keys=ON');
+ const pasta=new URL('../../drizzle/',import.meta.url);
+ const arquivos=readdirSync(pasta).filter(p=>p.endsWith('.sql')).sort();
+ for(const arquivo of arquivos.slice(0,2))db.exec(readFileSync(new URL(arquivo,pasta),'utf8'));
+ db.prepare('INSERT INTO usuarios(id,nome,criado_em) VALUES(?,?,?)').run('legado-a','A',1000);
+ db.prepare('INSERT INTO usuarios(id,nome,criado_em) VALUES(?,?,?)').run('legado-b','B',2000);
+ const adicionar=db.prepare('INSERT INTO lista(usuario_id,titulo_id,criado_em) VALUES(?,?,?)');
+ adicionar.run('legado-a','3',10000);adicionar.run('legado-a','1',20000);adicionar.run('legado-b','3',30000);
+ for(const arquivo of arquivos.slice(2))db.exec(readFileSync(new URL(arquivo,pasta),'utf8'));
+ const linhas=db.prepare('SELECT * FROM lista ORDER BY usuario_id,titulo_id').all();
+ assert.equal(linhas.length,3);assert.equal(linhas[0].usuario_id,'legado-a');assert.equal(linhas[2].usuario_id,'legado-b');
+ for(const item of linhas){assert.equal(item.situacao,'planejado');assert.equal(item.episodios_vistos,0);assert.equal(item.nota,null);assert.equal(item.atualizado_em,item.criado_em);}
+ assert.equal(db.prepare('PRAGMA foreign_keys').get().foreign_keys,1);
+ assert.deepEqual(db.prepare('PRAGMA foreign_key_check').all(),[]);
+ assert.throws(()=>db.prepare('UPDATE lista SET situacao=?').run('invalido'),/CHECK constraint/);
+ assert.throws(()=>db.prepare('UPDATE lista SET nota=?').run(11),/CHECK constraint/);
+ assert.throws(()=>db.prepare('UPDATE lista SET episodios_vistos=?').run(-1),/CHECK constraint/);
+ db.close();
+});

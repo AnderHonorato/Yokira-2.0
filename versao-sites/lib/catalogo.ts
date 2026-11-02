@@ -474,9 +474,12 @@ export const hero = "/arte/hero.webp";
 
 export const demonstracaoVideo = {
   "titulo": "Big Buck Bunny — demonstração",
-  "url": "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+  "poster": "/midia/demonstracao-bbb.webp",
+  "trechoSegundos": 30,
+  "fonte": "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4.zip",
+  "url": "/midia/demonstracao-bbb.mp4",
   "license": "CC BY 3.0 · Blender Foundation",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
   "autor": "Blender Foundation",
-  "descricao": "Curta de animação aberto usado exclusivamente para demonstrar o reprodutor. Não é um episódio do catálogo."
+  "descricao": "Trecho de 30 segundos do curta aberto Big Buck Bunny, recortado a partir de 01:00 e recodificado para demonstrar o reprodutor. Não é um episódio do catálogo."
 };

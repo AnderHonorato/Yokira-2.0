@@ -2,6 +2,7 @@ import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { getDb } from '../../db';
 import * as s from '../../db/schema';
 import { catalogo } from '../catalogo';
+import { situacoesColecao, type ItemColecao, type SituacaoColecao } from '../colecao';
 import { dadosPublicos, type DadosJogo } from './jogos-publicos';
 import { ErroApi, identificador, inteiro, nomeInicial, texto } from './validacao';
 type Db = ReturnType<typeof getDb>;
@@ -12,6 +13,10 @@ function titulo(valor: unknown) { const id = identificador(valor); if (!titulos.
     throw new ErroApi('Título não encontrado.', 404); return id; }
 function sorteio() { const ids = [...titulos.keys()]; return ids[crypto.getRandomValues(new Uint32Array(1))[0] % ids.length]; }
 function publico(usuario: Usuario) { return { id: usuario.id, nome: usuario.nome, papel: usuario.papel, xp:usuario.xp, nivel:Math.floor(usuario.xp/100)+1 }; }
+function itemColecao(item: typeof s.lista.$inferSelect): ItemColecao {
+    return { tituloId: item.tituloId, situacao: item.situacao, episodiosVistos: item.episodiosVistos, nota: item.nota,
+        criadoEm: new Date(item.criadoEm).toISOString(), atualizadoEm: new Date(item.atualizadoEm || item.criadoEm).toISOString() };
+}
 export async function contexto(request: Request) {
     const id = request.headers.get('oai-authenticated-user-id');
     if (!id || id.length > 160)
@@ -33,13 +38,13 @@ export async function estado(db: Db, usuario: Usuario) {
     const [membros, posts, minhaLista, progresso, jogos, totalMembros, totalAtividades] = await Promise.all([
         db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
         publicacoes(db, usuario.id),
-        db.select({ tituloId: s.lista.tituloId }).from(s.lista).where(eq(s.lista.usuarioId, usuario.id)).limit(200),
+        db.select().from(s.lista).where(eq(s.lista.usuarioId, usuario.id)).orderBy(desc(s.lista.atualizadoEm), desc(s.lista.criadoEm)).limit(200),
         db.select({ tituloId: s.progresso.tituloId, segundos: s.progresso.segundos }).from(s.progresso).where(eq(s.progresso.usuarioId, usuario.id)).limit(200),
         db.select().from(s.jogos).where(eq(s.jogos.usuarioId, usuario.id)).orderBy(desc(s.jogos.atualizadoEm)).limit(30),
         db.select({ total: sql<number> `count(*)` }).from(s.usuarios),
         db.select({ total: sql<number> `(select count(*) from publicacoes)+(select count(*) from respostas)+(select count(*) from jogos)` }).from(s.usuarios).limit(1)
     ]);
-    return { usuario: publico(usuario), estatisticas: { membros: totalMembros[0]?.total || 0, atividades: totalAtividades[0]?.total || 0 }, membros: membros.map(m => ({ ...m, nivel: Math.floor(m.xp / 100) + 1 })), publicacoes: posts, minhaLista: minhaLista.map(t => t.tituloId), progresso, jogos: jogos.map(j => jogoPublico(j)) };
+    return { usuario: publico(usuario), estatisticas: { membros: totalMembros[0]?.total || 0, atividades: totalAtividades[0]?.total || 0 }, membros: membros.map(m => ({ ...m, nivel: Math.floor(m.xp / 100) + 1 })), publicacoes: posts, minhaLista: minhaLista.map(t => t.tituloId), colecao: minhaLista.map(itemColecao), progresso, jogos: jogos.map(j => jogoPublico(j)) };
 }
 export async function publicacoes(db: Db, usuarioId: string, id?: string) {
     const posts = await db.select({ id: s.publicacoes.id, tipo: s.publicacoes.tipo, titulo: s.publicacoes.titulo, corpo: s.publicacoes.corpo, criadoEm: s.publicacoes.criadoEm, autor: { id: s.usuarios.id, nome: s.usuarios.nome } }).from(s.publicacoes).innerJoin(s.usuarios, eq(s.usuarios.id, s.publicacoes.autorId)).where(id ? eq(s.publicacoes.id, id) : undefined).orderBy(desc(s.publicacoes.criadoEm)).limit(id ? 1 : 50);
@@ -60,12 +65,28 @@ export async function mutar(db: Db, usuario: Usuario, p: Record<string, unknown>
     await limitar(db, usuario.id, `minuto:${Math.floor(agora / 60000)}`, 60);
     if (acao === 'lista') {
         const tituloId = titulo(p.tituloId);
+        if (p.adicionado !== undefined && typeof p.adicionado !== 'boolean')
+            throw new ErroApi('Escolha se o título deve ser adicionado ou removido.');
         const cond = and(eq(s.lista.usuarioId, usuario.id), eq(s.lista.tituloId, tituloId));
-        const removidos = await db.delete(s.lista).where(cond).returning();
-        if (removidos.length)
-            return { ok: true, adicionado: false };
-        await db.insert(s.lista).values({ usuarioId: usuario.id, tituloId, criadoEm: agora }).onConflictDoNothing();
+        if (p.adicionado !== true) {
+            const removidos = await db.delete(s.lista).where(cond).returning();
+            if (removidos.length || p.adicionado === false)
+                return { ok: true, adicionado: false };
+        }
+        await db.insert(s.lista).values({ usuarioId: usuario.id, tituloId, criadoEm: agora, atualizadoEm: agora }).onConflictDoNothing();
         return { ok: true, adicionado: true };
+    }
+    if (acao === 'acompanhamento') {
+        const tituloId = titulo(p.tituloId), meta = titulos.get(tituloId)!;
+        if (typeof p.situacao !== 'string' || !situacoesColecao.includes(p.situacao as SituacaoColecao))
+            throw new ErroApi('Situação de acompanhamento inválida.');
+        const situacao = p.situacao as SituacaoColecao;
+        const informado = inteiro(p.episodiosVistos, 'Episódios vistos', 0, meta.episodios || 100000);
+        const episodiosVistos = situacao === 'concluido' && meta.episodios > 0 ? meta.episodios : informado;
+        const nota = p.nota === null ? null : inteiro(p.nota, 'Nota', 1, 10);
+        const [item] = await db.insert(s.lista).values({ usuarioId: usuario.id, tituloId, situacao, episodiosVistos, nota, criadoEm: agora, atualizadoEm: agora })
+            .onConflictDoUpdate({ target: [s.lista.usuarioId, s.lista.tituloId], set: { situacao, episodiosVistos, nota, atualizadoEm: agora } }).returning();
+        return { ok: true, item: itemColecao(item) };
     }
     if (acao === 'progresso') {
         const tituloId = p.tituloId === 'demonstracao' ? 'demonstracao' : titulo(p.tituloId);

@@ -72,3 +72,43 @@ test('Tier compartilhável devolve apenas snapshot e rejeita duplicatas',async()
  const salvo=await post('jogador',{acao:'jogo',modo:'tier',tiers:{S:['1'],A:['2'],B:[],C:[],D:[]}});assert.equal(salvo.status,200);
  const tier=await get('pessoa-b','tier',`&id=${salvo.data.jogo.id}`);assert.equal(tier.status,200);assert.deepEqual(Object.keys(tier.data.tier).sort(),['id','tiers']);assert.equal(tier.data.tier.tiers.S[0],'1');
 });
+test('Acompanhamento persiste status, episódios e nota sem expor a coleção de outra pessoa',async()=>{
+ await get('colecionador-a');await get('colecionador-b');
+ const payload={acao:'acompanhamento',tituloId:'3',situacao:'assistindo',episodiosVistos:7,nota:9};
+ const salvo=await post('colecionador-a',payload);assert.equal(salvo.status,200);
+ assert.equal(salvo.data.item.situacao,'assistindo');assert.equal(salvo.data.item.episodiosVistos,7);assert.equal(salvo.data.item.nota,9);
+ assert.equal(Number.isFinite(Date.parse(salvo.data.item.criadoEm)),true);
+ const repetido=await post('colecionador-a',payload);assert.equal(repetido.status,200);assert.equal(repetido.data.item.criadoEm,salvo.data.item.criadoEm);
+ const estado=await get('colecionador-a');assert.deepEqual(estado.data.minhaLista,['3']);assert.equal(estado.data.colecao.length,1);assert.equal(estado.data.colecao[0].nota,9);
+ const outro=await get('colecionador-b');assert.deepEqual(outro.data.colecao,[]);
+ assert.equal(outro.data.membros.find(m=>m.id==='colecionador-a').colecao,undefined);
+ const concluido=await post('colecionador-a',{...payload,situacao:'concluido',episodiosVistos:7,nota:null});
+ assert.equal(concluido.status,200);assert.equal(concluido.data.item.episodiosVistos,28);assert.equal(concluido.data.item.nota,null);
+ const alterado=await post('colecionador-b',{...payload,usuarioId:'colecionador-a',episodiosVistos:2,nota:5});assert.equal(alterado.status,200);
+ assert.equal((await get('colecionador-a')).data.colecao[0].nota,null);
+ assert.equal((await get('colecionador-b')).data.colecao[0].nota,5);
+});
+test('Acompanhamento rejeita entradas inválidas, respeita total conhecido e aceita títulos em andamento',async()=>{
+ await get('validacao-colecao');
+ const payload={acao:'acompanhamento',tituloId:'3',situacao:'planejado',episodiosVistos:0,nota:null};
+ for(const invalido of [{situacao:'admin'},{situacao:null},{situacao:1},{episodiosVistos:-1},{episodiosVistos:29},{episodiosVistos:1.5},{episodiosVistos:'1'},{nota:0},{nota:11},{nota:8.5},{nota:'8'},{nota:undefined}]){
+  const resultado=await post('validacao-colecao',{...payload,...invalido});assert.equal(resultado.status,400,JSON.stringify(invalido));
+ }
+ assert.equal((await post('validacao-colecao',{...payload,tituloId:'inexistente'})).status,404);
+ assert.equal((await post('validacao-colecao',{...payload,tituloId:'2',situacao:'assistindo',episodiosVistos:1200})).status,200);
+ assert.equal((await post('validacao-colecao',{...payload,tituloId:'2',episodiosVistos:100001})).status,400);
+ assert.equal((await post('validacao-colecao',{...payload,tituloId:'2',episodiosVistos:100000})).status,200);
+});
+test('Adicionar e remover explicitamente são idempotentes e preservam o acompanhamento salvo',async()=>{
+ await get('lista-explicita');
+ for(let i=0;i<2;i++)assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4',adicionado:true})).data.adicionado,true);
+ const inicial=(await get('lista-explicita')).data.colecao;assert.equal(inicial.length,1);assert.equal(inicial[0].situacao,'planejado');assert.equal(inicial[0].episodiosVistos,0);assert.equal(inicial[0].nota,null);
+ await post('lista-explicita',{acao:'acompanhamento',tituloId:'4',situacao:'pausado',episodiosVistos:12,nota:8});
+ await post('lista-explicita',{acao:'lista',tituloId:'4',adicionado:true});
+ const salvo=(await get('lista-explicita')).data.colecao[0];assert.equal(salvo.episodiosVistos,12);assert.equal(salvo.nota,8);assert.equal(salvo.criadoEm,inicial[0].criadoEm);
+ assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4',adicionado:'true'})).status,400);
+ for(let i=0;i<2;i++)assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4',adicionado:false})).data.adicionado,false);
+ assert.deepEqual((await get('lista-explicita')).data.colecao,[]);
+ assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4'})).data.adicionado,true);
+ assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4'})).data.adicionado,false);
+});

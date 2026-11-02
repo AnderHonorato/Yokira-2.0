@@ -26,4 +26,10 @@ Os resultados efetivamente executados ficam em `versao-sites/docs/VALIDACAO.md`.
 
 Sites: https://yokira-2-ander.honoratoann.chatgpt.site
 
-Fonte Sites: `be76203b60ebf887f14882a8989ac7f7ae132132`. Publicação privada concluída em 2026-11-02.
+Fonte Sites: `dfdbf14fc81cc781f092a746e36b112589b27fc3`. Publicação privada concluída em 2026-11-02.
+
+## Atualização de acompanhamento e player — 02/11/2026
+
+A coleção ganhou situações, episódios vistos, notas privadas, busca e ordenação. A migração preserva as listas anteriores. O player recebeu retomada tardia, atalhos, salvamento ao pausar e recuperação de falhas; o trecho licenciado de demonstração agora é servido localmente. Foram corrigidos navegação, contraste e legibilidade em celular, persistência das preferências e renderização de links diretos.
+
+Validação: TypeScript, lint sem erros, 15 testes, build de produção, navegação e mídia em 320/375/768 px e desktop. Detalhes e limites em versao-sites/docs/VALIDACAO.md.
