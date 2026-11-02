@@ -7,10 +7,12 @@ on:
   pull_request:
     branches:
       - main
+      - main-ChatGPT
       - claude/yokira-animees-setup-docs-l1hngw
   push:
     branches:
       - main
+      - main-ChatGPT
       - claude/yokira-animees-setup-docs-l1hngw
       - 'sol/**'
 

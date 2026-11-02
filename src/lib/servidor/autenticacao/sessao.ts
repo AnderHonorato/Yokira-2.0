@@ -6,7 +6,7 @@ import { randomBytes, createHash } from 'node:crypto';
 import { banco } from '../banco/cliente.js';
 import type { Papel } from '../banco/gerado/enums.js';
 
-export const NOME_COOKIE_SESSAO = 'yokira_sessao';
+export const NOME_COOKIE_SESSAO = 'yokira2_sessao';
 const DURACAO_MS = 1000 * 60 * 60 * 24 * 30;
 
 export interface UsuarioDaSessao {

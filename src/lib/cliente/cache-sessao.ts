@@ -2,7 +2,7 @@
 // Guardo aqui o catalogo baixado no primeiro acesso pra navegacao nao ir no servidor de novo.
 // Depende de: idb-keyval? nao — uso IndexedDB direto pra nao inchar o bundle.
 
-const NOME_DO_BANCO = 'yokira-cache';
+const NOME_DO_BANCO = 'yokira2-cache';
 const VERSAO_DO_ESQUEMA = 1;
 const DEPOSITO = 'documentos';
 

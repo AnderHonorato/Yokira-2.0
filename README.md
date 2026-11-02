@@ -1,3 +1,7 @@
+# Yokira 2.0 — ChatGPT
+
+Cópia independente do projeto original. A versão hospedada no Sites fica em `versao-sites/`; leia `docs/entrega-2.0.md` para execução, testes e limites de vídeo.
+
 <div align="center">
 
 <img src="static/marca/emblema-192.png" alt="Emblema Yōkira" width="96" />

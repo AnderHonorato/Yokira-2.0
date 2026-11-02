@@ -4,7 +4,7 @@
 
 import 'dotenv/config';
 import { defineConfig } from 'prisma/config';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
@@ -13,7 +13,6 @@ export default defineConfig({
   },
   migrations: {
     path: 'prisma/migrations',
-    seed: 'tsx prisma/seed.ts'
-  },
-  adapter: async () => new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? 'file:./dev.db' })
+    seed: 'node --import tsx prisma/seed.ts'
+  }
 });
