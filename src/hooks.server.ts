@@ -3,6 +3,7 @@
 // seguranca — mais barato aqui do que repetir em cada rota.
 
 import type { Handle } from '@sveltejs/kit';
+import { conferirLimiteDeRequisicao } from '$servidor/seguranca/limite-requisicao';
 import { NOME_COOKIE_SESSAO, lerSessao } from '$lib/servidor/autenticacao/sessao';
 import { apagarCookieDeSessao } from '$lib/servidor/autenticacao/cookie';
 import { NOME_COOKIE_TEMA, metaDeTema, normalizarTema } from '$lib/validacoes/tema';
@@ -15,6 +16,19 @@ const CABECALHOS_DE_SEGURANCA: Record<string, string> = {
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
+  const limite = conferirLimiteDeRequisicao(
+    event.request.method,
+    event.url.pathname,
+    event.request.headers
+  );
+  if (limite) {
+    const resposta = new Response(limite.mensagem, { status: limite.codigo });
+    for (const [chave, valor] of Object.entries(CABECALHOS_DE_SEGURANCA)) {
+      resposta.headers.set(chave, valor);
+    }
+    return resposta;
+  }
+
   const id = event.cookies.get(NOME_COOKIE_SESSAO);
   event.locals.usuario = id ? await lerSessao(id) : null;
 
