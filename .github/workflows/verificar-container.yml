@@ -5,6 +5,7 @@ on:
     branches:
       - main-ChatGPT
       - sol/infra-producao-video-20261103
+      - sol/teste-real-ffmpeg-20261103
     paths:
       - Dockerfile
       - .dockerignore
@@ -15,6 +16,7 @@ on:
       - package.json
       - package-lock.json
       - scripts/backup-sqlite.ts
+      - scripts/testar-pipeline-hls.ts
       - src/lib/servidor/banco/backup-sqlite.ts
       - .github/workflows/verificar-container.yml
   pull_request:
@@ -59,7 +61,7 @@ jobs:
             --mount type=volume,source=yokira2-smoke,target=/data \
             -e ORIGIN=https://yokira.example \
             -e SEGREDO_SESSAO=yokira-somente-teste-de-integracao-continuo-1234567890 \
-            -e DATABASE_URL=file:/data/yokira.sqlite \
+            -e DATABASE_URL=file:/data/pipeline-ci-teste.sqlite \
             -e PASTA_UPLOADS=/data/originais \
             -e PASTA_HLS=/data/hls \
             -e YOKIRA_VOLUME_PERSISTENTE=/data \
@@ -76,6 +78,8 @@ jobs:
                 sqlite3 -readonly "$(find /data/backups -name "*.sqlite" -print -quit)" "PRAGMA integrity_check;" | grep -qx ok
               '
               echo 'Snapshot SQLite íntegro e manifesto presentes.'
+              docker exec -u node -e YOKIRA_TESTE_PIPELINE=1 yokira2-smoke npm run video:teste-integrado
+              echo 'Processamento HLS confirmado com FFmpeg real.'
               exit 0
             fi
             if [ "$(docker inspect -f '{{.State.Running}}' yokira2-smoke)" != true ]; then

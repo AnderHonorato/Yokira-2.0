@@ -30,6 +30,7 @@
     "banco:backup": "node --import tsx scripts/backup-sqlite.ts",
     "banco:importar": "node --import tsx scripts/importar-banco.ts",
     "video:teste": "node --import tsx scripts/gerar-video-teste.ts",
+    "video:teste-integrado": "node --import tsx scripts/testar-pipeline-hls.ts",
     "video:trabalhador": "node --import tsx scripts/trabalhador-hls.ts",
     "iniciar:completo": "node --import tsx scripts/iniciar-servicos.ts"
   },
