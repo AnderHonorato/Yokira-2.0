@@ -41,3 +41,121 @@
 
 @media(max-width:480px){.anime-grid.catalog-grid,.trending-section .anime-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.intro-art{right:0}}
 @media(max-width:340px){.filter-selects{grid-template-columns:1fr}.topbar .marca{font-size:19px}.topbar-inner{padding-inline:12px}.top-actions>button{min-width:40px}.intro-copy h1{font-size:39px}}
+
+
+/* Barra inferior: menus do cabeçalho passam ao alcance do polegar no mobile. */
+.mobile-bottom-nav,
+.mobile-more-panel{display:none}
+@media(max-width:980px){
+ .main-nav{display:none!important}
+ .menu-trigger{display:none!important}
+ .mobile-bottom-nav{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;
+  position:fixed;bottom:0;left:0;right:0;z-index:80;
+  padding:6px max(12px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
+  min-height:calc(65px + env(safe-area-inset-bottom,0px));
+  background:color-mix(in srgb,var(--surface) 94%,var(--bg));
+  border-top:1px solid var(--border);
+  box-shadow:0 -10px 36px #0003;
+  backdrop-filter:blur(20px);
+ }
+ .mobile-bottom-link{
+  min-width:0;min-height:52px;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  gap:5px;padding:5px 2px;border-radius:10px;
+  color:var(--dim);font-size:10px;font-weight:650;line-height:1.15;
+  position:relative;text-align:center;
+  transition:color .2s ease,background .2s ease;
+ }
+ .mobile-bottom-link svg{width:20px;height:20px;flex:none}
+ .mobile-bottom-link span{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .mobile-bottom-link.active{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent)}
+ .mobile-bottom-link.active::before{
+  content:'';position:absolute;top:-6px;width:22px;height:2px;border-radius:5px;
+  background:var(--accent);box-shadow:0 0 10px color-mix(in srgb,var(--accent) 60%,transparent)
+ }
+ .mobile-bottom-link:focus-visible,.mobile-more-link:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+ .mobile-more-panel{
+  position:fixed;left:12px;right:12px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:79;
+  display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  padding:12px;max-height:min(62dvh,460px);overflow-y:auto;overscroll-behavior:contain;
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  box-shadow:0 -12px 50px #0008;
+ }
+ .mobile-more-panel.is-open{display:grid;animation:yokira-menu-sobe .2s ease-out both}
+ .mobile-more-link{
+  min-width:0;display:flex;align-items:center;gap:10px;padding:14px 12px;
+  color:var(--text);text-align:left;font-size:13px;border-radius:10px;background:var(--card)
+ }
+ .mobile-more-link svg{flex:none;color:var(--accent)}
+ .mobile-more-link.active{color:var(--accent);outline:1px solid var(--accent)}
+ @keyframes yokira-menu-sobe{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+ body{padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+ .toast{bottom:calc(87px + env(safe-area-inset-bottom,0px))}
+ /* Nenhum item do grid deve determinar a largura da página. */
+ .main-container,.home-columns,.home-intro,.trending-section,.catalog-page,.sc-secoes{
+  min-width:0;max-width:100%;
+ }
+ .main-container{width:auto}
+ .anime-grid,.anime-grid.catalog-grid,.trending-section .anime-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:19px 12px;width:100%;min-width:0
+ }
+ .anime-card{min-width:0;max-width:100%;width:100%;overflow:hidden}
+ .anime-card .poster-wrap{width:100%;min-width:0;aspect-ratio:2/2.8}
+ .anime-card>strong,.card-meta{max-width:100%;overflow-wrap:anywhere}
+ .anime-card>strong{font-size:clamp(11px,3.3vw,14px)}
+ .card-meta{font-size:clamp(9px,2.7vw,11px)}
+ .filter-bar,.filter-selects,.game-tiles,.editorial-grid,.home-columns,.home-sidebar{
+  min-width:0;max-width:100%
+ }
+ .game-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .game-tile,.editorial-card,.sc-editorial-card,.sc-game-card,.sc-agenda-item{min-width:0;max-width:100%}
+ .sc-secoes .sc-editorial-grid,.sc-secoes .sc-games-grid,.sc-secoes .sc-agenda-items{min-width:0;max-width:100%}
+ .sc-secoes .sc-collection,.sc-secoes .sc-tier-pool{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc-secoes .sc-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sc-secoes .sc-stat-grid>div{min-width:0}
+}
+@media(max-width:480px){
+ .main-container,.subbar-inner,.footer-inner,.footer-bottom{margin-left:14px;margin-right:14px}
+ .anime-grid,.anime-grid.catalog-grid,.trending-section .anime-grid{gap:18px 10px}
+ .game-tiles{grid-template-columns:1fr 1fr;gap:9px}
+ .mobile-bottom-link{font-size:9px}
+}
+@media(max-width:355px){
+ .anime-grid,.anime-grid.catalog-grid,.trending-section .anime-grid{gap:12px 8px}
+ .card-meta i:nth-of-type(2){display:none}
+ .mobile-bottom-link svg{width:18px;height:18px}
+}
+@media(prefers-reduced-motion:reduce){
+ .mobile-more-panel.is-open{animation:none}
+ .mobile-bottom-link{transition:none}
+}
+
+
+/* Indicadores verdes vivos: luz suave, pulsação lenta e acessibilidade. */
+.live-dot{
+ position:relative;width:7px;height:7px;isolation:isolate;
+ background:#60e6b4;box-shadow:0 0 4px #60e6b4,0 0 13px #38d9a077;
+ animation:yokira-ponto-luz 2.7s ease-in-out infinite;
+}
+.live-dot::after{
+ content:'';position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
+ border:1px solid #52dda466;background:radial-gradient(circle,#52dda42e 0%,transparent 75%);
+ animation:yokira-onda-luz 2.7s ease-out infinite;
+}
+.air-badge::before{
+ background:#60e6b4;
+ box-shadow:0 0 6px #60e6b4,0 0 12px #38d9a077;
+ animation:yokira-ponto-luz 2.7s ease-in-out infinite;
+}
+@keyframes yokira-ponto-luz{
+ 0%,100%{opacity:.82;box-shadow:0 0 4px #60e6b4,0 0 8px #38d9a050}
+ 50%{opacity:1;box-shadow:0 0 8px #75ffd0,0 0 18px #38d9a0aa}
+}
+@keyframes yokira-onda-luz{
+ 0%{opacity:.14;transform:scale(.7)}
+ 50%{opacity:.95;transform:scale(1.22)}
+ 100%{opacity:.14;transform:scale(.7)}
+}
+@media(prefers-reduced-motion:reduce){
+ .live-dot,.live-dot::after,.air-badge::before{animation:none}
+}

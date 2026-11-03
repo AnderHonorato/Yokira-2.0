@@ -47,3 +47,38 @@ jobs:
 
       - name: Construir versão de produção Cloudflare
         run: pnpm run build
+
+  mobile:
+    name: Interface Sites em Chromium (390px e 1440px)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar Playwright do repositório e dependências Sites
+        run: |
+          npm ci
+          npm install --global pnpm@11.25.0
+          cd versao-sites
+          pnpm install --frozen-lockfile
+
+      - name: Instalar Chromium de teste
+        run: npx playwright install --with-deps chromium
+
+      - name: Verificar navegação inferior, encaixe dos cards e indicadores
+        run: npx playwright test --config=playwright.sites.config.ts
+
+      - name: Salvar relatório em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-mobile-sites
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

@@ -109,6 +109,19 @@
   background: var(--cor-marca-forte);
 }
 
+/* No celular já existe barra inferior: evitar dois menus e duas linhas de header. */
+@media (max-width: 1023px) {
+  .cabecalho-faixa {
+    grid-template-areas: 'logo acoes';
+  }
+  .cabecalho-navegacao {
+    display: none;
+  }
+  .cabecalho {
+    padding-bottom: var(--espaco-3);
+  }
+}
+
 @media (min-width: 1024px) {
   .cabecalho {
     padding: var(--espaco-3) var(--espaco-8);

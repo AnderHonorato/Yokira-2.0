@@ -71,6 +71,20 @@
   }
 }
 
+/* Duas capas inteiras por passada: nenhum terceiro card parcialmente cortado. */
+@media (max-width: 767px) {
+  .cartao {
+    width: calc((100% - var(--espaco-3)) / 2);
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cartao {
+    width: calc((100% - 2 * var(--espaco-3)) / 3);
+  }
+}
+
 @media (min-width: 1280px) {
   .cartao {
     width: 316px;

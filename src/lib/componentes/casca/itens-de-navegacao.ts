@@ -20,7 +20,7 @@ export const ITENS_DA_BARRA_INFERIOR = [
   { href: '/catalogo', rotulo: 'Catálogo', icone: 'grade-catalogo' },
   { href: '/novidades', rotulo: 'Novidades', icone: 'novidades-brilho' },
   { href: '/minha-lista', rotulo: 'Minha Lista', icone: 'marcador-lista' },
-  { href: '/configuracoes', rotulo: 'Configurações', icone: 'engrenagem' }
+  { href: '/generos', rotulo: 'Gêneros', icone: 'generos' }
 ] as const;
 
 /** A home so acende em "/" exato; as outras acendem tambem nas subrotas. */
