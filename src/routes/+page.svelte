@@ -3,8 +3,17 @@
 <script lang="ts">
   import BannerDestaque from '$componentes/home/banner-destaque.svelte';
   import TrilhaConteudo from '$componentes/home/trilha-conteudo.svelte';
+  import { onMount } from 'svelte';
+  import { gravar } from '$cliente/cache-sessao';
+  import { CHAVE_DO_CATALOGO } from '$cliente/precarregamento';
 
   export let data;
+
+  // Na primeira visita o `load` executa no servidor; a hidratação também precisa
+  // persistir o catálogo público para que a próxima navegação use o cache.
+  onMount(() => {
+    void gravar(CHAVE_DO_CATALOGO, data.catalogo).catch(() => {});
+  });
 
   // O `load` devolve o cache na hora; a revalidacao chega depois e troca o objeto
   // so quando o conteudo mudou de verdade. A geracao evita que uma resposta atrasada
