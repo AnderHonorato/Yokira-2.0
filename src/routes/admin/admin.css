@@ -94,3 +94,60 @@
   color: var(--cor-erro-texto);
   font-size: var(--texto-12);
 }
+
+/* Fila HLS: ações acessíveis sem deslocar os dados em telas estreitas. */
+.admin-fila-item {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.admin-fila-dados {
+  display: flex;
+  flex: 1 1 220px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  min-width: 0;
+}
+
+.admin-fila-dados .admin-fila-erro {
+  flex-basis: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-fila-acao {
+  margin-left: auto;
+}
+
+.admin-fila-retentar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alvo-toque);
+  padding: 0 var(--espaco-4);
+  border: 1px solid var(--cor-marca);
+  border-radius: var(--raio-botao);
+  background: var(--cor-marca-suave);
+  color: var(--cor-texto);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--transicao-rapida),
+    border-color var(--transicao-rapida);
+}
+
+.admin-fila-retentar:hover {
+  background: var(--cor-superficie-hover);
+}
+
+.admin-fila-retentar:focus-visible {
+  outline: 2px solid var(--cor-marca-clara);
+  outline-offset: 3px;
+}
+
+.admin-fila-retorno {
+  margin-bottom: var(--espaco-3);
+  color: var(--cor-texto-secundario);
+  font-size: var(--texto-13);
+}

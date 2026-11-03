@@ -2,6 +2,8 @@
 <!-- Painel administrativo: numeros, estado do ffmpeg e fila de processamento. -->
 <script lang="ts">
   import './admin.css';
+  import { onMount } from 'svelte';
+  import { invalidateAll } from '$app/navigation';
   import './tabela-admin.css';
   import './admin-formularios.css';
   import './admin-tabela.css';
@@ -11,6 +13,15 @@
   import BotaoPill from '$componentes/comum/botao-pill.svelte';
 
   export let data;
+  export let form;
+
+  // Atualiza os trabalhos sem trocar de página nem mostrar loading global.
+  onMount(() => {
+    const intervalo = window.setInterval(() => {
+      if (document.visibilityState === 'visible') void invalidateAll();
+    }, 15_000);
+    return () => window.clearInterval(intervalo);
+  });
 
   const SITUACAO_EM_TEXTO: Record<string, string> = {
     NA_FILA: 'Na fila',
@@ -74,17 +85,32 @@
 
 <section class="admin-secao">
   <h2 class="admin-secao-titulo">Fila de processamento</h2>
+  <p class="admin-secao-texto">
+    Os trabalhos são atualizados automaticamente. Uma conversão com falha pode ser reenviada à fila
+    sem enviar o arquivo novamente.
+  </p>
+  {#if form?.mensagem}
+    <p class="admin-fila-retorno" role="status">{form.mensagem}</p>
+  {/if}
   {#if data.trabalhos.length === 0}
     <p class="admin-secao-texto">Nenhum trabalho registrado ainda.</p>
   {:else}
     <ul class="admin-fila">
       {#each data.trabalhos as trabalho (trabalho.id)}
         <li class="admin-fila-item">
-          <Chip variante={trabalho.situacao === 'FALHOU' ? 'neutro' : 'roxo'}>
-            {SITUACAO_EM_TEXTO[trabalho.situacao] ?? trabalho.situacao}
-          </Chip>
-          <span>{trabalho.progresso}%</span>
-          {#if trabalho.mensagem}<span class="admin-fila-erro">{trabalho.mensagem}</span>{/if}
+          <div class="admin-fila-dados">
+            <Chip variante={trabalho.situacao === 'FALHOU' ? 'neutro' : 'roxo'}>
+              {SITUACAO_EM_TEXTO[trabalho.situacao] ?? trabalho.situacao}
+            </Chip>
+            <span aria-label={`Progresso: ${trabalho.progresso}%`}>{trabalho.progresso}%</span>
+            {#if trabalho.mensagem}<span class="admin-fila-erro">{trabalho.mensagem}</span>{/if}
+          </div>
+          {#if trabalho.situacao === 'FALHOU'}
+            <form method="POST" action="?/retentar" class="admin-fila-acao">
+              <input type="hidden" name="trabalhoId" value={trabalho.id} />
+              <button type="submit" class="admin-fila-retentar">Tentar novamente</button>
+            </form>
+          {/if}
         </li>
       {/each}
     </ul>

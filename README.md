@@ -382,6 +382,13 @@ Primeiro envio:
    `npm run video:trabalhador` em execução, acompanhe o processamento em `/admin`.
 5. Terminada a conversão, abra o episódio em `/assistir/<id>`.
 
+O painel atualiza os trabalhos automaticamente a cada 15 segundos enquanto a aba
+está visível. Quando um trabalho termina em `FALHOU`, um editor pode clicar em
+**Tentar novamente**. A action verifica a permissão e o estado no servidor,
+reagenda o mesmo trabalho e registra a operação na auditoria. Se o arquivo
+original foi perdido, a nova tentativa também falhará: é preciso restaurar
+o volume antes de repetir.
+
 Use apenas arquivos que você tem direito de distribuir.
 
 ## Testes e verificação
