@@ -38,4 +38,10 @@ test('painel envia um arquivo em fluxo e mostra feedback', async ({ page }) => {
 
   // O player não recebe vídeo falso; o transcodificador registrará falha.
   await expect(page.getByRole('button', { name: 'Enviar' })).toBeEnabled();
+
+  const acompanhar = page.getByRole('link', { name: 'Acompanhar conversão no painel' });
+  await expect(acompanhar).toBeVisible();
+  await acompanhar.click();
+  await expect(page).toHaveURL('/admin');
+  await expect(page.getByRole('heading', { name: 'Painel administrativo' })).toBeVisible();
 });
