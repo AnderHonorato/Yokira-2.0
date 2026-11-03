@@ -34,6 +34,24 @@ async function limitar(db: Db, usuarioId: string, janela: string, max: number) {
         throw new ErroApi('Limite de atividades atingido. Tente novamente mais tarde.', 429);
     return max - linha.quantidade;
 }
+/**
+ * Leitura pública: não consulta lista, progresso, jogos ou outras informações
+ * particulares. O identificador vazio impede marcar votos de outra pessoa.
+ */
+export async function estadoPublico() {
+    const db = getDb();
+    const [membros, posts, totalMembros, totalAtividades] = await Promise.all([
+        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
+        publicacoes(db, ''),
+        db.select({ total: sql<number> `count(*)` }).from(s.usuarios),
+        db.select({ total: sql<number> `(select count(*) from publicacoes)+(select count(*) from respostas)+(select count(*) from jogos)` }).from(s.usuarios).limit(1)
+    ]);
+    return {
+        estatisticas: { membros: totalMembros[0]?.total || 0, atividades: totalAtividades[0]?.total || 0 },
+        membros: membros.map(m => ({ ...m, nivel: Math.floor(m.xp / 100) + 1 })),
+        publicacoes: posts
+    };
+}
 export async function estado(db: Db, usuario: Usuario) {
     const [membros, posts, minhaLista, progresso, jogos, totalMembros, totalAtividades] = await Promise.all([
         db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
