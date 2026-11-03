@@ -58,7 +58,7 @@ export const actions: Actions = {
       );
 
       // Sem await: transcodificar 3 variantes leva minutos e a resposta nao pode esperar.
-      void processarArquivo(registro.id);
+      await processarArquivo(registro.id);
 
       return {
         mensagem: temArquivo
