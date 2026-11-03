@@ -4,7 +4,7 @@
 
 import { fail } from '@sveltejs/kit';
 import { banco } from '$servidor/banco/cliente';
-import { gravarBytes, gravarUpload } from '$servidor/armazenamento/gravar-upload';
+import { gravarFluxo, gravarUpload } from '$servidor/armazenamento/gravar-upload';
 import { baixarVideo, ErroDeDownload } from '$servidor/armazenamento/baixar-de-url';
 import { processarArquivo } from '$servidor/processamento/transcodificar';
 import { registrarAcaoAdministrativa } from '$servidor/autenticacao/confirmacao';
@@ -47,7 +47,7 @@ export const actions: Actions = {
         ? await gravarUpload(episodioId, arquivo)
         : await (async () => {
             const baixado = await baixarVideo(link);
-            return gravarBytes(episodioId, baixado.bytes, baixado.nome);
+            return gravarFluxo(episodioId, baixado.fluxo, baixado.nome);
           })();
 
       await registrarAcaoAdministrativa(
