@@ -49,7 +49,7 @@
 
 .grade-titulos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--espaco-4) var(--espaco-3);
 }
 
