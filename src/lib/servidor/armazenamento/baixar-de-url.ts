@@ -39,9 +39,7 @@ function validarUrl(bruto: string): URL {
 export function escolherEnderecoPublico(enderecos: EnderecoResolvido[]): EnderecoResolvido {
   if (
     enderecos.length === 0 ||
-    enderecos.some(
-      ({ address, family }) => isIP(address) !== family || enderecoPrivado(address)
-    )
+    enderecos.some(({ address, family }) => isIP(address) !== family || enderecoPrivado(address))
   ) {
     throw new ErroDeDownload('Esse link aponta para um endereço de rede interna ou inválido.');
   }
@@ -107,8 +105,7 @@ async function seguir(
   sinal: AbortSignal,
   saltos = 0
 ): Promise<{ resposta: IncomingMessage; url: URL }> {
-  if (saltos > MAXIMO_DE_SALTOS)
-    throw new ErroDeDownload('O link redireciona demais.');
+  if (saltos > MAXIMO_DE_SALTOS) throw new ErroDeDownload('O link redireciona demais.');
 
   const { url, endereco } = await resolverDestino(bruto);
   let resposta: IncomingMessage;

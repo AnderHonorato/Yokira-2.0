@@ -111,9 +111,9 @@ describe('conexão segura com destino fixado', () => {
       ])
     ).toThrow('rede interna');
     expect(() => escolherEnderecoPublico([])).toThrow('rede interna');
-    expect(() =>
-      escolherEnderecoPublico([{ address: '::ffff:7f00:1', family: 6 }])
-    ).toThrow('rede interna');
+    expect(() => escolherEnderecoPublico([{ address: '::ffff:7f00:1', family: 6 }])).toThrow(
+      'rede interna'
+    );
   });
 
   it('fixa IP público sem perder Host, caminho e SNI originais', () => {
