@@ -12,7 +12,7 @@ import {
 } from './banco/plano-do-lote.js';
 import { validarDataDeEstreia, validarNumeroDeEpisodio } from '../validacoes/administracao.js';
 import { baixarVideo } from './armazenamento/baixar-de-url.js';
-import { gravarBytes, gravarUpload } from './armazenamento/gravar-upload.js';
+import { gravarFluxo, gravarUpload } from './armazenamento/gravar-upload.js';
 import { processarArquivo } from './processamento/transcodificar.js';
 
 export interface ResultadoDoLote {
@@ -38,7 +38,7 @@ async function anexarVideo(
     if (!item.link) return null;
 
     const baixado = await baixarVideo(item.link);
-    const registro = await gravarBytes(episodioId, baixado.bytes, baixado.nome);
+    const registro = await gravarFluxo(episodioId, baixado.fluxo, baixado.nome);
     // Sem await: transcodificar tres variantes leva minutos por episodio, e o lote
     // inteiro seguraria a resposta ate o ultimo terminar.
     void processarArquivo(registro.id);
