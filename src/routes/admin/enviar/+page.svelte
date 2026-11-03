@@ -6,6 +6,7 @@
   import './upload-direto.css';
   import BotaoPill from '$componentes/comum/botao-pill.svelte';
   import Upload from '$visual/icones/upload.svelte';
+  import SetaDireita from '$visual/icones/seta-direita.svelte';
 
   export let data;
   export let form;
@@ -14,12 +15,14 @@
   let enviando = false;
   let progresso = 0;
   let mensagem = '';
+  let envioConcluido = false;
   let requisicao: XMLHttpRequest | null = null;
 
   function enviarArquivo(evento: SubmitEvent): void {
     if (origem !== 'arquivo') return;
     evento.preventDefault();
     if (enviando) return;
+    envioConcluido = false;
 
     const formulario = evento.currentTarget as HTMLFormElement;
     const dados = new FormData(formulario);
@@ -60,7 +63,8 @@
       }
       if (pedido.status >= 200 && pedido.status < 300) {
         progresso = 100;
-        mensagem = resposta.mensagem ?? 'Recebido. O processamento HLS começou.';
+        envioConcluido = true;
+        mensagem = resposta.mensagem ?? 'Vídeo recebido. Aguardando conversão HLS.';
         formulario.reset();
       } else {
         mensagem =
@@ -155,6 +159,12 @@
     <p class="admin-envio-mensagem" role="status" aria-live="polite">
       {mensagem || form?.mensagem}
     </p>
+  {/if}
+  {#if envioConcluido || form?.enfileirado}
+    <a class="admin-envio-acompanhar" href="/admin">
+      Acompanhar conversão no painel
+      <SetaDireita tamanho={16} />
+    </a>
   {/if}
 
   <BotaoPill variante="marca" tipo="submit" desabilitado={enviando}>
