@@ -6,6 +6,8 @@
 // Funcao pura de proposito: e a peca que precisa estar certa, e testar faixa de IP
 // contra um servidor de verdade seria lento e incompleto.
 
+import { isIP } from 'node:net';
+
 /** Faixas IPv4 que nunca sao de internet publica, em [primeiro octeto, mascara]. */
 const FAIXAS_IPV4: Array<[string, number]> = [
   ['0.0.0.0', 8], // "este host"
@@ -16,6 +18,7 @@ const FAIXAS_IPV4: Array<[string, number]> = [
   ['172.16.0.0', 12], // privada
   ['192.0.0.0', 24], // protocolos
   ['192.0.2.0', 24], // TEST-NET-1
+  ['192.88.99.0', 24], // antigo relé IPv6
   ['192.168.0.0', 16], // privada
   ['198.18.0.0', 15], // benchmark
   ['198.51.100.0', 24], // TEST-NET-2
@@ -58,17 +61,20 @@ export function ipv6Privado(endereco: string): boolean {
     .replace(/^\[|\]$/g, '')
     .split('%')[0];
 
-  if (limpo === '::1' || limpo === '::') return true;
+  if (isIP(limpo) !== 6) return true;
 
-  // IPv4 embutido (::ffff:127.0.0.1) e o disfarce mais comum: vale a regra do IPv4.
-  const embutido = limpo.match(/(\d{1,3}(?:\.\d{1,3}){3})$/);
-  if (embutido) return ipv4Privado(embutido[1]);
+  // Aceitamos apenas unicast global (2000::/3). Isso também barra ::ffff,
+  // inclusive os endereços IPv4 embutidos em hexadecimal, e endereços locais.
+  const [primeiro, segundo = ''] = limpo.split(':');
+  const grupo = Number.parseInt(primeiro, 16);
+  if (!Number.isFinite(grupo) || grupo < 0x2000 || grupo > 0x3fff) return true;
 
-  const primeiro = limpo.split(':')[0];
-  if (primeiro.startsWith('fe8') || primeiro.startsWith('fe9')) return true; // link-local
-  if (primeiro.startsWith('fea') || primeiro.startsWith('feb')) return true;
-  if (primeiro.startsWith('fc') || primeiro.startsWith('fd')) return true; // unique local
-  if (primeiro.startsWith('ff')) return true; // multicast
+  // 6to4, Teredo e documentação não devem apontar um download de produção.
+  if (grupo === 0x2002) return true;
+  if (grupo === 0x2001) {
+    const subgrupo = segundo ? Number.parseInt(segundo, 16) : 0;
+    if (subgrupo === 0 || subgrupo === 0xdb8) return true;
+  }
 
   return false;
 }
