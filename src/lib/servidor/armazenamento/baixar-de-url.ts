@@ -47,7 +47,10 @@ async function seguir(bruto: string, saltos = 0): Promise<Response> {
   if (saltos > MAXIMO_DE_SALTOS) throw new ErroDeDownload('O link redireciona demais.');
 
   const url = await conferirEndereco(bruto);
-  const resposta = await fetch(url, { redirect: 'manual' });
+  const resposta = await fetch(url, {
+    redirect: 'manual',
+    signal: AbortSignal.timeout(15 * 60 * 1000)
+  });
 
   if (resposta.status >= 300 && resposta.status < 400) {
     const destino = resposta.headers.get('location');
@@ -60,7 +63,7 @@ async function seguir(bruto: string, saltos = 0): Promise<Response> {
 }
 
 export interface VideoBaixado {
-  bytes: Buffer;
+  fluxo: ReadableStream<Uint8Array>;
   nome: string;
 }
 
@@ -73,16 +76,15 @@ export async function baixarVideo(bruto: string): Promise<VideoBaixado> {
     throw new ErroDeDownload('O arquivo do link está acima do limite.');
   }
 
-  const bytes = Buffer.from(await resposta.arrayBuffer());
-  if (bytes.length === 0) throw new ErroDeDownload('O link não devolveu nenhum conteúdo.');
-  if (bytes.length > TAMANHO_MAXIMO_BYTES) {
-    throw new ErroDeDownload('O arquivo do link está acima do limite.');
-  }
+  // O corpo passa direto ao gravador, que conta cada bloco e aborta ao atingir
+  // o limite. arrayBuffer() aqui permitiria alocar ate 8 GB por requisicao.
+  const fluxo = resposta.body;
+  if (!fluxo) throw new ErroDeDownload('O link não devolveu nenhum conteúdo.');
 
   const nome = nomeDoLink(new URL(resposta.url || bruto));
   if (!extensaoAceita(nome)) {
     throw new ErroDeDownload('O link não termina em mp4, mkv, mov ou webm.');
   }
 
-  return { bytes, nome };
+  return { fluxo, nome };
 }
