@@ -113,7 +113,13 @@
   {#if origem === 'arquivo'}
     <label class="conta-campo">
       <span>Arquivo de vídeo</span>
-      <input type="file" name="arquivo" accept=".mp4,.mkv,.mov,.webm,video/*" required disabled={enviando} />
+      <input
+        type="file"
+        name="arquivo"
+        accept=".mp4,.mkv,.mov,.webm,video/*"
+        required
+        disabled={enviando}
+      />
     </label>
     <small class="admin-dica">
       O vídeo é enviado em fluxo, sem carregar o arquivo inteiro na memória do servidor.
@@ -137,7 +143,8 @@
   {#if enviando}
     <div class="admin-envio-estado">
       <label for="progresso-video">Transferência: {progresso}%</label>
-      <progress id="progresso-video" class="admin-envio-progresso" value={progresso} max="100"></progress>
+      <progress id="progresso-video" class="admin-envio-progresso" value={progresso} max="100"
+      ></progress>
       <BotaoPill variante="neutro" tipo="button" on:click={() => requisicao?.abort()}>
         Cancelar envio
       </BotaoPill>
@@ -151,6 +158,7 @@
   {/if}
 
   <BotaoPill variante="marca" tipo="submit" desabilitado={enviando}>
-    <Upload tamanho={16} /> {enviando ? 'Enviando…' : 'Enviar'}
+    <Upload tamanho={16} />
+    {enviando ? 'Enviando…' : 'Enviar'}
   </BotaoPill>
 </form>

@@ -13,8 +13,11 @@ describe('limite de requisição', () => {
 
   it('rejeita corpo grande ou sem tamanho em endpoints comuns', () => {
     expect(
-      conferirLimiteDeRequisicao('POST', '/api/social', new Headers({ 'content-length': '9000000' }))
-        ?.codigo
+      conferirLimiteDeRequisicao(
+        'POST',
+        '/api/social',
+        new Headers({ 'content-length': '9000000' })
+      )?.codigo
     ).toBe(413);
     expect(conferirLimiteDeRequisicao('POST', '/entrar', new Headers())?.codigo).toBe(411);
   });

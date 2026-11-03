@@ -24,11 +24,12 @@ describe('validação de upload direto', () => {
   });
 
   it('rejeita envio de outra origem, inclusive sem Origin', () => {
-    expect(() => validarUploadDireto(cabecalhos({ origin: 'https://malicioso.exemplo' }), ORIGEM))
-      .toThrow('Origem não autorizada.');
     expect(() =>
-      validarUploadDireto(cabecalhos({ origin: '' }), ORIGEM)
+      validarUploadDireto(cabecalhos({ origin: 'https://malicioso.exemplo' }), ORIGEM)
     ).toThrow('Origem não autorizada.');
+    expect(() => validarUploadDireto(cabecalhos({ origin: '' }), ORIGEM)).toThrow(
+      'Origem não autorizada.'
+    );
   });
 
   it('barra tipo errado, extensão proibida e nome malformado', () => {
@@ -46,9 +47,9 @@ describe('validação de upload direto', () => {
     expect(() =>
       validarUploadDireto(cabecalhos({ 'content-length': String(LIMITE_VIDEO_BYTES + 1) }), ORIGEM)
     ).toThrow('limite');
-    expect(() =>
-      validarUploadDireto(cabecalhos({ 'content-length': 'infinito' }), ORIGEM)
-    ).toThrow('limite');
+    expect(() => validarUploadDireto(cabecalhos({ 'content-length': 'infinito' }), ORIGEM)).toThrow(
+      'limite'
+    );
   });
 
   it('retorna erros HTTP sem expor dados internos', () => {

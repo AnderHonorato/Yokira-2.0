@@ -6,7 +6,10 @@ export const LIMITE_VIDEO_BYTES = 8 * 1024 * 1024 * 1024;
 const EXTENSOES = new Set(['.mp4', '.mkv', '.mov', '.webm']);
 
 export class ErroDeUpload extends Error {
-  constructor(mensagem: string, public status = 400) {
+  constructor(
+    mensagem: string,
+    public status = 400
+  ) {
     super(mensagem);
   }
 }
@@ -42,7 +45,9 @@ export function validarUploadDireto(headers: Headers, origem: string): string {
 
   if (
     nome.length > 255 ||
-    [...nome].some((caractere) => caractere.charCodeAt(0) < 32 || caractere.charCodeAt(0) === 127) ||
+    [...nome].some(
+      (caractere) => caractere.charCodeAt(0) < 32 || caractere.charCodeAt(0) === 127
+    ) ||
     !EXTENSOES.has(extname(nome).toLowerCase())
   ) {
     throw new ErroDeUpload('Formato de vídeo não aceito.');
