@@ -43,11 +43,31 @@ try {
   await executar(
     process.env.CAMINHO_FFMPEG ?? 'ffmpeg',
     [
-      '-nostdin', '-hide_banner', '-loglevel', 'error', '-y',
-      '-f', 'lavfi', '-i', 'testsrc2=size=320x180:rate=12:duration=2.5',
-      '-f', 'lavfi', '-i', 'sine=frequency=440:duration=2.5',
-      '-shortest', '-c:v', 'libx264', '-preset', 'ultrafast',
-      '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '64k', caminho
+      '-nostdin',
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      '-f',
+      'lavfi',
+      '-i',
+      'testsrc2=size=320x180:rate=12:duration=2.5',
+      '-f',
+      'lavfi',
+      '-i',
+      'sine=frequency=440:duration=2.5',
+      '-shortest',
+      '-c:v',
+      'libx264',
+      '-preset',
+      'ultrafast',
+      '-pix_fmt',
+      'yuv420p',
+      '-c:a',
+      'aac',
+      '-b:a',
+      '64k',
+      caminho
     ],
     { timeout: 30_000 }
   );
@@ -122,7 +142,9 @@ try {
       throw new Error(`Playlist ${altura}p não é VOD completo.`);
     }
     const arquivos = await readdir(pasta);
-    const segmento = arquivos.find((nome) => nome.startsWith(`${altura}p_`) && nome.endsWith('.ts'));
+    const segmento = arquivos.find(
+      (nome) => nome.startsWith(`${altura}p_`) && nome.endsWith('.ts')
+    );
     if (!segmento) throw new Error(`Segmentos ausentes em ${altura}p.`);
     if ((await stat(join(pasta, segmento))).size < 128)
       throw new Error(`Segmento ${altura}p inválido.`);
