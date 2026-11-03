@@ -32,7 +32,7 @@ export async function gravarBytes(episodioId: string, bytes: Buffer, nome: strin
   await writeFile(caminho, bytes);
 
   return banco.arquivoMidia.create({
-    data: { episodioId, caminho, tamanhoBytes: bytes.length }
+    data: { episodioId, caminho, tamanhoBytes: BigInt(bytes.length) }
   });
 }
 
@@ -54,7 +54,7 @@ export async function gravarFluxo(
 
   try {
     return await banco.arquivoMidia.create({
-      data: { episodioId, caminho, tamanhoBytes }
+      data: { episodioId, caminho, tamanhoBytes: BigInt(tamanhoBytes) }
     });
   } catch (erro) {
     await unlink(caminho).catch(() => {});

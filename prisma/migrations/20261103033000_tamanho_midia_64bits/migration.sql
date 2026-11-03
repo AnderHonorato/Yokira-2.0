@@ -1,0 +1,3 @@
+-- Mudança sem DDL: SQLite armazena Int e BigInt como INTEGER assinado de 64 bits.
+-- O Prisma Client passa a representar tamanhoBytes como bigint. Não recria tabelas,
+-- não remove registros e preserva todas as relações de mídia já existentes.

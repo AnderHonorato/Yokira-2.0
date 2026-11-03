@@ -233,7 +233,7 @@ model ArquivoMidia {
   id            String      @id @default(cuid())
   episodioId    String
   caminho       String
-  tamanhoBytes  Int
+  tamanhoBytes  BigInt
   provedor      String      @default("local")
   chaveExterna  String?
   origem        OrigemMidia @default(ARQUIVO)
