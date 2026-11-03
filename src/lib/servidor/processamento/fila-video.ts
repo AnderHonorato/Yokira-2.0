@@ -52,7 +52,8 @@ export async function executarTrabalho(trabalhoId: string): Promise<boolean> {
     if (!trabalho) throw new Error('O trabalho de vídeo não foi encontrado.');
     await converterArquivo(trabalho.arquivoId, trabalhoId);
   } catch (falha) {
-    const mensagem = falha instanceof Error ? falha.message.slice(0, 500) : 'Falha no processamento.';
+    const mensagem =
+      falha instanceof Error ? falha.message.slice(0, 500) : 'Falha no processamento.';
     await banco.trabalhoProcessamento.updateMany({
       where: { id: trabalhoId, situacao: 'PROCESSANDO' },
       data: { situacao: 'FALHOU', mensagem }

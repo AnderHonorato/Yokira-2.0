@@ -40,9 +40,7 @@ describe('publicar pasta HLS', () => {
           throw new Error('Transação indisponível');
         })
       ).rejects.toThrow('Transação indisponível');
-      expect(await readFile(join(pastas.destino, 'mestre.m3u8'), 'utf8')).toBe(
-        'VERSAO-ANTIGA'
-      );
+      expect(await readFile(join(pastas.destino, 'mestre.m3u8'), 'utf8')).toBe('VERSAO-ANTIGA');
     } finally {
       await rm(pastas.raiz, { recursive: true, force: true });
     }
