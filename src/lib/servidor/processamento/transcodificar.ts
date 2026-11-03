@@ -2,11 +2,12 @@
 // A fila no banco decide QUEM executa; este modulo so gera e publica as variantes.
 
 import { spawn } from 'node:child_process';
-import { mkdir, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { banco } from '../banco/cliente.js';
 import { pastaDeHls } from '../midia/caminhos.js';
 import { PERFIS, argumentosDaVariante, playlistMestre } from './perfis-hls.js';
+import { publicarPastaHls } from './publicar-hls.js';
 
 const BINARIO = process.env.CAMINHO_FFMPEG ?? 'ffmpeg';
 const LIMITE_FFMPEG_MS = 2 * 60 * 60 * 1000;
@@ -72,25 +73,25 @@ export async function converterArquivo(arquivoId: string, trabalhoId: string): P
 
     await writeFile(join(temporario, 'mestre.m3u8'), playlistMestre(PERFIS), 'utf8');
 
-    // Na reexecucao, substitui as variantes completas, nunca uma playlist parcial.
-    await rm(destino, { recursive: true, force: true });
-    await rename(temporario, destino);
-
-    await banco.$transaction([
-      banco.varianteHls.deleteMany({ where: { arquivoId } }),
-      banco.varianteHls.createMany({
-        data: PERFIS.map((perfil) => ({
-          arquivoId,
-          altura: perfil.altura,
-          taxaBits: perfil.taxaBits,
-          playlist: `${perfil.altura}p.m3u8`
-        }))
-      }),
-      banco.trabalhoProcessamento.update({
-        where: { id: trabalhoId },
-        data: { situacao: 'CONCLUIDO', progresso: 100, mensagem: null }
-      })
-    ]);
+    // Confirma metadados apenas quando todas as variantes estão prontas.
+    // Se a transação falhar, a versão publicada anteriormente é restaurada.
+    await publicarPastaHls(temporario, destino, async () => {
+      await banco.$transaction([
+        banco.varianteHls.deleteMany({ where: { arquivoId } }),
+        banco.varianteHls.createMany({
+          data: PERFIS.map((perfil) => ({
+            arquivoId,
+            altura: perfil.altura,
+            taxaBits: perfil.taxaBits,
+            playlist: `${perfil.altura}p.m3u8`
+          }))
+        }),
+        banco.trabalhoProcessamento.update({
+          where: { id: trabalhoId },
+          data: { situacao: 'CONCLUIDO', progresso: 100, mensagem: null }
+        })
+      ]);
+    });
   } catch (erro) {
     await rm(temporario, { recursive: true, force: true }).catch(() => {});
     throw erro;
