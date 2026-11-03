@@ -5,10 +5,11 @@
 // A gravacao trabalha com bytes, nao com File: assim o mesmo caminho serve pro upload
 // do formulario e pro video que veio de um link, sem duplicar limite nem validacao.
 
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { banco } from '../banco/cliente.js';
+import { gravarFluxoLimitado } from './fluxo-de-arquivo.js';
 
 const EXTENSOES_ACEITAS = new Set(['.mp4', '.mkv', '.mov', '.webm']);
 export const TAMANHO_MAXIMO_BYTES = 8 * 1024 * 1024 * 1024;
@@ -35,7 +36,33 @@ export async function gravarBytes(episodioId: string, bytes: Buffer, nome: strin
   });
 }
 
+/**
+ * Transfere upload ou download diretamente para um arquivo privado, sem criar
+ * buffers de varios gigabytes na memoria. So registra no banco apos concluir.
+ */
+export async function gravarFluxo(
+  episodioId: string,
+  fluxo: ReadableStream<Uint8Array>,
+  nome: string
+) {
+  if (!extensaoAceita(nome)) throw new Error('Formato de vídeo não aceito.');
+
+  const pasta = process.env.PASTA_UPLOADS ?? './midia/originais';
+  await mkdir(pasta, { recursive: true });
+  const caminho = join(pasta, `${randomUUID()}${extname(nome).toLowerCase()}`);
+  const tamanhoBytes = await gravarFluxoLimitado(caminho, fluxo, TAMANHO_MAXIMO_BYTES);
+
+  try {
+    return await banco.arquivoMidia.create({
+      data: { episodioId, caminho, tamanhoBytes }
+    });
+  } catch (erro) {
+    await unlink(caminho).catch(() => {});
+    throw erro;
+  }
+}
+
 export async function gravarUpload(episodioId: string, arquivo: File) {
   if (arquivo.size > TAMANHO_MAXIMO_BYTES) throw new Error('Arquivo acima do limite.');
-  return gravarBytes(episodioId, Buffer.from(await arquivo.arrayBuffer()), arquivo.name);
+  return gravarFluxo(episodioId, arquivo.stream(), arquivo.name);
 }
