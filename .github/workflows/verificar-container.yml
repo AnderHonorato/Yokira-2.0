@@ -78,6 +78,8 @@ jobs:
                 sqlite3 -readonly "$(find /data/backups -name "*.sqlite" -print -quit)" "PRAGMA integrity_check;" | grep -qx ok
               '
               echo 'Snapshot SQLite íntegro e manifesto presentes.'
+              docker exec -u node -e YOKIRA_TESTE_PIPELINE=1 yokira2-smoke npm run video:teste-integrado
+              echo 'Processamento HLS confirmado com FFmpeg real.'
               exit 0
             fi
             if [ "$(docker inspect -f '{{.State.Running}}' yokira2-smoke)" != true ]; then
