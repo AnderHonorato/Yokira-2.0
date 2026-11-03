@@ -36,6 +36,9 @@ jobs:
       - name: Instalar dependências sem alterar o lockfile
         run: pnpm install --frozen-lockfile
 
+      - name: Bloquear vulnerabilidades críticas nas dependências de produção
+        run: pnpm audit --prod --audit-level=critical
+
       - name: Checar os tipos da aplicação publicada
         run: pnpm run typecheck
 
