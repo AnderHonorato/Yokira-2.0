@@ -112,3 +112,33 @@ test('Adicionar e remover explicitamente são idempotentes e preservam o acompan
  assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4'})).data.adicionado,true);
  assert.equal((await post('lista-explicita',{acao:'lista',tituloId:'4'})).data.adicionado,false);
 });
+
+
+test('A comunidade e as publicações são públicas sem expor dados pessoais',async()=>{
+ const privado=await get(null,'estado');
+ assert.equal(privado.status,401);
+ const criacao=await post('autor-publico',{acao:'publicar',tipo:'forum',titulo:'Discussão visível',corpo:'Uma descoberta para todos.'});
+ assert.equal(criacao.status,200);
+ const publico=await get(null,'publico');
+ assert.equal(publico.status,200);
+ assert.equal(publico.data.usuario,undefined);
+ assert.equal(publico.data.minhaLista,undefined);
+ assert.equal(publico.data.colecao,undefined);
+ assert.equal(publico.data.progresso,undefined);
+ assert.equal(publico.data.jogos,undefined);
+ assert.ok(publico.data.publicacoes.some(p=>p.id===criacao.data.id));
+ assert.ok(publico.data.membros.some(m=>m.id==='autor-publico'));
+ const detalhe=await get(null,'publicacao',`&id=${criacao.data.id}`);
+ assert.equal(detalhe.status,200);
+ assert.equal(detalhe.data.publicacao.id,criacao.data.id);
+ const gravacao=await post('autor-publico',{acao:'jogo',modo:'tier',tiers:{S:['1'],A:['2'],B:[],C:[],D:[]}});
+ assert.equal(gravacao.status,200);
+ const compartilhada=await get(null,'tier',`&id=${encodeURIComponent(gravacao.data.jogo.id)}`);
+ assert.equal(compartilhada.status,200);
+ assert.deepEqual(Object.keys(compartilhada.data.tier).sort(),['id','tiers']);
+ const escritaAnonima=await POST(new Request('https://yokira.test/api/yokira',{
+  method:'POST',headers:{origin:'https://yokira.test','content-type':'application/json'},
+  body:JSON.stringify({acao:'perfil',nome:'Não autorizado'})
+ }));
+ assert.equal(escritaAnonima.status,401);
+});
