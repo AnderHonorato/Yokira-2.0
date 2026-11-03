@@ -1,0 +1,30 @@
+name: Formatação pontual do upload
+on:
+  push:
+    branches:
+      - sol/upload-direto-seguro-20261103
+    paths:
+      - .github/workflows/formatacao-upload-temporaria.yml
+permissions:
+  contents: write
+jobs:
+  formatar:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: |
+          npx prettier --write src/lib/validacoes/upload-direto.ts src/routes/admin/enviar/+page.svelte testes/unitarios/limite-requisicao.teste.ts testes/unitarios/upload-direto.teste.ts
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/validacoes/upload-direto.ts src/routes/admin/enviar/+page.svelte testes/unitarios/limite-requisicao.teste.ts testes/unitarios/upload-direto.teste.ts
+          if ! git diff --cached --quiet; then
+            git commit -m "style(upload): normaliza arquivos do streaming direto"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
