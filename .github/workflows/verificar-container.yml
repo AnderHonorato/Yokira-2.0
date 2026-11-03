@@ -61,7 +61,7 @@ jobs:
             --mount type=volume,source=yokira2-smoke,target=/data \
             -e ORIGIN=https://yokira.example \
             -e SEGREDO_SESSAO=yokira-somente-teste-de-integracao-continuo-1234567890 \
-            -e DATABASE_URL=file:/data/yokira.sqlite \
+            -e DATABASE_URL=file:/data/pipeline-ci-teste.sqlite \
             -e PASTA_UPLOADS=/data/originais \
             -e PASTA_HLS=/data/hls \
             -e YOKIRA_VOLUME_PERSISTENTE=/data \
