@@ -1,0 +1,26 @@
+# Nunca incorporar dados locais ou segredos à imagem de produção.
+.git
+.github
+node_modules
+.svelte-kit
+build
+dist
+coverage
+test-results
+playwright-report
+midia
+.env
+.env.*
+!.env.exemplo
+*.db
+*.sqlite
+*.db-*
+*.sqlite-*
+*.log
+*.rar
+*.zip
+*.pem
+*.key
+**/node_modules
+**/.next
+**/.vercel
