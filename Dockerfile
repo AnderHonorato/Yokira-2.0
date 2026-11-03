@@ -2,7 +2,7 @@
 FROM node:22-bookworm-slim
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg ca-certificates openssl gosu \
+    && apt-get install -y --no-install-recommends ffmpeg sqlite3 ca-certificates openssl gosu \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
