@@ -13,7 +13,7 @@ import {
 import { validarDataDeEstreia, validarNumeroDeEpisodio } from '../validacoes/administracao.js';
 import { baixarVideo } from './armazenamento/baixar-de-url.js';
 import { gravarFluxo, gravarUpload } from './armazenamento/gravar-upload.js';
-import { processarArquivo } from './processamento/transcodificar.js';
+import { processarArquivo } from './processamento/fila-video.js';
 
 export interface ResultadoDoLote {
   criados: number;
