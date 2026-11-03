@@ -2,10 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PrismaClient } from '../../src/lib/servidor/banco/gerado/client';
-import {
-  podeSemearContasDemonstrativas,
-  semearContas
-} from '../../prisma/contas-de-demonstracao';
+import { podeSemearContasDemonstrativas, semearContas } from '../../prisma/contas-de-demonstracao';
 import { senhaDeDemonstracaoBloqueada } from '../../src/lib/servidor/banco/conta';
 
 describe('segurança de contas demonstrativas', () => {
