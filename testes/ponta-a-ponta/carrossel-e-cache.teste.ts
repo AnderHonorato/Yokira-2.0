@@ -97,7 +97,7 @@ async function temNoCache(page: import('@playwright/test').Page, chave: string) 
   return page.evaluate(
     (nomeDaChave) =>
       new Promise<boolean>((resolver) => {
-        const pedido = indexedDB.open('yokira-cache', 1);
+        const pedido = indexedDB.open('yokira2-cache', 1);
         pedido.onerror = () => resolver(false);
         pedido.onsuccess = () => {
           const banco = pedido.result;
