@@ -45,11 +45,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   try {
     if (acao === 'denunciar') {
       return json(
-        await denunciarComentario(
-          locals.usuario.id,
-          String(corpo.comentarioId ?? ''),
-          corpo.motivo
-        )
+        await denunciarComentario(locals.usuario.id, String(corpo.comentarioId ?? ''), corpo.motivo)
       );
     }
 

@@ -40,7 +40,8 @@ export default [
       'static/',
       'playwright-report/',
       'test-results/',
-      'prisma/gerado/'
+      'prisma/gerado/',
+      'versao-sites/**'
     ]
   }
 ];

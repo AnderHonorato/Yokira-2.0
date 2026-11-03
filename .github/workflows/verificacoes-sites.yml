@@ -1,0 +1,49 @@
+# Testa a aplicação realmente publicada no Sites, separada da base Node/Svelte.
+name: Verificações da versão Sites
+
+on:
+  pull_request:
+    branches:
+      - main-ChatGPT
+  push:
+    branches:
+      - main-ChatGPT
+      - 'sol/**'
+    paths:
+      - 'versao-sites/**'
+      - '.github/workflows/verificacoes-sites.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sites:
+    name: React/Vinext, D1 e segurança
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: versao-sites
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Preparar gerenciador PNPM
+        run: npm install --global pnpm@11.25.0
+
+      - name: Instalar dependências sem alterar o lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Checar os tipos da aplicação publicada
+        run: pnpm run typecheck
+
+      - name: Testar autenticação, dados e regras do backend
+        run: pnpm test
+
+      - name: Lint do frontend e do servidor
+        run: pnpm run lint
+
+      - name: Construir versão de produção Cloudflare
+        run: pnpm run build
