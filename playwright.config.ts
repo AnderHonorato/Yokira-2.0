@@ -63,6 +63,8 @@ export default defineConfig({
       EMAIL_TRANSPORTE: 'arquivo',
       EMAIL_ARQUIVO: CAIXA_DE_SAIDA,
       BODY_SIZE_LIMIT: '8G',
+      // O Playwright precisa do catálogo e das contas fictícias mesmo no build de produção.
+      YOKIRA_MODO_TESTE_E2E: '1',
       NODE_ENV: 'production'
     }
   }

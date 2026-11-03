@@ -1,5 +1,23 @@
 # Segurança — Yōkira Animes
 
+## Contas demonstrativas e produção
+
+O seed de demonstração é destinado apenas a desenvolvimento e testes. Quando
+`NODE_ENV=production`, o catálogo fictício ainda pode ser importado, mas
+`semearContas` e avaliações com votantes fictícios são ignoradas.
+
+O login de produção rejeita as senhas públicas conhecidas (`YokiraAdmin#2024`
+e `YokiraDemo#2024`), inclusive se permanecerem em um banco antigo.
+Reexecutar o seed nunca repõe privilégios de administrador em conta existente.
+
+A única exceção é `YOKIRA_MODO_TESTE_E2E=1`, configurado explicitamente no
+Playwright para testar o build de produção com dados falsos. **Nunca habilite
+esse valor no servidor real.**
+
+Para habilitar uma conta administrativa real, cadastre uma conta, configure
+senha forte e execute `npm run banco:promover -- email@dominio.com` em ambiente
+autorizado. Revogue sessões de contas demonstrativas antigas antes de publicar.
+
 ## Senhas
 
 Argon2id via `@node-rs/argon2`, com os parâmetros do OWASP concentrados em

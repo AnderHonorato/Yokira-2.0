@@ -8,6 +8,19 @@ import { estaBloqueado, limparFalhas, registrarFalha } from '../autenticacao/lim
 
 export class ErroDeAutenticacao extends Error {}
 
+/** Contas antigas semeadas com senha pública não devem autenticar em produção. */
+export function senhaDeDemonstracaoBloqueada(
+  senha: string,
+  ambiente = process.env.NODE_ENV,
+  e2e = process.env.YOKIRA_MODO_TESTE_E2E
+): boolean {
+  return (
+    ambiente === 'production' &&
+    e2e !== '1' &&
+    (senha === 'YokiraAdmin#2024' || senha === 'YokiraDemo#2024')
+  );
+}
+
 export async function cadastrarUsuario(email: string, senha: string, nome: string) {
   const jaExiste = await banco.usuario.findUnique({ where: { email } });
   if (jaExiste) throw new ErroDeAutenticacao('Ja existe uma conta com este e-mail.');
@@ -23,6 +36,10 @@ export async function cadastrarUsuario(email: string, senha: string, nome: strin
 }
 
 export async function autenticarUsuario(email: string, senha: string) {
+  if (senhaDeDemonstracaoBloqueada(senha)) {
+    throw new ErroDeAutenticacao('E-mail ou senha incorretos.');
+  }
+
   const usuario = await banco.usuario.findUnique({ where: { email } });
   if (!usuario) throw new ErroDeAutenticacao('E-mail ou senha incorretos.');
 

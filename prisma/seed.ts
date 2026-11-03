@@ -6,7 +6,11 @@ import 'dotenv/config';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '../src/lib/servidor/banco/gerado/client.js';
 import { GENEROS, NOMES_DE_EPISODIO, TITULOS } from './dados-ficticios.js';
-import { garantirVotantes, semearContas } from './contas-de-demonstracao.js';
+import {
+  garantirVotantes,
+  semearContas,
+  podeSemearContasDemonstrativas
+} from './contas-de-demonstracao.js';
 import { semear } from '../src/lib/visual/posters/gerar-poster.js';
 
 const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? 'file:./dev.db' });
@@ -127,7 +131,17 @@ function paraSlug(texto: string): string {
 
 const generos = await semearGeneros();
 await semearTitulos(generos);
-await semearContas(banco);
-await semearAvaliacoes();
-console.log('Seed concluido: catalogo ficticio + contas de demonstracao.');
+
+// Os dados fictícios podem aparecer no catálogo, mas senhas de demonstração
+// nunca devem ser levadas a um servidor de produção.
+const criarContasDemo = podeSemearContasDemonstrativas();
+if (criarContasDemo) {
+  await semearContas(banco);
+  await semearAvaliacoes();
+}
+console.log(
+  criarContasDemo
+    ? 'Seed concluído: catálogo e contas fictícias de demonstração.'
+    : 'Seed concluído: catálogo. Contas demonstrativas não foram criadas.'
+);
 await banco.$disconnect();
