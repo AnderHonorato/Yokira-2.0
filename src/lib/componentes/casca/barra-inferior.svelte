@@ -8,14 +8,14 @@
   import GradeCatalogo from '$visual/icones/grade-catalogo.svelte';
   import NovidadesBrilho from '$visual/icones/novidades-brilho.svelte';
   import MarcadorLista from '$visual/icones/marcador-lista.svelte';
-  import Engrenagem from '$visual/icones/engrenagem.svelte';
+  import Generos from '$visual/icones/generos.svelte';
 
   const ICONES = {
     casa: Casa,
     'grade-catalogo': GradeCatalogo,
     'novidades-brilho': NovidadesBrilho,
     'marcador-lista': MarcadorLista,
-    engrenagem: Engrenagem
+    generos: Generos
   } as const;
 </script>
 
