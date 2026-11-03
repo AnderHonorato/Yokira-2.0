@@ -16,6 +16,7 @@ on:
       - package.json
       - package-lock.json
       - scripts/backup-sqlite.ts
+      - scripts/testar-pipeline-hls.ts
       - src/lib/servidor/banco/backup-sqlite.ts
       - .github/workflows/verificar-container.yml
   pull_request:
