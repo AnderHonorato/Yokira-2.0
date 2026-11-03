@@ -62,6 +62,7 @@ export default defineConfig({
       // em vez de fingir que o e-mail chegou.
       EMAIL_TRANSPORTE: 'arquivo',
       EMAIL_ARQUIVO: CAIXA_DE_SAIDA,
+      BODY_SIZE_LIMIT: '8G',
       NODE_ENV: 'production'
     }
   }

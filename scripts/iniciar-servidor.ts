@@ -5,6 +5,8 @@
 
 import 'dotenv/config';
 
+// O hook limita as demais rotas; esta margem permite o upload binário até 8 GiB.
+process.env.BODY_SIZE_LIMIT ??= '8G';
 process.env.PORT ??= '4000';
 process.env.HOST ??= '0.0.0.0';
 process.env.ORIGIN ??= `http://localhost:${process.env.PORT}`;

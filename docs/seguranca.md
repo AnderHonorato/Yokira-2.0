@@ -103,6 +103,23 @@ O arquivo original vai para `midia/originais/` e os segmentos HLS para
 `midia/hls/`, os dois **fora de `static/`**. Nada de mídia é servido como
 arquivo estático.
 
+### Upload binário sem multipart em memória
+
+O formulário do painel envia o arquivo por `XMLHttpRequest` diretamente para
+`POST /api/admin/enviar-video`. O endpoint exige papel **EDITOR**, a origem
+exata do site, nome codificado e extensão permitida. Ele valida o episódio
+antes de consumir o corpo e grava em blocos, eliminando arquivos parciais.
+
+O limite real continua 8 GiB, mesmo se o cliente mentir em
+`Content-Length`. `BODY_SIZE_LIMIT=8G` é exigido no adaptador Node para
+permitir a transferência (o padrão de 512 KiB não permite vídeos comuns).
+O `hooks.server.ts` limita outras requisições com corpo a 8 MiB e rejeita
+requisições comuns sem `Content-Length`. O proxy reverso também deve aplicar
+limites por caminho e timeouts de upload.
+
+O envio por link continua na action tradicional, mas usa streaming após
+validar DNS; a conexão de saída deve usar apenas o IP público já autorizado.
+
 ## Mídia assinada
 
 Todo `.m3u8` e todo `.ts` passa por `/midia/hls/[arquivoId]/[recurso]`, que
