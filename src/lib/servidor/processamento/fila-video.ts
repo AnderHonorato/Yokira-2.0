@@ -63,12 +63,9 @@ export async function executarTrabalho(trabalhoId: string): Promise<boolean> {
   return true;
 }
 
-/** Serve para o fluxo atual: agendamento durável, execução imediata sem aguardar FFmpeg. */
+/** A requisição só persiste o agendamento; o trabalhador Node executa o FFmpeg. */
 export async function processarArquivo(arquivoId: string): Promise<void> {
-  const trabalhoId = await enfileirarArquivo(arquivoId);
-  void executarTrabalho(trabalhoId).catch((erro) => {
-    console.error('Falha ao iniciar trabalho HLS agendado:', erro);
-  });
+  await enfileirarArquivo(arquivoId);
 }
 
 /** So recupera PROCESSANDO sem batimento por dez minutos; nunca reinicia concluidos. */
