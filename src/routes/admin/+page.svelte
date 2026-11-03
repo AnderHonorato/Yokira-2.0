@@ -86,8 +86,8 @@
 <section class="admin-secao">
   <h2 class="admin-secao-titulo">Fila de processamento</h2>
   <p class="admin-secao-texto">
-    Os trabalhos são atualizados automaticamente. Uma conversão com falha pode ser reenviada à
-    fila sem enviar o arquivo novamente.
+    Os trabalhos são atualizados automaticamente. Uma conversão com falha pode ser reenviada à fila
+    sem enviar o arquivo novamente.
   </p>
   {#if form?.mensagem}
     <p class="admin-fila-retorno" role="status">{form.mensagem}</p>
