@@ -1,0 +1,40 @@
+name: Diagnóstico de dependências de produção
+on:
+  push:
+    branches:
+      - sol/auditoria-vulnerabilidades-20261103
+permissions:
+  contents: read
+jobs:
+  analisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Auditar dependências de produção Node
+        run: |
+          timeout 180s npm audit --omit=dev --json > /tmp/auditoria-node.json || true
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          const dados = JSON.parse(readFileSync('/tmp/auditoria-node.json', 'utf8'));
+          const vulnerabilidades = Object.entries(dados.vulnerabilities || {})
+            .map(([nome, v]) => ({ nome, severidade: v.severity, diretas: v.isDirect, correcao: v.fixAvailable }));
+          console.log('Dependências Node (somente produção):', JSON.stringify(vulnerabilidades));
+          console.log('Metadados:', JSON.stringify(dados.metadata?.vulnerabilities));
+          JS
+      - name: Auditar dependências de produção Sites
+        run: |
+          npm install --global pnpm@11.25.0
+          cd versao-sites
+          timeout 180s pnpm audit --prod --json > /tmp/auditoria-sites.json || true
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          const dados = JSON.parse(readFileSync('/tmp/auditoria-sites.json', 'utf8'));
+          console.log('Sites - totais:', JSON.stringify(dados.metadata?.vulnerabilities));
+          console.log('Sites - pacotes:', JSON.stringify((dados.advisories ? Object.values(dados.advisories) : []).map(a => ({
+            pacote: a.module_name, severidade: a.severity, titulo: a.title, corrigidoEm: a.patched_versions
+          }))));
+          JS
