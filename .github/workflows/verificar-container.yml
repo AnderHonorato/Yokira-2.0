@@ -5,6 +5,7 @@ on:
     branches:
       - main-ChatGPT
       - sol/infra-producao-video-20261103
+      - sol/teste-real-ffmpeg-20261103
     paths:
       - Dockerfile
       - .dockerignore
