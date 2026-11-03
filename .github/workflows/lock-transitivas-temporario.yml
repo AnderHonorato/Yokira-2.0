@@ -1,4 +1,4 @@
-name: Remover Zod não utilizado do lockfile Sites
+name: Aplicar patch Zod compatível no lockfile Sites
 on:
   push:
     branches:
