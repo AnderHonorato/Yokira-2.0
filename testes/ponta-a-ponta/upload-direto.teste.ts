@@ -31,9 +31,10 @@ test('painel envia um arquivo em fluxo e mostra feedback', async ({ page }) => {
   });
 
   await page.locator('form.conta-forma').getByRole('button', { name: 'Enviar' }).click();
-  await expect(page.locator('.admin-envio-mensagem')).toContainText('Vídeo recebido para conversão HLS.', {
-    timeout: 20_000
-  });
+  await expect(page.locator('.admin-envio-mensagem')).toContainText(
+    'Vídeo recebido para conversão HLS.',
+    { timeout: 20_000 }
+  );
 
   // O player não recebe vídeo falso; o transcodificador registrará falha.
   await expect(page.getByRole('button', { name: 'Enviar' })).toBeEnabled();
