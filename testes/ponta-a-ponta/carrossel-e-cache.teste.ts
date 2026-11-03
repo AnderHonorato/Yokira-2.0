@@ -82,11 +82,11 @@ test('voltar para uma pagina ja visitada e instantaneo', async ({ page }) => {
   // Navegacao pelo proprio roteador (clique num link), que e o caminho que o
   // prefetch e o cache otimizam. `goBack` faria um carregamento completo e mediria
   // o navegador, nao o app.
-  await page.locator('a[href="/catalogo"]').first().click();
+  await page.locator('a[href="/catalogo"]:visible').first().click();
   await expect(page.getByRole('heading', { name: 'Catálogo', level: 1 })).toBeVisible();
 
   const inicio = Date.now();
-  await page.locator('a[href="/"]').first().click();
+  await page.locator('a[href="/"]:visible').first().click();
   await expect(page.getByRole('heading', { name: 'Populares' })).toBeVisible();
   expect(Date.now() - inicio).toBeLessThan(1500);
 });
@@ -128,11 +128,11 @@ test('a home pinta do cache mesmo com o servidor lento', async ({ page }) => {
     await rota.continue();
   });
 
-  await page.locator('a[href="/catalogo"]').first().click();
+  await page.locator('a[href="/catalogo"]:visible').first().click();
   await expect(page.getByRole('heading', { name: 'Catálogo', level: 1 })).toBeVisible();
 
   const inicio = Date.now();
-  await page.locator('a[href="/"]').first().click();
+  await page.locator('a[href="/"]:visible').first().click();
   await expect(page.getByRole('heading', { name: 'Populares' })).toBeVisible();
   const decorrido = Date.now() - inicio;
 
