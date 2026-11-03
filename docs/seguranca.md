@@ -140,11 +140,12 @@ tocado.
 segmento chegar sem assinatura nenhuma. Por isso cada URI de dentro sai
 assinada, em `src/lib/servidor/midia/playlist-assinada.ts`.
 
-**Dois prazos, de propósito.** A playlist vale 10 minutos, e é pedida no
-instante do play (`/api/midia/playlist`) — a página não carrega nenhuma URL de
-mídia embutida, senão uma aba aberta por meia hora daria 403 no play. Os
-segmentos valem 4 horas porque a playlist de VOD não é recarregada pelo
-player: 10 minutos aqui matariam o vídeo no minuto 11.
+**Prazo efetivo da assinatura.** A playlist é emitida no instante do play
+(`/api/midia/playlist`), com prazo de **6 horas** definido em
+`VALIDADE_PLAYLIST_MS`. Os segmentos gerados a partir dela herdam a mesma
+expiração. A página nunca incorpora um link de mídia antecipadamente. Para
+sessões maiores que 6 horas, a aplicação precisará renovar a playlist e os
+links assinados antes de expirar.
 
 Em produção o servidor **se recusa a assinar** com o `SEGREDO_SESSAO` de
 exemplo. Falha fechada: sem segredo real, sem mídia.
