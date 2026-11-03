@@ -42,7 +42,7 @@ export function validarUploadDireto(headers: Headers, origem: string): string {
 
   if (
     nome.length > 255 ||
-    /[\u0000-\u001f\u007f]/.test(nome) ||
+    [...nome].some((caractere) => caractere.charCodeAt(0) < 32 || caractere.charCodeAt(0) === 127) ||
     !EXTENSOES.has(extname(nome).toLowerCase())
   ) {
     throw new ErroDeUpload('Formato de vídeo não aceito.');
