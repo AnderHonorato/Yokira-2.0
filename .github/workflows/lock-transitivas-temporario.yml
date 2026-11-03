@@ -1,4 +1,4 @@
-name: Regerar lockfile Sites com overrides de segurança
+name: Remover Zod não utilizado do lockfile Sites
 on:
   push:
     branches:
