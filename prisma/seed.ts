@@ -6,7 +6,11 @@ import 'dotenv/config';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '../src/lib/servidor/banco/gerado/client.js';
 import { GENEROS, NOMES_DE_EPISODIO, TITULOS } from './dados-ficticios.js';
-import { garantirVotantes, semearContas } from './contas-de-demonstracao.js';
+import {
+  garantirVotantes,
+  semearContas,
+  podeSemearContasDemonstrativas
+} from './contas-de-demonstracao.js';
 import { semear } from '../src/lib/visual/posters/gerar-poster.js';
 
 const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? 'file:./dev.db' });
@@ -130,8 +134,7 @@ await semearTitulos(generos);
 
 // Os dados fictícios podem aparecer no catálogo, mas senhas de demonstração
 // nunca devem ser levadas a um servidor de produção.
-const modoTeste = process.env.YOKIRA_MODO_TESTE_E2E === '1';
-const criarContasDemo = process.env.NODE_ENV !== 'production' || modoTeste;
+const criarContasDemo = podeSemearContasDemonstrativas();
 if (criarContasDemo) {
   await semearContas(banco);
   await semearAvaliacoes();
