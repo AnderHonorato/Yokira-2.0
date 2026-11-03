@@ -8,6 +8,10 @@ import type { PrismaClient } from '../src/lib/servidor/banco/gerado/client.js';
 const PARAMETROS_ARGON = { memoryCost: 19456, timeCost: 2, parallelism: 1 };
 
 export async function semearContas(banco: PrismaClient): Promise<void> {
+  if (process.env.NODE_ENV === 'production' && process.env.YOKIRA_MODO_TESTE_E2E !== '1') {
+    throw new Error('Contas demonstrativas não podem ser criadas em produção.');
+  }
+
   const contas = [
     {
       email: process.env.ADMIN_EMAIL ?? 'admin@yokira.local',
@@ -34,7 +38,8 @@ export async function semearContas(banco: PrismaClient): Promise<void> {
         senhaHash: await hash(conta.senha, PARAMETROS_ARGON),
         perfis: { create: { apelido: conta.nome } }
       },
-      update: { papel: conta.papel }
+      // Nunca restaura privilégios de uma conta já existente ao repetir o seed.
+      update: {}
     });
   }
 }
