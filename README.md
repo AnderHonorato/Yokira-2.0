@@ -469,7 +469,6 @@ de configuração segura antes de iniciar. Não crie serviço com banco efêmero
 A aplicação hospedada em `chatgpt.site` é distinta e não é atualizada
 automaticamente por merges no GitHub.
 
-
 ```bash
 npm ci
 npx prisma generate
