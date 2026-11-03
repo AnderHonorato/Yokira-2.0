@@ -1,0 +1,86 @@
+name: Verificação do contêiner Yokira
+
+on:
+  push:
+    branches:
+      - main-ChatGPT
+      - sol/infra-producao-video-20261103
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - railway.json
+      - scripts/iniciar-servicos.ts
+      - scripts/entrada-docker.sh
+      - src/lib/servidor/seguranca/config-producao.ts
+      - package.json
+      - package-lock.json
+      - .github/workflows/verificar-container.yml
+  pull_request:
+    branches:
+      - main-ChatGPT
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - railway.json
+      - scripts/iniciar-servicos.ts
+      - scripts/entrada-docker.sh
+      - src/lib/servidor/seguranca/config-producao.ts
+      - package.json
+      - package-lock.json
+      - .github/workflows/verificar-container.yml
+
+permissions:
+  contents: read
+
+jobs:
+  construir:
+    name: Docker + FFmpeg + execução sem privilégios
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagem de produção sem publicar
+        run: docker build --pull -t yokira2:ci .
+      - name: Verificar artefatos, FFmpeg e usuário sem privilégios
+        run: |
+          docker run --rm --entrypoint /bin/sh yokira2:ci -c '
+            test -f /app/build/index.js
+            test -f /app/scripts/trabalhador-hls.ts
+            command -v ffmpeg
+            command -v gosu
+            ffmpeg -version >/dev/null
+          '
+      - name: Iniciar contêiner com volume de teste, migrations e trabalhador
+        run: |
+          docker volume create yokira2-smoke
+          docker run -d --name yokira2-smoke -p 4800:4000 \
+            --mount type=volume,source=yokira2-smoke,target=/data \
+            -e ORIGIN=https://yokira.example \
+            -e SEGREDO_SESSAO=yokira-somente-teste-de-integracao-continuo-1234567890 \
+            -e DATABASE_URL=file:/data/yokira.sqlite \
+            -e PASTA_UPLOADS=/data/originais \
+            -e PASTA_HLS=/data/hls \
+            -e YOKIRA_VOLUME_PERSISTENTE=/data \
+            yokira2:ci
+          trap 'docker logs yokira2-smoke || true; docker rm -f yokira2-smoke || true; docker volume rm yokira2-smoke || true' EXIT
+          for tentativa in $(seq 1 45); do
+            if curl --fail --silent http://localhost:4800/api/saude | grep -q '"disponivel":true'; then
+              docker logs yokira2-smoke 2>&1 | grep -q 'Trabalhador HLS iniciado'
+              echo 'Servidor, banco e trabalhador ativos.'
+              exit 0
+            fi
+            if [ "$(docker inspect -f '{{.State.Running}}' yokira2-smoke)" != true ]; then
+              break
+            fi
+            sleep 2
+          done
+          echo 'O backend não ficou saudável.' >&2
+          exit 1
+      - name: Bloquear inicialização sem segredos e volume configurado
+        run: |
+          if docker run --rm --network none yokira2:ci >/tmp/saida-yokira.txt 2>&1; then
+            cat /tmp/saida-yokira.txt
+            echo "Falha: contêiner iniciou sem segredos" >&2
+            exit 1
+          fi
+          grep -q "Yokira não iniciado: configuração insegura" /tmp/saida-yokira.txt

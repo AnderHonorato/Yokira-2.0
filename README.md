@@ -461,6 +461,14 @@ POST de origem diferente por proteção contra CSRF.
 
 ## Ir para produção
 
+Para instalar **web + FFmpeg no mesmo serviço com volume persistente**, use
+[Implantação com volume](docs/implantacao-volume.md). O projeto fornece
+`Dockerfile`, `railway.json`, `npm run iniciar:completo` e verificação
+de configuração segura antes de iniciar. Não crie serviço com banco efêmero.
+
+A aplicação hospedada em `chatgpt.site` é distinta e não é atualizada
+automaticamente por merges no GitHub.
+
 ```bash
 npm ci
 npx prisma generate
