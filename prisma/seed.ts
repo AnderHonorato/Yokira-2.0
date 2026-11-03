@@ -127,7 +127,18 @@ function paraSlug(texto: string): string {
 
 const generos = await semearGeneros();
 await semearTitulos(generos);
-await semearContas(banco);
-await semearAvaliacoes();
-console.log('Seed concluido: catalogo ficticio + contas de demonstracao.');
+
+// Os dados fictícios podem aparecer no catálogo, mas senhas de demonstração
+// nunca devem ser levadas a um servidor de produção.
+const modoTeste = process.env.YOKIRA_MODO_TESTE_E2E === '1';
+const criarContasDemo = process.env.NODE_ENV !== 'production' || modoTeste;
+if (criarContasDemo) {
+  await semearContas(banco);
+  await semearAvaliacoes();
+}
+console.log(
+  criarContasDemo
+    ? 'Seed concluído: catálogo e contas fictícias de demonstração.'
+    : 'Seed concluído: catálogo. Contas demonstrativas não foram criadas.'
+);
 await banco.$disconnect();
