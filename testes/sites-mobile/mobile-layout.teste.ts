@@ -57,9 +57,7 @@ test('o catálogo encaixa cards completos sem transbordamento horizontal', async
   }
 });
 
-test('pontos verdes têm animação suave e respeitam movimento reduzido', async ({
-  page
-}) => {
+test('pontos verdes têm animação suave e respeitam movimento reduzido', async ({ page }) => {
   await page.goto('/');
   const ponto = page.locator('.live-dot').first();
   await expect(ponto).toBeVisible();

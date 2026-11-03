@@ -2,9 +2,7 @@
 
 import { expect, test } from '@playwright/test';
 
-test('no celular o menu fica embaixo, não duplicado no cabeçalho', async ({
-  page
-}, informacao) => {
+test('no celular o menu fica embaixo, não duplicado no cabeçalho', async ({ page }, informacao) => {
   await page.goto('/');
   const inferior = page.getByRole('navigation', { name: 'Navegação principal' });
   const cabecalho = page.getByRole('navigation', { name: 'Seções do catálogo' });
