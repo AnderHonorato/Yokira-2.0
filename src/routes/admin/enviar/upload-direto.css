@@ -43,3 +43,38 @@
   color: var(--cor-texto-secundario);
   font-size: var(--texto-13);
 }
+
+/* Link de continuidade: envio concluído não significa transcodificação concluída. */
+.admin-envio-acompanhar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-3);
+  width: fit-content;
+  max-width: 100%;
+  min-height: var(--alvo-toque);
+  padding: var(--espaco-2) var(--espaco-4);
+  border-radius: var(--raio-botao);
+  color: var(--cor-marca);
+  border: 1px solid var(--cor-borda);
+  font-size: var(--texto-13);
+  font-weight: 600;
+  transition:
+    background var(--transicao-rapida),
+    border-color var(--transicao-rapida);
+}
+
+.admin-envio-acompanhar:hover {
+  background: var(--cor-superficie-hover);
+  border-color: var(--cor-marca);
+}
+
+.admin-envio-acompanhar svg {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 420px) {
+  .admin-envio-acompanhar {
+    width: 100%;
+  }
+}
