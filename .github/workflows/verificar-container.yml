@@ -1,0 +1,60 @@
+name: Verificação do contêiner Yokira
+
+on:
+  push:
+    branches:
+      - main-ChatGPT
+      - sol/infra-producao-video-20261103
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - railway.json
+      - scripts/iniciar-servicos.ts
+      - scripts/entrada-docker.sh
+      - src/lib/servidor/seguranca/config-producao.ts
+      - package.json
+      - package-lock.json
+      - .github/workflows/verificar-container.yml
+  pull_request:
+    branches:
+      - main-ChatGPT
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - railway.json
+      - scripts/iniciar-servicos.ts
+      - scripts/entrada-docker.sh
+      - src/lib/servidor/seguranca/config-producao.ts
+      - package.json
+      - package-lock.json
+      - .github/workflows/verificar-container.yml
+
+permissions:
+  contents: read
+
+jobs:
+  construir:
+    name: Docker + FFmpeg + execução sem privilégios
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagem de produção sem publicar
+        run: docker build --pull -t yokira2:ci .
+      - name: Verificar artefatos, FFmpeg e usuário sem privilégios
+        run: |
+          docker run --rm --entrypoint /bin/sh yokira2:ci -c '
+            test -f /app/build/index.js
+            test -f /app/scripts/trabalhador-hls.ts
+            command -v ffmpeg
+            command -v gosu
+            ffmpeg -version >/dev/null
+          '
+      - name: Bloquear inicialização sem segredos e volume configurado
+        run: |
+          if docker run --rm --network none yokira2:ci >/tmp/saida-yokira.txt 2>&1; then
+            cat /tmp/saida-yokira.txt
+            echo "Falha: contêiner iniciou sem segredos" >&2
+            exit 1
+          fi
+          grep -q "Yokira não iniciado: configuração insegura" /tmp/saida-yokira.txt
