@@ -21,6 +21,12 @@ if (process.env.YOKIRA_TESTE_PIPELINE !== '1') {
 if (!process.env.PASTA_UPLOADS) {
   throw new Error('Configure PASTA_UPLOADS para o volume de teste.');
 }
+if (!process.env.DATABASE_URL?.match(/^file:\/[^?]*(teste|test|pipeline)[^/]*\.sqlite$/i)) {
+  throw new Error('Teste HLS bloqueado: o banco precisa ser SQLite isolado de teste.');
+}
+if (!process.env.YOKIRA_VOLUME_PERSISTENTE?.startsWith('/data')) {
+  throw new Error('Execute o teste apenas no volume temporário /data do contêiner.');
+}
 
 const codigo = randomUUID().replaceAll('-', '');
 const caminho = join(process.env.PASTA_UPLOADS, `pipeline-${codigo}.mp4`);
