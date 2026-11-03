@@ -29,7 +29,7 @@
     "banco:exportar": "node --import tsx scripts/exportar-banco.ts",
     "banco:importar": "node --import tsx scripts/importar-banco.ts",
     "video:teste": "node --import tsx scripts/gerar-video-teste.ts",
-    "video:trabalhador": "node --import tsx scripts/trabalhador-video.ts"
+    "video:trabalhador": "node --import tsx scripts/trabalhador-hls.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
