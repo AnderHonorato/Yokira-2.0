@@ -14,6 +14,8 @@ on:
       - src/lib/servidor/seguranca/config-producao.ts
       - package.json
       - package-lock.json
+      - scripts/backup-sqlite.ts
+      - src/lib/servidor/banco/backup-sqlite.ts
       - .github/workflows/verificar-container.yml
   pull_request:
     branches:
@@ -67,6 +69,13 @@ jobs:
             if curl --fail --silent http://localhost:4800/api/saude | grep -q '"disponivel":true'; then
               docker logs yokira2-smoke 2>&1 | grep -q 'Trabalhador HLS iniciado'
               echo 'Servidor, banco e trabalhador ativos.'
+              docker exec -u node -e BACKUP_DIRETORIO=/data/backups yokira2-smoke npm run banco:backup
+              docker exec -u node yokira2-smoke /bin/sh -c '
+                test -n "$(find /data/backups -name "*.sqlite" -print -quit)"
+                test -n "$(find /data/backups -name "*.sqlite.json" -print -quit)"
+                sqlite3 -readonly "$(find /data/backups -name "*.sqlite" -print -quit)" "PRAGMA integrity_check;" | grep -qx ok
+              '
+              echo 'Snapshot SQLite íntegro e manifesto presentes.'
               exit 0
             fi
             if [ "$(docker inspect -f '{{.State.Running}}' yokira2-smoke)" != true ]; then
