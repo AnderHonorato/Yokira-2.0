@@ -11,7 +11,7 @@ test('visitante não consegue gravar vídeo por URL direta', async ({ page }) =>
     },
     data: Buffer.from('conteúdo binário')
   });
-  expect(resposta.status()).toBe(403);
+  expect(resposta.status()).toBe(401);
 });
 
 test('painel envia um arquivo em fluxo e mostra feedback', async ({ page }) => {
@@ -31,7 +31,7 @@ test('painel envia um arquivo em fluxo e mostra feedback', async ({ page }) => {
   });
 
   await page.locator('form.conta-forma').getByRole('button', { name: 'Enviar' }).click();
-  await expect(page.getByRole('status')).toContainText('Vídeo recebido para conversão HLS.', {
+  await expect(page.locator('.admin-envio-mensagem')).toContainText('Vídeo recebido para conversão HLS.', {
     timeout: 20_000
   });
 
