@@ -20,7 +20,14 @@ describe('gravarFluxoLimitado', () => {
     const pasta = await mkdtemp(join(tmpdir(), 'yokira-fluxo-'));
     const caminho = join(pasta, 'video.mp4');
     try {
-      const tamanho = await gravarFluxoLimitado(caminho, fluxoDe([[1, 2], [3, 4, 5]]), 10);
+      const tamanho = await gravarFluxoLimitado(
+        caminho,
+        fluxoDe([
+          [1, 2],
+          [3, 4, 5]
+        ]),
+        10
+      );
       expect(tamanho).toBe(5);
       expect([...(await readFile(caminho))]).toEqual([1, 2, 3, 4, 5]);
     } finally {
@@ -32,7 +39,14 @@ describe('gravarFluxoLimitado', () => {
     const pasta = await mkdtemp(join(tmpdir(), 'yokira-fluxo-'));
     try {
       await expect(
-        gravarFluxoLimitado(join(pasta, 'video.mp4'), fluxoDe([[1, 2], [3, 4]]), 3)
+        gravarFluxoLimitado(
+          join(pasta, 'video.mp4'),
+          fluxoDe([
+            [1, 2],
+            [3, 4]
+          ]),
+          3
+        )
       ).rejects.toThrow('Arquivo acima do limite.');
       expect(await readdir(pasta)).toEqual([]);
     } finally {
