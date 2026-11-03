@@ -61,9 +61,10 @@ export const actions: Actions = {
       await processarArquivo(registro.id);
 
       return {
+        enfileirado: true,
         mensagem: temArquivo
-          ? 'Arquivo recebido. A conversão para HLS começou.'
-          : 'Vídeo baixado do link. A conversão para HLS começou.'
+          ? 'Arquivo recebido. O vídeo entrou na fila de conversão HLS.'
+          : 'Vídeo baixado do link. Entrou na fila de conversão HLS.'
       };
     } catch (erro) {
       if (erro instanceof ErroDeDownload) return fail(400, { mensagem: erro.message });
