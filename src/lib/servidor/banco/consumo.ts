@@ -25,7 +25,10 @@ export function normalizarSegundoDeConsumo(valor: unknown): number {
 }
 
 export function inicioDoIntervalo(segundo: number): number {
-  return Math.floor(normalizarSegundoDeConsumo(segundo) / SEGUNDOS_POR_INTERVALO) * SEGUNDOS_POR_INTERVALO;
+  return (
+    Math.floor(normalizarSegundoDeConsumo(segundo) / SEGUNDOS_POR_INTERVALO) *
+    SEGUNDOS_POR_INTERVALO
+  );
 }
 
 export async function registrarConsumo(

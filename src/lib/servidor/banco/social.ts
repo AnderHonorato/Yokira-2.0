@@ -18,7 +18,9 @@ export interface ComentarioPublico {
   meu: boolean;
 }
 
-function validarAlvo(alvo: AlvoSocial): Required<Pick<AlvoSocial, 'tituloId'>> | Required<Pick<AlvoSocial, 'episodioId'>> {
+function validarAlvo(
+  alvo: AlvoSocial
+): Required<Pick<AlvoSocial, 'tituloId'>> | Required<Pick<AlvoSocial, 'episodioId'>> {
   const temTitulo = Boolean(alvo.tituloId);
   const temEpisodio = Boolean(alvo.episodioId);
   if (temTitulo === temEpisodio) throw new Error('Informe uma obra ou um episódio, nunca os dois.');
@@ -26,7 +28,9 @@ function validarAlvo(alvo: AlvoSocial): Required<Pick<AlvoSocial, 'tituloId'>> |
 }
 
 function corpoValido(valor: unknown): string {
-  const corpo = String(valor ?? '').trim().replace(/\s{3,}/g, '  ');
+  const corpo = String(valor ?? '')
+    .trim()
+    .replace(/\s{3,}/g, '  ');
   if (corpo.length < 2) throw new Error('O comentário precisa ter pelo menos 2 caracteres.');
   if (corpo.length > 1200) throw new Error('O comentário pode ter no máximo 1200 caracteres.');
   return corpo;
@@ -34,7 +38,8 @@ function corpoValido(valor: unknown): string {
 
 export async function lerSocial(alvoOriginal: AlvoSocial, usuarioId?: string) {
   const alvo = validarAlvo(alvoOriginal);
-  const whereCurtida = 'tituloId' in alvo ? { tituloId: alvo.tituloId } : { episodioId: alvo.episodioId };
+  const whereCurtida =
+    'tituloId' in alvo ? { tituloId: alvo.tituloId } : { episodioId: alvo.episodioId };
   const whereComentario = { ...whereCurtida, situacao: 'PUBLICADO' as const };
 
   const [curtidas, minhaCurtida, comentarios] = await Promise.all([
@@ -108,8 +113,10 @@ async function verificarSpam(usuarioId: string, corpo: string): Promise<void> {
     take: 8,
     orderBy: { criadoEm: 'desc' }
   });
-  if (recentes.length >= 5) throw new Error('Muitos comentários em pouco tempo. Tente novamente em instantes.');
-  if (recentes.some((item) => item.corpo === corpo)) throw new Error('Esse comentário acabou de ser enviado.');
+  if (recentes.length >= 5)
+    throw new Error('Muitos comentários em pouco tempo. Tente novamente em instantes.');
+  if (recentes.some((item) => item.corpo === corpo))
+    throw new Error('Esse comentário acabou de ser enviado.');
 }
 
 export async function criarComentario(alvoOriginal: AlvoSocial, usuarioId: string, texto: unknown) {
@@ -127,14 +134,19 @@ export async function editarComentario(
   podeModerar = false
 ) {
   const comentario = await banco.comentario.findUnique({ where: { id: comentarioId } });
-  if (!comentario || comentario.situacao === 'REMOVIDO') throw new Error('Comentário não encontrado.');
-  if (comentario.usuarioId !== usuarioId && !podeModerar) throw new Error('Você não pode editar este comentário.');
+  if (!comentario || comentario.situacao === 'REMOVIDO')
+    throw new Error('Comentário não encontrado.');
+  if (comentario.usuarioId !== usuarioId && !podeModerar)
+    throw new Error('Você não pode editar este comentário.');
 
   await banco.comentario.update({
     where: { id: comentarioId },
     data: { corpo: corpoValido(texto), editadoEm: new Date() }
   });
-  return lerSocial({ tituloId: comentario.tituloId ?? undefined, episodioId: comentario.episodioId ?? undefined }, usuarioId);
+  return lerSocial(
+    { tituloId: comentario.tituloId ?? undefined, episodioId: comentario.episodioId ?? undefined },
+    usuarioId
+  );
 }
 
 export async function removerComentario(
@@ -144,19 +156,32 @@ export async function removerComentario(
 ) {
   const comentario = await banco.comentario.findUnique({ where: { id: comentarioId } });
   if (!comentario) throw new Error('Comentário não encontrado.');
-  if (comentario.usuarioId !== usuarioId && !podeModerar) throw new Error('Você não pode remover este comentário.');
+  if (comentario.usuarioId !== usuarioId && !podeModerar)
+    throw new Error('Você não pode remover este comentário.');
 
   await banco.comentario.update({
     where: { id: comentarioId },
     data: { situacao: 'REMOVIDO', editadoEm: new Date() }
   });
-  return lerSocial({ tituloId: comentario.tituloId ?? undefined, episodioId: comentario.episodioId ?? undefined }, usuarioId);
+  return lerSocial(
+    { tituloId: comentario.tituloId ?? undefined, episodioId: comentario.episodioId ?? undefined },
+    usuarioId
+  );
 }
 
-export async function denunciarComentario(usuarioId: string, comentarioId: string, motivo: unknown) {
-  const texto = String(motivo ?? '').trim().slice(0, 500);
+export async function denunciarComentario(
+  usuarioId: string,
+  comentarioId: string,
+  motivo: unknown
+) {
+  const texto = String(motivo ?? '')
+    .trim()
+    .slice(0, 500);
   if (texto.length < 3) throw new Error('Informe o motivo da denúncia.');
-  const comentario = await banco.comentario.findUnique({ where: { id: comentarioId }, select: { id: true } });
+  const comentario = await banco.comentario.findUnique({
+    where: { id: comentarioId },
+    select: { id: true }
+  });
   if (!comentario) throw new Error('Comentário não encontrado.');
 
   const repetida = await banco.denuncia.findFirst({
