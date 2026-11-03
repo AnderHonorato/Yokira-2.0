@@ -1,4 +1,4 @@
-name: Atualizar transitivas Sites na branch de segurança
+name: Regerar lockfile Sites com overrides de segurança
 on:
   push:
     branches:
