@@ -7,7 +7,7 @@ import { gravarFluxo } from '$servidor/armazenamento/gravar-upload';
 import { registrarAcaoAdministrativa } from '$servidor/autenticacao/confirmacao';
 import { exigirPapel } from '$servidor/permissoes/papeis';
 import { ErroDeUpload, validarUploadDireto } from '$lib/validacoes/upload-direto';
-import { processarArquivo } from '$servidor/processamento/transcodificar';
+import { processarArquivo } from '$servidor/processamento/fila-video';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, locals, url }) => {
