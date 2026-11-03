@@ -46,7 +46,7 @@ export const POST: RequestHandler = async ({ request, locals, url }) => {
   await processarArquivo(registro.id);
 
   return json(
-    { recebido: true, arquivoId: registro.id, mensagem: 'Vídeo recebido para conversão HLS.' },
+    { recebido: true, arquivoId: registro.id, mensagem: 'Vídeo recebido e colocado na fila de conversão HLS.' },
     { status: 202, headers: { 'cache-control': 'private, no-store' } }
   );
 };
