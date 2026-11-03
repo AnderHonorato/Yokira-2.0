@@ -17,7 +17,24 @@ export default function Portal({parametrosIniciais=''}:{parametrosIniciais?:stri
  const [params,setParams]=useState(()=>new URLSearchParams(parametrosIniciais));const [idioma,setIdioma]=useState('pt');const [light,setLight]=useState(false);const [preferenciasProntas,setPreferenciasProntas]=useState(false);const [menu,setMenu]=useState(false);const [busca,setBusca]=useState(false);const [query,setQuery]=useState('');const [estado,setEstado]=useState<Estado|null>(null);const [loading,setLoading]=useState(false);const [toast,setToast]=useState('');const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);const buscaRef=useRef<HTMLDialogElement>(null);const searchInput=useRef<HTMLInputElement>(null);const menuRef=useRef<HTMLElement>(null);const menuBotao=useRef<HTMLButtonElement>(null);const pagina=params.get('p')||'inicio';
  const tr=(pt:string,en:string,es:string)=>idioma==='en'?en:idioma==='es'?es:pt;const nomes=labels[idioma]||labels.pt;
  const notificar=useCallback((texto:string)=>{setToast(texto);if(toastTimer.current)clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),4800)},[]);
- const recarregar=useCallback(async()=>{try{const r=await fetch('/api/yokira?acao=estado');const data=await r.json() as Estado & {erro?:string};if(r.ok)setEstado(data);else if(r.status!==401)notificar(data.erro||'Não foi possível carregar seus dados.');}catch{notificar('Sem conexão. Seu acervo continua disponível.');}},[notificar]);
+ const recarregar=useCallback(async()=>{
+  try{
+   const r=await fetch('/api/yokira?acao=estado');
+   if(r.status===401){
+    // A comunidade continua visível sem login. Nunca reutilizar um estado privado
+    // depois que a sessão expira.
+    setEstado(null);
+    const publica=await fetch('/api/yokira?acao=publico');
+    const dados=await publica.json() as Estado & {erro?:string};
+    if(!publica.ok)throw new Error(dados.erro||'Não foi possível carregar a comunidade.');
+    setEstado({...dados,usuario:null,minhaLista:[],colecao:[],progresso:[]});
+    return;
+   }
+   const data=await r.json() as Estado & {erro?:string};
+   if(r.ok)setEstado(data);
+   else notificar(data.erro||'Não foi possível carregar seus dados.');
+  }catch{notificar('Sem conexão. Seu acervo continua disponível.');}
+ },[notificar]);
  const navegar=useCallback((p:string,values?:Record<string,string>)=>{const next=new URLSearchParams(values);if(p!=='inicio')next.set('p',p);const url=next.size?'/?'+next.toString():'/';window.history.pushState({},'',url);setParams(next);setMenu(false);setBusca(false);window.scrollTo({top:0,behavior:'instant'});requestAnimationFrame(()=>{const heading=document.querySelector<HTMLElement>('main h1');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}});},[]);
  useEffect(()=>{const t=setTimeout(()=>{setParams(new URLSearchParams(window.location.search));try{const saved=localStorage.getItem('yokira-idioma');if(saved&&labels[saved])setIdioma(saved);setLight(localStorage.getItem('yokira-tema')==='claro');}catch{/* Preferências continuam disponíveis sem armazenamento local. */}setPreferenciasProntas(true);void recarregar();},0);const pop=(evento:PopStateEvent)=>{setParams(new URLSearchParams(window.location.search));if(!evento.state?.manterPosicao)window.scrollTo({top:0})};window.addEventListener('popstate',pop);const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setBusca(v=>!v);}if(e.key==='Escape'){setBusca(false);setMenu(false);if(menuRef.current?.contains(document.activeElement))menuBotao.current?.focus();}};window.addEventListener('keydown',key);return()=>{clearTimeout(t);window.removeEventListener('popstate',pop);window.removeEventListener('keydown',key);};},[recarregar]);
  useEffect(()=>{if(!menu)return;const foco=requestAnimationFrame(()=>menuRef.current?.querySelector<HTMLElement>('a')?.focus());const fechar=(e:MouseEvent)=>{if(!menuRef.current?.contains(e.target as Node)&&!menuBotao.current?.contains(e.target as Node))setMenu(false);};document.addEventListener('click',fechar);return()=>{cancelAnimationFrame(foco);document.removeEventListener('click',fechar);};},[menu]);
