@@ -10,9 +10,6 @@ export const GET: RequestHandler = async () => {
     await banco.$queryRaw`SELECT 1`;
     return json({ disponivel: true }, { headers: { 'cache-control': 'no-store' } });
   } catch {
-    return json(
-      { disponivel: false },
-      { status: 503, headers: { 'cache-control': 'no-store' } }
-    );
+    return json({ disponivel: false }, { status: 503, headers: { 'cache-control': 'no-store' } });
   }
 };
