@@ -7,8 +7,15 @@ import type { PrismaClient } from '../src/lib/servidor/banco/gerado/client.js';
 
 const PARAMETROS_ARGON = { memoryCost: 19456, timeCost: 2, parallelism: 1 };
 
+export function podeSemearContasDemonstrativas(
+  ambiente = process.env.NODE_ENV,
+  e2e = process.env.YOKIRA_MODO_TESTE_E2E
+): boolean {
+  return ambiente !== 'production' || e2e === '1';
+}
+
 export async function semearContas(banco: PrismaClient): Promise<void> {
-  if (process.env.NODE_ENV === 'production' && process.env.YOKIRA_MODO_TESTE_E2E !== '1') {
+  if (!podeSemearContasDemonstrativas()) {
     throw new Error('Contas demonstrativas não podem ser criadas em produção.');
   }
 
