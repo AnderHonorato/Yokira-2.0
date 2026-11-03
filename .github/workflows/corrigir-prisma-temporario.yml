@@ -19,6 +19,7 @@ jobs:
           node-version: 22
       - name: Corrigir pacotes de produção dentro das faixas já autorizadas
         run: |
+          npm install --package-lock-only --ignore-scripts --no-audit
           npm audit fix --package-lock-only --omit=dev --no-fund || true
           npm audit --omit=dev --json > /tmp/prisma-audit.json || true
           node --input-type=module <<'JS'
