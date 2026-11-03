@@ -67,7 +67,7 @@ export function ipv6Privado(endereco: string): boolean {
   // inclusive os endereços IPv4 embutidos em hexadecimal, e endereços locais.
   const [primeiro, segundo = ''] = limpo.split(':');
   const grupo = Number.parseInt(primeiro, 16);
-  if (grupo < 0x2000 || grupo > 0x3fff) return true;
+  if (!Number.isFinite(grupo) || grupo < 0x2000 || grupo > 0x3fff) return true;
 
   // 6to4, Teredo e documentação não devem apontar um download de produção.
   if (grupo === 0x2002) return true;
