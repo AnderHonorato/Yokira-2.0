@@ -22,7 +22,7 @@ describe('gravarFluxoLimitado', () => {
     try {
       const tamanho = await gravarFluxoLimitado(caminho, fluxoDe([[1, 2], [3, 4, 5]]), 10);
       expect(tamanho).toBe(5);
-      expect([...await readFile(caminho)]).toEqual([1, 2, 3, 4, 5]);
+      expect([...(await readFile(caminho))]).toEqual([1, 2, 3, 4, 5]);
     } finally {
       await rm(pasta, { recursive: true, force: true });
     }
