@@ -303,6 +303,28 @@ Se o binário não estiver no PATH, aponte no `.env`:
 CAMINHO_FFMPEG="/caminho/completo/para/ffmpeg"
 ```
 
+### Executar o trabalhador HLS
+
+Em **outro terminal**, após preparar o banco, execute:
+
+```bash
+npm run video:trabalhador
+```
+
+Mantenha o processo junto ao servidor Node, com o **mesmo `DATABASE_URL` e as
+mesmas pastas `PASTA_UPLOADS` e `PASTA_HLS`**. Em produção, configure o gerenciador
+de processos para reiniciá-lo automaticamente e persista o volume de mídia.
+
+O trabalhador verifica a fila a cada 5 segundos e recupera trabalhos que ficaram
+`PROCESSANDO` sem atualização por mais de 10 minutos. A reivindicação usa
+`updateMany` condicional para impedir dois trabalhadores de executar **o mesmo
+registro** ao mesmo tempo. Evite executar várias instâncias para o mesmo arquivo,
+pois a fila não substitui uma infraestrutura distribuída com leases por arquivo.
+
+As conversões parciais ficam em pasta temporária; somente após completar todas
+as variantes o conteúdo novo é publicado. Em falha, mantém a versão antiga.
+Sem o trabalhador, o upload permanece em `NA_FILA` e **não haverá vídeo novo**.
+
 ### Gerar um vídeo de teste
 
 Sem depender de nenhum arquivo de terceiro:
@@ -318,8 +340,9 @@ Cria um mp4 sintético de 20 segundos (barras de cor e um tom de áudio) em
 
 1. O upload grava o original em `midia/originais/` — **fora de `static/`**, com
    nome gerado por `randomUUID()`.
-2. Um `TrabalhoProcessamento` entra no banco e o FFmpeg roda em processo
-   separado, sem segurar a resposta HTTP.
+2. Um `TrabalhoProcessamento` entra no banco com estado `NA_FILA`. Um
+   **trabalhador Node separado** coleta o trabalho e executa o FFmpeg, sem segurar a resposta HTTP.
+   Se o trabalhador cair, o registro persiste e pode ser retomado.
 3. Saem três variantes — 360p, 720p e 1080p — em `midia/hls/<id-do-arquivo>/`,
    mais a playlist mestre `mestre.m3u8`.
 4. O player carrega `hls.js` por import dinâmico, e só em navegador que não toca
@@ -355,8 +378,8 @@ Primeiro envio:
 2. Vá em `/admin` e clique em **Abrir formulário de envio**.
 3. Escolha o episódio de destino e o arquivo (`.mp4`, `.mkv`, `.mov` ou `.webm`,
    até 8 GB).
-4. Envie. A tela confirma o recebimento e o FFmpeg começa a converter em segundo
-   plano; acompanhe o progresso na fila em `/admin`.
+4. Envie. A tela confirma o recebimento e o arquivo entra em `NA_FILA`. Com
+   `npm run video:trabalhador` em execução, acompanhe o processamento em `/admin`.
 5. Terminada a conversão, abra o episódio em `/assistir/<id>`.
 
 Use apenas arquivos que você tem direito de distribuir.
@@ -437,6 +460,8 @@ npx prisma generate
 npx prisma migrate deploy      # nunca `migrate dev` em produção
 npm run build
 PORT=4000 ORIGIN=https://seu-dominio node build/index.js
+# Em outro processo, com o mesmo volume e banco:
+npm run video:trabalhador
 ```
 
 Lista de conferência:
@@ -448,6 +473,7 @@ Lista de conferência:
 - [ ] Proxy reverso terminando TLS e limitando requisições por IP
 - [ ] Senha do administrador trocada
 - [ ] `midia/` em disco com backup
+- [ ] Trabalhador HLS separado com reinício automático e acesso ao mesmo banco/volume
 
 ## Erros comuns
 

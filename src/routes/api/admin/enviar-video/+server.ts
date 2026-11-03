@@ -7,7 +7,7 @@ import { gravarFluxo } from '$servidor/armazenamento/gravar-upload';
 import { registrarAcaoAdministrativa } from '$servidor/autenticacao/confirmacao';
 import { exigirPapel } from '$servidor/permissoes/papeis';
 import { ErroDeUpload, validarUploadDireto } from '$lib/validacoes/upload-direto';
-import { processarArquivo } from '$servidor/processamento/transcodificar';
+import { processarArquivo } from '$servidor/processamento/fila-video';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, locals, url }) => {
@@ -42,10 +42,8 @@ export const POST: RequestHandler = async ({ request, locals, url }) => {
   }
 
   await registrarAcaoAdministrativa(locals.usuario!.id, 'enviar-video', episodioId, nome);
-  // Processamento continua após o upload; falhas são registradas no banco.
-  void processarArquivo(registro.id).catch((falha) => {
-    console.error('Falha ao iniciar processamento de vídeo:', falha);
-  });
+  // Confirma que o trabalho foi persistido antes de responder ao painel.
+  await processarArquivo(registro.id);
 
   return json(
     { recebido: true, arquivoId: registro.id, mensagem: 'Vídeo recebido para conversão HLS.' },

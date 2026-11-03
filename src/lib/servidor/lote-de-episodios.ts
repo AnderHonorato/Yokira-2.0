@@ -13,7 +13,7 @@ import {
 import { validarDataDeEstreia, validarNumeroDeEpisodio } from '../validacoes/administracao.js';
 import { baixarVideo } from './armazenamento/baixar-de-url.js';
 import { gravarFluxo, gravarUpload } from './armazenamento/gravar-upload.js';
-import { processarArquivo } from './processamento/transcodificar.js';
+import { processarArquivo } from './processamento/fila-video.js';
 
 export interface ResultadoDoLote {
   criados: number;
@@ -31,7 +31,7 @@ async function anexarVideo(
   try {
     if (arquivo && arquivo.size > 0) {
       const registro = await gravarUpload(episodioId, arquivo);
-      void processarArquivo(registro.id);
+      await processarArquivo(registro.id);
       return null;
     }
 
@@ -41,7 +41,7 @@ async function anexarVideo(
     const registro = await gravarFluxo(episodioId, baixado.fluxo, baixado.nome);
     // Sem await: transcodificar tres variantes leva minutos por episodio, e o lote
     // inteiro seguraria a resposta ate o ultimo terminar.
-    void processarArquivo(registro.id);
+    await processarArquivo(registro.id);
     return null;
   } catch (erro) {
     const motivo = erro instanceof Error ? erro.message : 'falha desconhecida';

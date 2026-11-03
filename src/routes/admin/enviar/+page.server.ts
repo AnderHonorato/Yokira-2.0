@@ -6,7 +6,7 @@ import { fail } from '@sveltejs/kit';
 import { banco } from '$servidor/banco/cliente';
 import { gravarFluxo, gravarUpload } from '$servidor/armazenamento/gravar-upload';
 import { baixarVideo, ErroDeDownload } from '$servidor/armazenamento/baixar-de-url';
-import { processarArquivo } from '$servidor/processamento/transcodificar';
+import { processarArquivo } from '$servidor/processamento/fila-video';
 import { registrarAcaoAdministrativa } from '$servidor/autenticacao/confirmacao';
 import { exigirPapel } from '$servidor/permissoes/papeis';
 import type { Actions, PageServerLoad } from './$types';
@@ -58,7 +58,7 @@ export const actions: Actions = {
       );
 
       // Sem await: transcodificar 3 variantes leva minutos e a resposta nao pode esperar.
-      void processarArquivo(registro.id);
+      await processarArquivo(registro.id);
 
       return {
         mensagem: temArquivo
