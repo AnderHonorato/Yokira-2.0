@@ -63,6 +63,13 @@ no site e use `npm run banco:promover -- email@dominio.com` em terminal
 administrativo autenticado, dentro do serviço com acesso ao banco correto.
 Revogue sessões demo antigas antes de disponibilizar uma base migrada.
 
+## Endpoint de saúde
+
+O serviço expõe `GET /api/saude`, que retorna HTTP 200 quando o Prisma
+consegue consultar o banco e HTTP 503 quando a conexão falha. A resposta
+contém somente o estado booleano, sem informações internas. O `railway.json`
+usa essa rota para evitar considerar saudável uma instância sem banco.
+
 ## Verificações antes de anunciar a publicação
 
 - Faça backup do volume e teste restauração antes de migrar uma base real.
