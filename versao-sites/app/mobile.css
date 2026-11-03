@@ -129,3 +129,33 @@
  .mobile-more-panel.is-open{animation:none}
  .mobile-bottom-link{transition:none}
 }
+
+
+/* Indicadores verdes vivos: luz suave, pulsação lenta e acessibilidade. */
+.live-dot{
+ position:relative;width:7px;height:7px;isolation:isolate;
+ background:#60e6b4;box-shadow:0 0 4px #60e6b4,0 0 13px #38d9a077;
+ animation:yokira-ponto-luz 2.7s ease-in-out infinite;
+}
+.live-dot::after{
+ content:'';position:absolute;inset:-7px;border-radius:50%;pointer-events:none;
+ border:1px solid #52dda466;background:radial-gradient(circle,#52dda42e 0%,transparent 75%);
+ animation:yokira-onda-luz 2.7s ease-out infinite;
+}
+.air-badge::before{
+ background:#60e6b4;
+ box-shadow:0 0 6px #60e6b4,0 0 12px #38d9a077;
+ animation:yokira-ponto-luz 2.7s ease-in-out infinite;
+}
+@keyframes yokira-ponto-luz{
+ 0%,100%{opacity:.82;box-shadow:0 0 4px #60e6b4,0 0 8px #38d9a050}
+ 50%{opacity:1;box-shadow:0 0 8px #75ffd0,0 0 18px #38d9a0aa}
+}
+@keyframes yokira-onda-luz{
+ 0%{opacity:.14;transform:scale(.7)}
+ 50%{opacity:.95;transform:scale(1.22)}
+ 100%{opacity:.14;transform:scale(.7)}
+}
+@media(prefers-reduced-motion:reduce){
+ .live-dot,.live-dot::after,.air-badge::before{animation:none}
+}
