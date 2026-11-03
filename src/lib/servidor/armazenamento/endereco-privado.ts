@@ -58,7 +58,7 @@ export function ipv4Privado(endereco: string): boolean {
 export function ipv6Privado(endereco: string): boolean {
   const limpo = endereco
     .toLowerCase()
-    .replace(/^\\[|\\]$/g, '')
+    .replace(/^\[|\]$/g, '')
     .split('%')[0];
 
   if (isIP(limpo) !== 6) return true;
