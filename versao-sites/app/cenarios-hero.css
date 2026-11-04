@@ -1,0 +1,117 @@
+/* Galeria autoral anime: apenas o FUNDO do hero, sem alterar a paleta global. */
+.intro-cenarios{
+  position:absolute;
+  inset:-26px -18px;
+  z-index:-1;
+  overflow:hidden;
+  pointer-events:none;
+  contain:paint;
+  isolation:isolate;
+  mask-image:linear-gradient(90deg,transparent 0%,#000 18%,#000 95%,transparent 100%);
+}
+.cenario-camada{position:absolute;inset:0;will-change:opacity}
+.cenario-anterior{z-index:1;opacity:1}
+.cenario-atual{z-index:2;opacity:1;animation:yokira-cenario-entrar 1.8s ease-in-out both}
+.cenario-ilustracao{
+  position:absolute;
+  inset:-5%;
+  background-position:68% center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  transform-origin:68% 56%;
+  animation:yokira-cenario-respirar 29s ease-in-out infinite alternate;
+  will-change:transform;
+}
+.intro-cenarios::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:5;
+  background:linear-gradient(90deg,var(--bg) 0%,transparent 31%,transparent 78%,var(--bg) 100%);
+  opacity:.42;
+}
+.cenario-nevoa{
+  position:absolute;
+  z-index:3;
+  inset:0;
+  background:radial-gradient(ellipse at 81% 72%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 48%);
+  opacity:.62;
+  animation:yokira-nevoa-viva 16s ease-in-out infinite alternate;
+}
+.cenario-luz{
+  position:absolute;
+  z-index:4;
+  inset:4%;
+  background-image:radial-gradient(circle,#ffffff8c 0 1px,transparent 2px),radial-gradient(circle,#b5c7ff88 0 1px,transparent 3px);
+  background-size:137px 179px,193px 163px;
+  background-position:7px 11px,50px 78px;
+  opacity:.30;
+  animation:yokira-fagulhas 12s linear infinite;
+  mix-blend-mode:screen;
+}
+@keyframes yokira-cenario-entrar{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes yokira-cenario-respirar{
+  from{transform:translate3d(-1%,0,0) scale(1.045)}
+  to{transform:translate3d(1.1%,-1.3%,0) scale(1.105)}
+}
+@keyframes yokira-nevoa-viva{
+  from{transform:translateX(-4%) scale(1);opacity:.4}
+  to{transform:translateX(5%) scale(1.13);opacity:.78}
+}
+@keyframes yokira-fagulhas{
+  from{background-position:7px 11px,50px 78px}
+  to{background-position:45px -120px,10px -100px}
+}
+
+/* Mais fluidez sem mexer na aparência do cabeçalho, botões ou cores. */
+@media (hover:hover) and (pointer:fine){
+  .anime-card,.game-tile,.editorial-card,.top-mini{
+    transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .28s ease,border-color .28s ease;
+  }
+  .anime-card:hover,.editorial-card:hover{transform:translateY(-5px)}
+  .game-tile:hover{transform:translateY(-3px)}
+  .top-mini:hover{transform:translateX(3px)}
+  .anime-card:hover .poster-wrap{
+    box-shadow:0 11px 30px #0004,0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);
+  }
+  .button-primary{position:relative;overflow:hidden}
+  .button-primary::after{
+    content:"";position:absolute;inset:-50%;
+    background:linear-gradient(100deg,transparent 40%,#fff3 50%,transparent 60%);
+    transform:translateX(-100%) rotate(9deg);
+    transition:transform .6s ease;
+    pointer-events:none;
+  }
+  .button-primary:hover::after{transform:translateX(100%) rotate(9deg)}
+}
+@media (max-width:980px){
+  .intro-cenarios{inset:0 -10px 0 -10px;mask-image:linear-gradient(90deg,transparent 0%,#000 31%,#000 99%)}
+  .cenario-ilustracao{background-position:72% center;transform-origin:70% center}
+  /* Correção específica da seção abaixo de "O que vale descobrir". */
+  .trending-section{min-width:0;max-width:100%;overflow:clip}
+  .trending-section .section-title{min-width:0;flex-wrap:wrap}
+  .trending-section .section-title>div{min-width:0;max-width:100%}
+  .trending-section .section-title h2{min-width:0;flex-wrap:wrap;overflow-wrap:anywhere}
+  .trending-section .anime-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 10px;
+    width:100%;max-width:100%;margin:0;padding:0;
+  }
+  .trending-section .anime-card{min-width:0;width:100%;max-width:100%;overflow:clip}
+  .trending-section .poster-wrap,.trending-section .poster-wrap>img{max-width:100%;min-width:0}
+  .trending-section .anime-card>strong,.trending-section .card-meta{
+    max-width:100%;min-width:0;overflow-wrap:anywhere;
+  }
+}
+@media (max-width:480px){
+  .intro-cenarios{opacity:.88}
+  .trending-section .section-title{gap:8px}
+  .trending-section .section-title .text-link{max-width:100%;margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .cenario-atual,.cenario-ilustracao,.cenario-nevoa,.cenario-luz{animation:none!important}
+  .cenario-camada,.anime-card,.game-tile,.top-mini,.editorial-card,.button-primary::after{transition:none!important;will-change:auto}
+  .cenario-atual{opacity:1}
+}
