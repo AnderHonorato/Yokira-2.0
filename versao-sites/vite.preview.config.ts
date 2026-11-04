@@ -8,7 +8,7 @@ const diretorio = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig({
   root: resolve(diretorio, 'preview'),
   publicDir: resolve(diretorio, 'public'),
-  base: '/',
+  base: process.env.YOKIRA_PUBLIC_BASE || '/',
   plugins: [react()],
   resolve: {
     alias: { '@': diretorio }
