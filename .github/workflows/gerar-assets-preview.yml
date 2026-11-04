@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main-ChatGPT
+      - sol/distribuir-assets-preview-20261104
     paths:
       - 'versao-sites/**'
       - '.github/workflows/gerar-assets-preview.yml'
