@@ -1,0 +1,73 @@
+name: Publicar prévia Yokira 2.0 no GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main-ChatGPT
+    paths:
+      - 'versao-sites/**'
+      - '.github/workflows/publicar-previa-pages.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: yokira-pages
+  cancel-in-progress: true
+
+jobs:
+  preparar:
+    name: Compilar prévia visual
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Preparar PNPM e dependências
+        run: |
+          npm install --global pnpm@11.25.0
+          cd versao-sites
+          pnpm install --frozen-lockfile
+
+      - name: Compilar para o caminho do Pages
+        working-directory: versao-sites
+        env:
+          YOKIRA_PUBLIC_BASE: /Yokira-2.0/
+        run: pnpm run build:preview
+
+      - name: Verificar HTML, assets e 10 cenários
+        run: |
+          test -s versao-sites/dist-preview/index.html
+          test -s versao-sites/dist-preview/favicon.svg
+          test "$(find versao-sites/dist-preview/arte/cenarios -maxdepth 1 -name '*.svg' | wc -l)" -eq 10
+          touch versao-sites/dist-preview/.nojekyll
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Enviar artefato de hospedagem
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: versao-sites/dist-preview
+
+  publicar:
+    name: Publicar URL pública de demonstração
+    needs: preparar
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
