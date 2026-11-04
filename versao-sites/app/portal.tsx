@@ -10,6 +10,7 @@ import Player from './componentes/player';
 import Secoes from './componentes/secoes';
 import './portal.css';
 import './mobile.css';
+import './cenarios-hero.css';
 import type {ItemColecao} from '@/lib/colecao';
 type Estado={usuario:Record<string,unknown>|null;minhaLista:string[];colecao?:ItemColecao[];progresso:{tituloId:string;segundos:number}[];[key:string]:unknown};
 const labels:Record<string,Record<string,string>>={pt:{inicio:'Início',catalogo:'Acervo',agenda:'Agenda',top100:'Top 100',editorial:'Editorial',forum:'Fórum',comunidade:'Comunidade',jogos:'Jogos',listas:'Minha lista',perfil:'Meu perfil'},en:{inicio:'Home',catalogo:'Collection',agenda:'Schedule',top100:'Top 100',editorial:'Editorial',forum:'Forum',comunidade:'Community',jogos:'Games',listas:'My list',perfil:'My profile'},es:{inicio:'Inicio',catalogo:'Catálogo',agenda:'Agenda',top100:'Top 100',editorial:'Editorial',forum:'Foro',comunidade:'Comunidad',jogos:'Juegos',listas:'Mi lista',perfil:'Mi perfil'}};
