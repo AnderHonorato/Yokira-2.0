@@ -67,7 +67,6 @@ test('pontos verdes têm animação suave e respeitam movimento reduzido', async
   await expect(ponto).toHaveCSS('animation-name', 'none');
 });
 
-
 test('galeria anime usa dez artes próprias e alterna na virada de cada hora', async ({
   page,
   request
@@ -80,23 +79,30 @@ test('galeria anime usa dez artes próprias e alterna na virada de cada hora', a
   await expect(galeria).toBeVisible();
   const indiceAnterior = Math.floor(inicio.getTime() / 3_600_000) % 10;
   await expect(galeria).toHaveAttribute('data-cenario-atual', String(indiceAnterior));
-  const fundoAnterior = await page.locator('.cenario-atual .cenario-ilustracao').evaluate(
-    elemento => getComputedStyle(elemento).backgroundImage
-  );
+  const fundoAnterior = await page
+    .locator('.cenario-atual .cenario-ilustracao')
+    .evaluate((elemento) => getComputedStyle(elemento).backgroundImage);
 
   await page.clock.fastForward(4_000);
   const indiceSeguinte = (indiceAnterior + 1) % 10;
   await expect(galeria).toHaveAttribute('data-cenario-atual', String(indiceSeguinte));
-  const proximo = await page.locator('.cenario-atual .cenario-ilustracao').evaluate(
-    elemento => getComputedStyle(elemento).backgroundImage
-  );
+  const proximo = await page
+    .locator('.cenario-atual .cenario-ilustracao')
+    .evaluate((elemento) => getComputedStyle(elemento).backgroundImage);
   expect(proximo).not.toEqual(fundoAnterior);
 
   for (const numero of Array.from({ length: 10 }, (_, i) => i + 1)) {
     const nome = [
-      'sakura-luar', 'metropole-chuva', 'ilhas-celestes', 'expresso-crepusculo',
-      'templo-de-neve', 'areias-do-destino', 'floresta-espiritos',
-      'observatorio-astral', 'palacio-submerso', 'dragoes-do-amanhecer'
+      'sakura-luar',
+      'metropole-chuva',
+      'ilhas-celestes',
+      'expresso-crepusculo',
+      'templo-de-neve',
+      'areias-do-destino',
+      'floresta-espiritos',
+      'observatorio-astral',
+      'palacio-submerso',
+      'dragoes-do-amanhecer'
     ][numero - 1];
     const caminho = `/arte/cenarios/${String(numero).padStart(2, '0')}-${nome}.svg`;
     const resultado = await request.get(caminho);
@@ -105,9 +111,7 @@ test('galeria anime usa dez artes próprias e alterna na virada de cada hora', a
   }
 });
 
-test('o que vale descobrir cabe inteiramente no mobile, inclusive em 320px', async ({
-  page
-}) => {
+test('o que vale descobrir cabe inteiramente no mobile, inclusive em 320px', async ({ page }) => {
   for (const largura of [320, 360, 390, 430]) {
     await page.setViewportSize({ width: largura, height: 800 });
     await page.goto('/');
@@ -121,18 +125,22 @@ test('o que vale descobrir cabe inteiramente no mobile, inclusive em 320px', asy
       return {
         rolagem: document.documentElement.scrollWidth,
         larguraUtil,
-        cards: cards.map(card => {
+        cards: cards.map((card) => {
           const rect = card.getBoundingClientRect();
           return { esquerda: rect.left, direita: rect.right, largura: rect.width };
         }),
         limite: box.right
       };
     });
-    expect(resultado.rolagem, `Rolagem horizontal em ${largura}px`).toBeLessThanOrEqual(largura + 1);
+    expect(resultado.rolagem, `Rolagem horizontal em ${largura}px`).toBeLessThanOrEqual(
+      largura + 1
+    );
     expect(resultado.cards.length).toBeGreaterThan(1);
     for (const card of resultado.cards) {
       expect(card.esquerda, `Card saiu à esquerda em ${largura}px`).toBeGreaterThanOrEqual(-1);
-      expect(card.direita, `Card saiu à direita em ${largura}px`).toBeLessThanOrEqual(resultado.larguraUtil + 1);
+      expect(card.direita, `Card saiu à direita em ${largura}px`).toBeLessThanOrEqual(
+        resultado.larguraUtil + 1
+      );
       expect(card.direita, 'Card saiu da seção').toBeLessThanOrEqual(resultado.limite + 1);
     }
   }
