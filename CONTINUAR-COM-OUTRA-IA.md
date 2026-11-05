@@ -75,6 +75,46 @@ O estado de publicação e validação deve ser conferido no histórico do PR e
 na versão Sites atual. Antes de editar, conferir `git status`, HEAD e mudanças
 feitas por outras sessões; preservar trabalho concorrente.
 
+## Evolução social publicada na versão 7
+
+- Origem Sites `dadecff3fde9d0badf1627b874278b506c7f6357`; implementação GitHub
+  `211da482b31e969cc1ff9e7cfc92eae71b51b29b` (inclui a revisão social
+  `9aca03258eb951553d6fc62d55abd6a718114d8c`). Publicação confirmada pelo Sites,
+  configuração de ambiente revisão 2. Mesmo endereço público.
+- 20 conquistas calculadas por feitos persistidos, emblemas distintos animados,
+  raridades por cor e forma e hall com três destaques editáveis e persistentes.
+- Níveis evoluem em oito faixas, com refinamento por nível e partículas limitadas.
+  Cobra SVG percorre as letras YKA em camadas de frente e fundo, em loop.
+- Cabeçalho completo fica na parte inferior no celular, acima da navegação. Uma
+  única instância de notificações preserva a reivindicação de celebração.
+- Cadastro/login e-mail/senha com better-auth, sessão D1, cookies seguros, senha
+  forte e sugestões. Login ChatGPT preservado. Contas têm namespace `conta:` e
+  não são fundidas automaticamente. Nunca promover admin por e-mail não verificado.
+- **Sem serviço de envio de e-mails:** verificação e recuperação de senha ainda
+  indisponíveis. `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` estão configurados no Sites;
+  não expor seus valores. A administração automática segue apenas identidade
+  ChatGPT confiável e allowlist privada.
+- `@` único para ambos os provedores, sugestões verificadas, privacidade do perfil,
+  busca, solicitações de amizade e bloqueios. Perfil começa privado; usuário pode
+  habilitar busca pública no editor do perfil.
+- Salas privadas por episódio publicado, dupla/grupo até 2/12, convite imprevisível,
+  chat persistente, gestão pelo dono e sincronização do player nativo a cada dois
+  segundos. Iframes externos têm aviso de ausência de sincronização universal.
+- Admin configura banners, artes com personagens em camada separada, ordem,
+  ativação e intervalo padrão/individual entre 3–60 segundos. Imagens R2 seguem
+  visibilidade do banner/título. Moderação das mensagens das salas com auditoria.
+- Frases promocionais removidas da home, cabeçalho e rodapé. Fundo de dez cenários
+  permanece APENAS administrativo; o carrossel de anúncios é separado.
+- Migrações 0011–0015, schemas em módulos, snapshots e journal coerentes.
+- Validações locais: 99 testes, typecheck, lint sem erros, builds de produção e
+  prévia, audit sem alto/crítico; `db:generate` sem alterações pendentes.
+- CI aprovado: https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42129141413.
+  Backend, prévia e 20 testes Chromium aprovados, incluindo 320–1440px com e sem
+  sessão. Corrigido overflow causado pelo cartão pessoal criar coluna implícita
+  na grade móvel e evitado clique em Mais antes da hidratação. HTTP real confirmou
+  páginas, três banners, imagens e recusa de APIs privadas sem sessão.
+  Mais detalhes em `versao-sites/docs/EVOLUCAO-SOCIAL.md`.
+
 ## Arquivos principais
 
 - `versao-sites/.openai/hosting.json`: identidade Sites, `DB` e `BUCKET`.
@@ -92,7 +132,8 @@ feitas por outras sessões; preservar trabalho concorrente.
 
 ## Regras importantes
 
-- Identidade vem do dispatch Sites, nunca de um usuário/papel fornecido no JSON.
+- Identidade vem do dispatch Sites ou de sessão better-auth validada no servidor,
+  nunca de um usuário/papel fornecido no JSON.
 - `YOKIRA_ADMIN_EMAILS` é configuração privada do Worker. Não colocar seu valor em
   fonte, frontend, documentos públicos ou logs.
 - Toda escrita administrativa reconfere a permissão no banco. O último admin
