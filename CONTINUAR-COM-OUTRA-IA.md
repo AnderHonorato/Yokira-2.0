@@ -46,7 +46,7 @@ conteúdo, múltiplas fontes, R2, marca antiga e notificações persistentes. Pa
 por 58 testes, typecheck e build. HTTP real confirmou página/catálogo, bloqueio de
 área privada e rota R2. O proprietário é configurado por allowlist privada no Worker.
 
-A revisão visual seguinte implementa:
+A revisão visual está publicada na versão Sites 5 e implementa:
 
 - Migração incremental `0010_aparencia_global`, cenário e intensidade globais com
   autorização administrativa, revisão monotônica SQL e auditoria atômica.
@@ -61,7 +61,17 @@ A revisão visual seguinte implementa:
   de nível; claims do servidor não foram alterados.
 - Camada `app/efeitos-visuais.css` para o restante da interface.
 
-O estado final de publicação e validação deve ser conferido no histórico do PR e
+A versão Sites 5 foi confirmada como publicada, com origem
+`a2983365f6c1261ac57c86040d5c1e0729333587`. O código correspondente foi enviado ao
+GitHub no commit `c056cf4`. Foram aprovados 65 testes locais, TypeScript, lint sem
+erros, builds de produção/prévia e os três jobs do CI Sites, incluindo Chromium
+em 390px e 1440px: https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42018030481.
+HTTP real confirmou a home sem seletor, a imagem WebP nova, aparência global e
+recusa de dados pessoais sem login. Admin → Aparência inclui prévias de conquista
+e nível sem gravar XP ou notificações. Uma falha de formatação no teste mobile do
+workflow geral foi identificada e corrigida com Prettier, sem alterar comportamento.
+
+O estado de publicação e validação deve ser conferido no histórico do PR e
 na versão Sites atual. Antes de editar, conferir `git status`, HEAD e mudanças
 feitas por outras sessões; preservar trabalho concorrente.
 

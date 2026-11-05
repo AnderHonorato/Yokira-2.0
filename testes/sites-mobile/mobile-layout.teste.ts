@@ -67,12 +67,17 @@ test('pontos verdes têm animação suave e respeitam movimento reduzido', async
   await expect(ponto).toHaveCSS('animation-name', 'none');
 });
 
-test('fundo segue a configuração global e não oferece escolha ao visitante', async ({ page, request }) => {
+test('fundo segue a configuração global e não oferece escolha ao visitante', async ({
+  page,
+  request
+}) => {
   await page.clock.install({ time: new Date('2026-11-05T12:00:00Z') });
   let cenario = 4;
-  await page.route('**/api/yokira?acao=aparencia', rota => rota.fulfill({
-    json: { aparencia: { cenario, intensidade: 'intenso', atualizadoEm: cenario + 1 } }
-  }));
+  await page.route('**/api/yokira?acao=aparencia', (rota) =>
+    rota.fulfill({
+      json: { aparencia: { cenario, intensidade: 'intenso', atualizadoEm: cenario + 1 } }
+    })
+  );
   await page.goto('/');
   const galeria = page.locator('.intro-cenarios');
   await expect(galeria).toHaveAttribute('data-cenario-atual', '4');
@@ -83,9 +88,20 @@ test('fundo segue a configuração global e não oferece escolha ao visitante', 
   cenario = 7;
   await page.clock.fastForward(16_000);
   await expect(galeria).toHaveAttribute('data-cenario-atual', '7');
-  const nomes = ['sakura-luar','metropole-chuva','ilhas-celestes','expresso-crepusculo','templo-de-neve','areias-do-destino','floresta-espiritos','observatorio-astral','palacio-submerso','dragoes-do-amanhecer'];
-  for (const [indice,nome] of nomes.entries()) {
-    const caminho = `/arte/cenarios/${String(indice+1).padStart(2,'0')}-${nome}.webp`;
+  const nomes = [
+    'sakura-luar',
+    'metropole-chuva',
+    'ilhas-celestes',
+    'expresso-crepusculo',
+    'templo-de-neve',
+    'areias-do-destino',
+    'floresta-espiritos',
+    'observatorio-astral',
+    'palacio-submerso',
+    'dragoes-do-amanhecer'
+  ];
+  for (const [indice, nome] of nomes.entries()) {
+    const caminho = `/arte/cenarios/${String(indice + 1).padStart(2, '0')}-${nome}.webp`;
     const resposta = await request.get(caminho);
     expect(resposta.ok(), caminho).toBeTruthy();
     expect(resposta.headers()['content-type']).toContain('image/webp');
