@@ -1,0 +1,306 @@
+/* Movimento editorial: feedback curto, profundidade local e leitura estável. */
+:root {
+  --efeito-ease: cubic-bezier(.2,.75,.2,1);
+  --efeito-tempo: 240ms;
+  --efeito-entrada: 560ms;
+  --efeito-subida: -5px;
+  --efeito-inicio: 16px;
+  --efeito-inclinacao: .65deg;
+  --efeito-escala: .975;
+  --efeito-halo: 25%;
+  --efeito-atraso: 45ms;
+  --efeito-cor: color-mix(in srgb,var(--accent) 45%,var(--border));
+  --efeito-sombra: 0 16px 32px -20px #0009;
+}
+html[data-efeitos='equilibrado'] {
+  --efeito-subida: -3px;
+  --efeito-inicio: 10px;
+  --efeito-inclinacao: .3deg;
+  --efeito-escala: .985;
+  --efeito-halo: 18%;
+  --efeito-entrada: 450ms;
+  --efeito-atraso: 30ms;
+}
+html[data-efeitos='suave'] {
+  --efeito-subida: -1px;
+  --efeito-inicio: 4px;
+  --efeito-inclinacao: 0deg;
+  --efeito-escala: .995;
+  --efeito-halo: 10%;
+  --efeito-entrada: 260ms;
+  --efeito-atraso: 15ms;
+}
+html[data-theme='light'] {
+  --efeito-sombra: 0 16px 30px -22px #19355c66;
+}
+
+/* A linha do cabeçalho acompanha a identidade sem cobrir conteúdo. */
+html .topbar::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg,transparent 5%,var(--accent) 37%,color-mix(in srgb,var(--gold) 55%,var(--accent)) 65%,transparent 95%);
+  opacity: .48;
+}
+html .topbar {
+  box-shadow: 0 8px 32px -25px color-mix(in srgb,var(--accent) 60%,transparent);
+}
+html .nav-link::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 65%,var(--gold)));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--efeito-tempo) var(--efeito-ease);
+}
+html .nav-link:is(:hover,:focus-visible,.active)::after { transform: scaleX(1); }
+html .nav-link.active::after { animation: yokira-linha 350ms var(--efeito-ease); }
+html :is(.nav-link,.mobile-bottom-link,.mobile-more-link) svg {
+  transition: transform var(--efeito-tempo) var(--efeito-ease),color var(--efeito-tempo);
+}
+html .mobile-bottom-link.active::before { animation: yokira-linha 350ms var(--efeito-ease); }
+html .mobile-bottom-link.active svg { animation: yokira-icone 400ms var(--efeito-ease); }
+
+/* Gradientes próximos da cor do texto preservam contraste nos dois temas. */
+@supports (background-clip: text) {
+  html :is(.page-heading,.sc-heading,.detail-copy) h1 {
+    background: linear-gradient(115deg,var(--text) 15%,color-mix(in srgb,var(--text) 80%,var(--accent)) 70%,var(--text));
+    background-clip: text;
+    color: transparent;
+  }
+  html :is(.intro-copy h1,.community-promo h2,.footer-brand h3) em {
+    background: linear-gradient(110deg,var(--accent) 18%,color-mix(in srgb,var(--accent) 75%,var(--text)) 67%,var(--accent));
+    background-clip: text;
+    color: transparent;
+  }
+}
+html :is(.section-pill,.eyebrow,.sc-kicker) {
+  text-shadow: 0 0 22px color-mix(in srgb,var(--accent) 13%,transparent);
+}
+html .section-title h2 > svg {
+  transition: transform var(--efeito-tempo) var(--efeito-ease);
+}
+html .section-title:hover h2 > svg { transform: translateY(-2px) rotate(-7deg); }
+
+/* As capas ganham um plano de luz, mantendo as proporções originais. */
+html :is(.poster-wrap,.editorial-image) {
+  transition: transform var(--efeito-tempo) var(--efeito-ease),border-color var(--efeito-tempo),box-shadow var(--efeito-tempo);
+}
+html .poster-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -25% -45%;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(110deg,transparent 35%,#ffffff25 48%,#ffffff45 50%,transparent 63%);
+  transform: translateX(-80%);
+  opacity: 0;
+}
+html :is(.anime-card,.editorial-card) { perspective: 900px; }
+html :is(.game-tile,.sc-game-card,.sc-editorial-card,.colecao-item,.sc-discussion,.episodios-publicos-item) {
+  position: relative;
+  transition: transform var(--efeito-tempo) var(--efeito-ease),border-color var(--efeito-tempo),box-shadow var(--efeito-tempo),background-color var(--efeito-tempo);
+}
+/* Borda dupla em aurora: só muda a luz, sem acrescentar largura. */
+html :is(.game-tile,.sc-game-card,.sc-editorial-card)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  background: linear-gradient(125deg,var(--accent),transparent 38%,transparent 58%,color-mix(in srgb,var(--gold) 70%,var(--accent)));
+  mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--efeito-tempo);
+}
+html :is(.game-symbol,.sc-game-symbol) {
+  transition: transform var(--efeito-tempo) var(--efeito-ease),box-shadow var(--efeito-tempo);
+}
+html :is(.season-row,.top-mini,.sc-rank-row,.sc-agenda-item,.search-results > button,.upcoming > button) {
+  transition: background-color var(--efeito-tempo),box-shadow var(--efeito-tempo),border-color var(--efeito-tempo);
+}
+html :is(.text-link,.read-more,.aside-link,.back-link) svg,
+html :is(.game-tile,.season-row,.upcoming > button,.search-results > button) > svg:last-child {
+  transition: transform var(--efeito-tempo) var(--efeito-ease),color var(--efeito-tempo);
+}
+
+/* Feedback de pressão e reflexo interno, sem listeners globais de clique. */
+html .button {
+  position: relative;
+  isolation: isolate;
+  transition: transform var(--efeito-tempo) var(--efeito-ease),background-color var(--efeito-tempo),border-color var(--efeito-tempo),box-shadow var(--efeito-tempo);
+}
+html .button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%,#ffffff38,transparent 72%);
+  box-shadow: inset 0 1px 0 #ffffff25;
+  opacity: 0;
+  transform: scale(.4);
+  transition: opacity 400ms,transform 500ms var(--efeito-ease);
+}
+html .button:active:not(:disabled) { transform: translateY(1px) scale(var(--efeito-escala)); }
+html .button:active:not(:disabled)::after { opacity: 1; transform: scale(1); transition-duration: 70ms; }
+html .button-primary {
+  box-shadow: 0 4px 16px color-mix(in srgb,var(--accent) 20%,transparent),inset 0 1px 0 #ffffff30;
+}
+html :is(.icon-button,.avatar-button,.list-trigger,.search-trigger,.brand-button) {
+  transition: color var(--efeito-tempo),transform var(--efeito-tempo) var(--efeito-ease),box-shadow var(--efeito-tempo);
+}
+html :is(.icon-button,.avatar-button,.list-trigger,.search-trigger):active { transform: scale(.94); }
+html :is(.sc-day-tabs,.colecao-filtros,.genre-chips) button,
+html .sc-poll-option {
+  transition: border-color var(--efeito-tempo),background-color var(--efeito-tempo),box-shadow var(--efeito-tempo),transform var(--efeito-tempo) var(--efeito-ease);
+}
+html :is(.sc-day-tabs button.active,.colecao-filtros button.selecionado,.sc-poll-option.selected) {
+  box-shadow: inset 0 1px 0 #ffffff20,0 3px 12px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  html .anime-card:is(:hover,:focus-visible) .poster-wrap {
+    transform: translateY(var(--efeito-subida)) rotateX(var(--efeito-inclinacao));
+    border-color: var(--efeito-cor);
+    box-shadow: var(--efeito-sombra),0 0 0 1px color-mix(in srgb,var(--accent) 15%,transparent);
+  }
+  html .anime-card:is(:hover,:focus-visible) .poster-wrap::after { animation: yokira-reflexo 720ms var(--efeito-ease); }
+  html .editorial-card:is(:hover,:focus-visible) .editorial-image {
+    transform: translateY(var(--efeito-subida));
+    box-shadow: var(--efeito-sombra);
+  }
+  html :is(.game-tile,.sc-game-card,.sc-editorial-card,.episodios-publicos-item):is(:hover,:focus-visible),
+  html .colecao-item:focus-within {
+    transform: translateY(var(--efeito-subida));
+    border-color: var(--efeito-cor);
+    box-shadow: var(--efeito-sombra);
+  }
+  html :is(.game-tile,.sc-game-card,.sc-editorial-card):is(:hover,:focus-visible)::before { opacity: .85; }
+  html :is(.game-tile,.sc-game-card):is(:hover,:focus-visible) :is(.game-symbol,.sc-game-symbol) {
+    transform: translateY(-2px) rotate(-5deg);
+    box-shadow: 0 5px 20px color-mix(in srgb,var(--accent) var(--efeito-halo),transparent);
+  }
+  html :is(.season-row,.top-mini,.sc-rank-row,.sc-agenda-item,.search-results > button,.upcoming > button):is(:hover,:focus-visible) {
+    background-color: color-mix(in srgb,var(--accent) 5%,transparent);
+    box-shadow: inset 2px 0 0 color-mix(in srgb,var(--accent) 70%,transparent);
+  }
+  html :is(.text-link,.read-more,.aside-link):hover svg,
+  html :is(.game-tile,.season-row,.upcoming > button,.search-results > button):hover > svg:last-child { transform: translateX(3px); color: var(--accent); }
+  html .button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px -9px color-mix(in srgb,var(--accent) 45%,transparent),inset 0 1px 0 #ffffff20;
+  }
+  html .button:active:not(:disabled) { transform: translateY(1px) scale(var(--efeito-escala)); }
+  html :is(.icon-button,.avatar-button,.list-trigger,.search-trigger):hover { color: var(--accent); transform: translateY(-1px); }
+  html .nav-link:hover svg { transform: translateY(-2px); }
+  html :is(.sc-day-tabs,.colecao-filtros,.genre-chips) button:hover { border-color: var(--efeito-cor); }
+}
+
+/* Foco visível também para busca e formulários com outline local removido. */
+html :is(button,a,input,select,textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb,var(--accent) 13%,transparent);
+}
+html :is(.filter-search,.colecao-ferramentas > label):focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 2px 0 color-mix(in srgb,var(--accent) 20%,transparent);
+}
+
+/* Entrada finita; as trilhas são curtas mesmo em catálogos extensos. */
+html :is(.page-heading,.sc-heading,.detail-intro,.intro-copy,.weekly-top,.section-title) {
+  animation: yokira-entrada var(--efeito-entrada) var(--efeito-ease) backwards;
+}
+html :is(.anime-grid,.game-tiles,.editorial-grid,.sc-games-grid,.sc-editorial-grid,.colecao-itens,.episodios-publicos-lista) > * {
+  animation: yokira-entrada var(--efeito-entrada) var(--efeito-ease) backwards;
+}
+html :is(.anime-grid,.game-tiles,.editorial-grid,.sc-games-grid,.sc-editorial-grid,.colecao-itens,.episodios-publicos-lista) > :nth-child(6n + 2) { animation-delay: var(--efeito-atraso); }
+html :is(.anime-grid,.game-tiles,.editorial-grid,.sc-games-grid,.sc-editorial-grid,.colecao-itens,.episodios-publicos-lista) > :nth-child(6n + 3) { animation-delay: calc(var(--efeito-atraso) * 2); }
+html :is(.anime-grid,.game-tiles,.editorial-grid,.sc-games-grid,.sc-editorial-grid,.colecao-itens,.episodios-publicos-lista) > :nth-child(6n + 4) { animation-delay: calc(var(--efeito-atraso) * 3); }
+html :is(.anime-grid,.game-tiles,.editorial-grid,.sc-games-grid,.sc-editorial-grid,.colecao-itens,.episodios-publicos-lista) > :nth-child(6n + 5) { animation-delay: calc(var(--efeito-atraso) * 4); }
+html :is(.anime-grid,.game-tiles,.editorial-grid,.sc-games-grid,.sc-editorial-grid,.colecao-itens,.episodios-publicos-lista) > :nth-child(6n + 6) { animation-delay: calc(var(--efeito-atraso) * 5); }
+
+html :is(.search-dialog,.colecao-dialogo)[open],
+html .sc-modal-backdrop[open] .sc-modal {
+  animation: yokira-camada 300ms var(--efeito-ease) backwards;
+  box-shadow: 0 30px 110px -25px #000b,0 0 0 1px color-mix(in srgb,var(--accent) 16%,transparent),inset 0 1px 0 #ffffff0c;
+}
+html :is(.search-dialog,.colecao-dialogo)::backdrop {
+  background: color-mix(in srgb,var(--bg) 78%,transparent);
+  animation: yokira-velatura 220ms ease-out;
+}
+html .mobile-more-panel.is-open { box-shadow: 0 -16px 55px -18px #0008,0 0 0 1px color-mix(in srgb,var(--accent) 12%,transparent); }
+
+html [data-slot='skeleton'] {
+  position: relative;
+  background: linear-gradient(110deg,var(--card) 30%,color-mix(in srgb,var(--card) 78%,var(--text)) 48%,var(--card) 66%);
+  background-size: 220% 100%;
+  animation: yokira-esqueleto 1.8s ease-in-out infinite;
+}
+html .footer { position: relative; }
+html .footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg,transparent 8%,color-mix(in srgb,var(--accent) 65%,transparent) 35%,color-mix(in srgb,var(--gold) 40%,transparent) 67%,transparent 92%);
+}
+html .footer-inner > div:not(:first-child) > a {
+  width: fit-content;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 5px;
+  transition: color var(--efeito-tempo),text-decoration-color var(--efeito-tempo);
+}
+html .footer-inner > div:not(:first-child) > a:hover { color: var(--accent); text-decoration-color: currentColor; }
+
+@keyframes yokira-entrada {
+  from { opacity: 0; transform: translateY(var(--efeito-inicio)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes yokira-camada {
+  from { opacity: 0; transform: translateY(var(--efeito-inicio)) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes yokira-reflexo {
+  0% { opacity: 0; transform: translateX(-80%); }
+  20% { opacity: .75; }
+  100% { opacity: 0; transform: translateX(80%); }
+}
+@keyframes yokira-linha { from { transform: scaleX(.2); opacity: .3; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes yokira-icone { 50% { transform: translateY(-3px); } }
+@keyframes yokira-velatura { from { opacity: 0; } to { opacity: 1; } }
+@keyframes yokira-esqueleto { from { background-position: 150% 0; } to { background-position: -70% 0; } }
+
+@media (max-width:760px) {
+  :root { --efeito-inicio: 8px; --efeito-atraso: 25ms; }
+  html .nav-link::after { display: none; }
+}
+@media (prefers-reduced-motion:reduce) {
+  html *,html *::before,html *::after { animation: none!important; transition: none!important; }
+  html { scroll-behavior: auto; }
+  html :is(.anime-card,.editorial-card):is(:hover,:focus-visible) :is(.poster-wrap,.editorial-image),
+  html :is(.game-tile,.sc-game-card,.sc-editorial-card,.episodios-publicos-item):is(:hover,:focus-visible),
+  html .colecao-item:focus-within { transform: none; }
+  html :is(.button,.icon-button,.avatar-button,.list-trigger,.search-trigger):is(:hover,:active),
+  html :is(.nav-link,.mobile-bottom-link) svg,
+  html :is(.game-symbol,.sc-game-symbol),
+  html :is(.section-title,.text-link,.read-more,.aside-link,.game-tile,.season-row,.upcoming > button,.search-results > button):hover svg { transform: none!important; }
+  html .poster-wrap::after { display: none; }
+}
+@media (forced-colors:active) {
+  html :is(.page-heading,.sc-heading,.detail-copy) h1,
+  html :is(.intro-copy h1,.community-promo h2,.footer-brand h3) em { background: none; color: CanvasText; }
+  html :is(.poster-wrap,.game-tile,.sc-game-card,.sc-editorial-card)::before,
+  html .poster-wrap::after { display: none; }
+}

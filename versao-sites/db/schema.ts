@@ -128,3 +128,13 @@ export const midia = sqliteTable('midia', {
     check('midia_tamanho_valido', sql`${t.tamanho} BETWEEN 1 AND 104857600`),
     check('midia_status_valido', sql`${t.status} IN ('enviando','pronto','falhou')`),
 ]);
+
+export const aparenciaGlobal = sqliteTable('aparencia_global', {
+    id: integer('id').primaryKey(), cenario: integer('cenario').notNull().default(0),
+    intensidade: text('intensidade', { enum: ['suave', 'equilibrado', 'intenso'] }).notNull().default('intenso'),
+    atualizadoEm: integer('atualizado_em').notNull().default(0),
+}, t => [check('aparencia_global_unica', sql`${t.id}=1`),
+    check('aparencia_cenario_valido', sql`${t.cenario} BETWEEN 0 AND 9`),
+    check('aparencia_intensidade_valida', sql`${t.intensidade} IN ('suave','equilibrado','intenso')`),
+    check('aparencia_atualizacao_valida', sql`${t.atualizadoEm}>=0`),
+]);

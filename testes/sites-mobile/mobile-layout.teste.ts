@@ -67,47 +67,29 @@ test('pontos verdes têm animação suave e respeitam movimento reduzido', async
   await expect(ponto).toHaveCSS('animation-name', 'none');
 });
 
-test('galeria anime usa dez artes próprias e alterna na virada de cada hora', async ({
-  page,
-  request
-}) => {
-  const inicio = new Date('2026-11-04T14:59:58.000Z');
-  await page.clock.install({ time: inicio });
+test('fundo segue a configuração global e não oferece escolha ao visitante', async ({ page, request }) => {
+  await page.clock.install({ time: new Date('2026-11-05T12:00:00Z') });
+  let cenario = 4;
+  await page.route('**/api/yokira?acao=aparencia', rota => rota.fulfill({
+    json: { aparencia: { cenario, intensidade: 'intenso', atualizadoEm: cenario + 1 } }
+  }));
   await page.goto('/');
-
   const galeria = page.locator('.intro-cenarios');
-  await expect(galeria).toBeVisible();
-  const indiceAnterior = Math.floor(inicio.getTime() / 3_600_000) % 10;
-  await expect(galeria).toHaveAttribute('data-cenario-atual', String(indiceAnterior));
-  const fundoAnterior = await page
-    .locator('.cenario-atual .cenario-ilustracao')
-    .getAttribute('data-cenario-src');
-
-  await page.clock.fastForward(4_000);
-  const indiceSeguinte = (indiceAnterior + 1) % 10;
-  await expect(galeria).toHaveAttribute('data-cenario-atual', String(indiceSeguinte));
-  const proximo = await page
-    .locator('.cenario-atual .cenario-ilustracao')
-    .getAttribute('data-cenario-src');
-  expect(proximo).not.toEqual(fundoAnterior);
-
-  for (const numero of Array.from({ length: 10 }, (_, i) => i + 1)) {
-    const nome = [
-      'sakura-luar',
-      'metropole-chuva',
-      'ilhas-celestes',
-      'expresso-crepusculo',
-      'templo-de-neve',
-      'areias-do-destino',
-      'floresta-espiritos',
-      'observatorio-astral',
-      'palacio-submerso',
-      'dragoes-do-amanhecer'
-    ][numero - 1];
-    const caminho = `/arte/cenarios/${String(numero).padStart(2, '0')}-${nome}.svg`;
-    const resultado = await request.get(caminho);
-    expect(resultado.ok(), `Faltou cenário ${caminho}`).toBeTruthy();
-    expect(await resultado.text()).toContain('<svg');
+  await expect(galeria).toHaveAttribute('data-cenario-atual', '4');
+  await expect(page.locator('.cenarios-controles')).toHaveCount(0);
+  await expect(page.getByLabel('Cenário animado')).toHaveCount(0);
+  await page.clock.fastForward(3_600_000);
+  await expect(galeria).toHaveAttribute('data-cenario-atual', '4');
+  cenario = 7;
+  await page.clock.fastForward(16_000);
+  await expect(galeria).toHaveAttribute('data-cenario-atual', '7');
+  const nomes = ['sakura-luar','metropole-chuva','ilhas-celestes','expresso-crepusculo','templo-de-neve','areias-do-destino','floresta-espiritos','observatorio-astral','palacio-submerso','dragoes-do-amanhecer'];
+  for (const [indice,nome] of nomes.entries()) {
+    const caminho = `/arte/cenarios/${String(indice+1).padStart(2,'0')}-${nome}.webp`;
+    const resposta = await request.get(caminho);
+    expect(resposta.ok(), caminho).toBeTruthy();
+    expect(resposta.headers()['content-type']).toContain('image/webp');
+    expect((await resposta.body()).length).toBeGreaterThan(50_000);
   }
 });
 
@@ -146,31 +128,12 @@ test('o que vale descobrir cabe inteiramente no mobile, inclusive em 320px', asy
   }
 });
 
-test('ilustração em loop respeita a preferência por menos animação', async ({ page }) => {
+test('arte e atmosfera respeitam a preferência por menos animação', async ({ page }) => {
   await page.goto('/');
   const ilustracao = page.locator('.cenario-atual .cenario-ilustracao');
-  await expect(ilustracao).toBeVisible();
-  await expect(ilustracao).toHaveCSS('animation-name', 'yokira-cenario-respirar');
+  await expect(ilustracao.locator('img')).toBeVisible();
+  await expect(ilustracao).toHaveCSS('animation-name', 'cenario-cinematico');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(ilustracao).toHaveCSS('animation-name', 'none');
-  await expect(ilustracao.locator('svg')).toBeVisible();
-  expect(await ilustracao.locator('svg').evaluate((svg) =>
-    svg.getAnimations({ subtree: true }).every(animacao => animacao.playState !== 'running')
-  )).toBeTruthy();
-});
-
-test('seletor mostra cada um dos dez temas e permite pausar o movimento', async ({ page }) => {
-  await page.goto('/');
-  for (let indice = 0; indice < 10; indice++) {
-    await page.getByLabel('Cenário animado').selectOption(String(indice));
-    await expect(page.locator('.intro-cenarios')).toHaveAttribute('data-cenario-atual', String(indice));
-    await expect(page.locator('.cenario-atual svg')).toBeVisible();
-  }
-  await page.getByRole('button', { name: 'Pausar animação' }).click();
-  await expect(page.locator('.intro-cenarios')).toHaveClass(/cenario-pausado/);
-  expect(await page.locator('.cenario-atual svg').evaluate((svg) =>
-    svg.getAnimations({ subtree: true }).every(animacao => animacao.playState !== 'running')
-  )).toBeTruthy();
-  await page.getByRole('button', { name: 'Retomar animação' }).click();
-  await expect(page.locator('.intro-cenarios')).not.toHaveClass(/cenario-pausado/);
+  await expect(page.locator('.cenario-atmosfera')).toBeHidden();
 });

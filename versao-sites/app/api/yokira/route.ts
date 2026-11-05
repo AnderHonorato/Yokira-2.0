@@ -6,6 +6,7 @@ import { listarNotificacoes, verNotificacoes } from '../../../lib/servidor/notif
 import { obterTemporadasAdmin, obterEpisodiosPublicos, salvarTemporada, salvarEpisodio } from '../../../lib/servidor/temporadas';
 import { salvarProgressoEpisodio, obterProgressoEpisodio } from '../../../lib/servidor/progresso-episodios';
 import { exigirAtivo } from '../../../lib/servidor/permissoes';
+import { obterAparencia, salvarAparencia } from '../../../lib/servidor/aparencia';
 import { corpoJson, ErroApi, identificador } from '../../../lib/servidor/validacao';
 function resposta(valor: unknown, status = 200) {
     return Response.json(valor, { status, headers: { 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' } });
@@ -19,10 +20,11 @@ function falha(erro: unknown) {
 export async function GET(request: Request) {
     try {
         const url = new URL(request.url), acao = url.searchParams.get('acao') || 'estado';
+        if (acao === 'aparencia') return resposta({aparencia: await obterAparencia(getDb())});
         // Somente informações públicas: nenhuma lista, nota, progresso ou jogo pessoal.
         if (acao === 'publico') {
-            const [comunidade, acervo] = await Promise.all([estadoPublico(), obterAcervo(getDb())]);
-            return resposta({...comunidade, ...acervo});
+            const [comunidade, acervo, aparencia] = await Promise.all([estadoPublico(), obterAcervo(getDb()), obterAparencia(getDb())]);
+            return resposta({...comunidade, ...acervo, aparencia});
         }
         if (acao === 'episodios')
             return resposta(await obterEpisodiosPublicos(getDb(), identificador(url.searchParams.get('tituloId')), url.origin));
@@ -47,8 +49,8 @@ export async function GET(request: Request) {
         }
         if (acao === 'moderacao') return resposta(await listarModeracao(db, usuario, url.searchParams.get('busca') || ''));
         if (acao === 'estado') {
-            const [pessoal, acervo] = await Promise.all([estado(db, usuario), obterAcervo(db)]);
-            return resposta({...pessoal, ...acervo});
+            const [pessoal, acervo, aparencia] = await Promise.all([estado(db, usuario), obterAcervo(db), obterAparencia(db)]);
+            return resposta({...pessoal, ...acervo, aparencia});
         }
         throw new ErroApi('Ação desconhecida.');
     }
@@ -59,6 +61,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const payload = await corpoJson(request), { db, usuario } = await contexto(request);
+        if (payload.acao === 'salvar-aparencia') return resposta(await salvarAparencia(db, usuario, payload));
         if (payload.acao === 'notificacoes-ver') return resposta(await verNotificacoes(db, usuario, payload));
         if (payload.acao === 'salvar-acervo') return resposta(await salvarAcervo(db, usuario, payload));
         if (payload.acao === 'salvar-temporada') return resposta(await salvarTemporada(db, usuario, payload));

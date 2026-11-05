@@ -73,6 +73,14 @@ jobs:
       - name: Instalar Chromium de teste
         run: npx playwright install --with-deps chromium
 
+      - name: Preparar banco local com todas as migrações Sites
+        run: |
+          cd versao-sites
+          pnpm run build
+          for migracao in drizzle/*.sql; do
+            node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file "$migracao"
+          done
+
       - name: Verificar navegação inferior, encaixe dos cards e indicadores
         run: npx playwright test --config=playwright.sites.config.ts
 
@@ -107,9 +115,9 @@ jobs:
       - name: Confirmar entrada e galeria anime completa
         run: |
           test -s dist-preview/index.html
-          test -s dist-preview/favicon.svg
+          test -s dist-preview/favicon.ico
           for numero in $(seq -w 1 10); do
-            test -n "$(find dist-preview/arte/cenarios -maxdepth 1 -name "${numero}-*.svg" -print -quit)"
+            test -n "$(find dist-preview/arte/cenarios -maxdepth 1 -name "${numero}-*.webp" -print -quit)"
           done
           test -n "$(find dist-preview/assets -name '*.js' -print -quit)"
           echo "Prévia Vite e dez artes anime prontas."

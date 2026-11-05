@@ -100,3 +100,14 @@ test('subida de nível guarda o caminho exato da participação que concedeu XP'
  assert.equal(nivel.destino,'/?p=forum&post='+publicacao.data.id);
  assert.equal(avisos.data.notificacoes.filter(item=>item.tipo==='nivel').length,1);
 });
+test('somente admin altera o fundo e a configuração publicada é a mesma para todos',async()=>{
+ const antes=await get(null,'aparencia');assert.equal(antes.status,200);assert.equal(antes.data.aparencia.cenario,0);
+ const payload={acao:'salvar-aparencia',cenario:7,intensidade:'equilibrado',motivo:'Aplicar cenário astral para todos'};
+ assert.equal((await post('espectador-a',payload)).status,403);
+ assert.equal((await post('espectador-b',{...payload,papel:'administrador'})).status,403);
+ const salvo=await post('admin-fluxo',payload);assert.equal(salvo.status,200);
+ assert.equal((await get(null,'aparencia')).data.aparencia.cenario,7);
+ assert.equal((await get('espectador-a')).data.aparencia.cenario,7);
+ assert.equal((await get(null,'publico')).data.aparencia.intensidade,'equilibrado');
+ assert.equal((await post('admin-fluxo',{...payload,cenario:0,intensidade:'intenso'})).status,200);
+});

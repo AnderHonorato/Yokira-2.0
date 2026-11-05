@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bell, CheckCheck, Sparkles, Trophy, X, ArrowUpRight } from 'lucide-react';
 import { origemNotificacao, type Notificacao } from '@/lib/notificacoes';
+import Celebracao from './celebracao';
 import './notificacoes.css';
 
 type Props = {
@@ -103,16 +104,7 @@ function NotificacoesPrivadas({ usuario, navegar }: Props) {
    <footer>Seu histórico é privado e acompanha sua conta.</footer>
   </section>}
   <dialog ref={dialogo} className={`notificacoes-celebracao ${evento?.tipo || ''}`} aria-labelledby="notificacoes-celebracao-titulo" onCancel={e => { e.preventDefault(); fecharFesta(); }} onClick={e => { if (e.target === e.currentTarget) fecharFesta(); }}>
-   {evento && <div className="notificacoes-festa" key={evento.id}>
-    <div className="notificacoes-particulas" aria-hidden="true">{Array.from({ length: 24 }, (_, i) => <i key={i} style={{ '--i': i } as CSSProperties}/>)}</div>
-    <button className="notificacoes-fechar-festa" onClick={fecharFesta} aria-label="Fechar celebrações"><X size={21}/></button>
-    <span className="notificacoes-legenda">{evento.tipo === 'nivel' ? 'UM NOVO CAPÍTULO' : 'CONQUISTA DESBLOQUEADA'}</span>
-    <div className="notificacoes-medalha"><span/><Trophy size={55}/><Sparkles size={20}/></div>
-    <h2 id="notificacoes-celebracao-titulo">{evento.titulo}</h2><p>{evento.descricao}</p>
-    <button className="button button-primary" autoFocus onClick={() => { void ler([evento]); setEvento(null); }}>Continuar minha jornada <ArrowUpRight size={16}/></button>
-    <button className="notificacoes-ver-origem" onClick={() => origem(evento)}>Ver de onde veio</button>
-    <small>Guardado no seu histórico de notificações.</small>
-   </div>}
+   {evento && <Celebracao key={evento.id} evento={evento} fechar={fecharFesta} continuar={() => { void ler([evento]); setEvento(null); }} origem={() => origem(evento)}/>}
   </dialog>
  </div>;
 }

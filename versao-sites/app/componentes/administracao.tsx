@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import AparenciaAdmin from './aparencia-admin';
 import './administracao.css';
 
 type Usuario = {id:string;nome:string;papel:string;suspenso:boolean;criadoEm:number};
@@ -15,7 +16,7 @@ const rotulos = {nome:'Nome de exibição',titulo:'Título',corpo:'Texto'};
 const minimo = (campo:string,acao:Acao)=>campo==='nome'?2:campo==='corpo'&&acao.dados.alvoTipo==='resposta'?1:3;
 const maximo = (campo:string,acao:Acao)=>campo==='nome'?60:campo==='titulo'?160:acao.dados.alvoTipo==='resposta'?4000:10000;
 const papeis = {membro:'Membro',editor:'Editor',moderador:'Moderador',administrador:'Administrador'};
-const acoes:Record<string,string> = {'suspender-usuario':'Situação da conta','alterar-papel':'Papel da conta','moderar-conteudo':'Visibilidade do conteúdo','moderar-catalogo':'Visibilidade no catálogo','editar-usuario':'Nome da conta','editar-conteudo':'Edição de conteúdo','resolver-denuncia':'Situação da denúncia','denunciar':'Denúncia enviada'};
+const acoes:Record<string,string> = {'suspender-usuario':'Situação da conta','alterar-papel':'Papel da conta','moderar-conteudo':'Visibilidade do conteúdo','moderar-catalogo':'Visibilidade no catálogo','editar-usuario':'Nome da conta','editar-conteudo':'Edição de conteúdo','resolver-denuncia':'Situação da denúncia','denunciar':'Denúncia enviada','salvar-aparencia':'Aparência global do site'};
 const data = (valor:number)=>new Date(valor).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
 
 export default function Administracao({usuario,notificar,recarregar}:Props) {
@@ -66,7 +67,9 @@ export default function Administracao({usuario,notificar,recarregar}:Props) {
  if(!permitido)return <section className="administracao administracao-vazia"><h1>Acesso restrito</h1><p>{usuario.suspenso?'Sua conta está suspensa.':'Este painel está disponível para moderadores e administradores.'}</p><Link className="button button-subtle" href="/?p=perfil">Voltar ao perfil</Link></section>;
  return <section className="administracao">
   <header className="administracao-cabecalho"><span className="administracao-sobrelinha">YOKIRA / COMUNIDADE</span><h1>Administração</h1><p>Cuide das pessoas e das conversas. Cada alteração fica registrada com seu motivo.</p><span className="administracao-selo">{administrador?'Administrador':'Moderador'}</span>{administrador&&<Link className="administracao-link-editor" href="/?p=acervo-admin">Editar catálogo e editoriais</Link>}</header>
-  <nav className="administracao-abas" aria-label="Seções da administração">{[['usuarios','Usuários'],['conteudo','Conteúdo'],['catalogo','Catálogo'],['denuncias','Denúncias'],['registros','Auditoria']].map(([id,rotulo])=><button key={id} aria-current={aba===id?'page':undefined} disabled={enviando} onClick={()=>{setAba(id);setPendente(null);}}>{rotulo}{id==='denuncias'&&dados&&<span>{dados.denuncias.filter(d=>!d.resolvida).length}</span>}</button>)}</nav>
+  <nav className="administracao-abas" aria-label="Seções da administração">{[['usuarios','Usuários'],['conteudo','Conteúdo'],['catalogo','Catálogo'],['denuncias','Denúncias'],['registros','Auditoria'],...(administrador?[['aparencia','Aparência']]:[])].map(([id,rotulo])=><button key={id} aria-current={aba===id?'page':undefined} disabled={enviando} onClick={()=>{setAba(id);setPendente(null);}}>{rotulo}{id==='denuncias'&&dados&&<span>{dados.denuncias.filter(d=>!d.resolvida).length}</span>}</button>)}</nav>
+  {aba==='aparencia'&&administrador&&<AparenciaAdmin notificar={notificar} recarregar={recarregar}/>}
+  {aba!=='aparencia'&&<>
   <form className="administracao-busca" onSubmit={evento=>{evento.preventDefault();setConsulta(busca.trim());setVersao(v=>v+1);}}><label htmlFor="administracao-busca">Buscar no painel<input id="administracao-busca" value={busca} onChange={evento=>setBusca(evento.target.value)} placeholder="Nome, título ou texto" maxLength={100}/></label><button className="button button-subtle" disabled={bloqueado}>Buscar</button><button className="button button-subtle" type="button" disabled={bloqueado} onClick={()=>setVersao(v=>v+1)}>Atualizar</button></form>
   <p className="administracao-ajuda">Até 100 registros recentes por seção. Use a busca para encontrar outros registros.</p>
   {erro&&<div className="administracao-aviso" role="alert"><p>{erro}</p>{!pendente&&<button className="button button-subtle" disabled={bloqueado} onClick={()=>setVersao(v=>v+1)}>Tentar novamente</button>}</div>}
@@ -88,5 +91,6 @@ export default function Administracao({usuario,notificar,recarregar}:Props) {
     {aba==='registros'&&<div className="administracao-lista"><h2>Histórico de alterações</h2>{!dados.registros.length&&<p className="administracao-vazia">Ainda não há alterações registradas.</p>}{dados.registros.map(item=><article className="administracao-item" key={item.id}><div className="administracao-item-corpo"><h3>{acoes[item.acao]||item.acao}</h3><p>{item.motivo}</p><small>{nome(item.autorId)} · {data(item.criadoEm)}</small><p className="administracao-identificador">{item.alvoTipo}: {item.alvoId}</p></div></article>)}</div>}
    </>}
   </div>
+  </>}
  </section>;
 }

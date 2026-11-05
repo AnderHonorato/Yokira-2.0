@@ -51,7 +51,8 @@ concedeu XP. O XP e as permissões são calculados no servidor.
 - Incorporações recebem apenas URLs HTTPS validadas, sem HTML arbitrário. O iframe
   usa sandbox e não recebe os dados pessoais ou credenciais da conta Yokira.
 - Os dez cenários e a marca têm animações em loop e respeitam movimento reduzido.
-  O seletor de cenários também oferece pausa e escolha manual.
+  O fundo é escolhido exclusivamente pelo administrador, na aba Aparência, e
+  sincronizado para todos os visitantes em até 15 segundos.
 
 ## Validação e recuperação
 

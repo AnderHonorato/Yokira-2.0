@@ -4,6 +4,7 @@ import Portal from '../app/portal';
 import { catalogo, editoriais, demonstracaoVideo } from '../lib/catalogo';
 import { CENARIOS_HERO } from '../app/componentes/cenarios-hero';
 import '../app/globals.css';
+import '../app/efeitos-visuais.css';
 
 // A hospedagem GitHub Pages usa /Yokira-2.0/, enquanto a aplicação Sites
 // oficial e as demais hospedagens servem os recursos na raiz /.
@@ -85,6 +86,7 @@ window.fetch = async (recurso, opcoes) => {
       );
     }
     const acao = url.searchParams.get('acao') || 'estado';
+    if (acao === 'aparencia') return Response.json({aparencia:{cenario:0,intensidade:'intenso',atualizadoEm:0}});
     if (acao === 'publico') {
       return Response.json({
         estatisticas: { membros: 0, atividades: 0 },
