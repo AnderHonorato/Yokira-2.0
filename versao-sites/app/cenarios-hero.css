@@ -63,7 +63,7 @@
 }
 @keyframes yokira-fagulhas{
   from{background-position:7px 11px,50px 78px}
-  to{background-position:45px -120px,10px -100px}
+  to{background-position:7px -168px,50px -85px}
 }
 
 /* Mais fluidez sem mexer na aparência do cabeçalho, botões ou cores. */
@@ -115,3 +115,33 @@
   .cenario-camada,.anime-card,.game-tile,.top-mini,.editorial-card,.button-primary::after{transition:none!important;will-change:auto}
   .cenario-atual{opacity:1}
 }
+
+/* Os controles são irmãos do fundo decorativo e permanecem acessíveis ao teclado. */
+.cenarios-controles{
+  position:absolute;right:8px;bottom:5px;z-index:2;
+  display:grid;gap:4px;max-width:min(260px,100%);
+  padding:8px 10px;border:1px solid var(--border);border-radius:6px;
+  background:var(--surface);color:var(--dim);font-size:10px;
+}
+.cenarios-controles label{font-weight:600}
+.cenarios-controles select{
+  min-height:44px;max-width:100%;width:100%;padding:7px 28px 7px 8px;
+  background:var(--bg);color:var(--text);border:1px solid var(--border);
+  border-radius:4px;font:inherit;font-size:11px;cursor:pointer;
+}
+.cenarios-controles select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.cenario-status{font-size:9px;color:var(--dim)}
+@media(max-width:980px){
+  .intro-main{padding-bottom:152px}
+  .cenarios-controles{left:0;right:auto;bottom:12px;max-width:100%;width:250px}
+}
+@media(min-width:981px){.intro-main{padding-bottom:142px}}
+
+.cenario-ilustracao>svg{display:block;width:100%;height:100%}
+.cenario-pausado,.cenario-pausado *{animation-play-state:paused!important}
+.cenarios-controles button{
+  min-height:44px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;
+  background:var(--bg);color:var(--text);font:inherit;cursor:pointer;
+}
+.cenarios-controles button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.intro-cenarios svg *{animation:none!important;transition:none!important}}

@@ -81,14 +81,14 @@ test('galeria anime usa dez artes próprias e alterna na virada de cada hora', a
   await expect(galeria).toHaveAttribute('data-cenario-atual', String(indiceAnterior));
   const fundoAnterior = await page
     .locator('.cenario-atual .cenario-ilustracao')
-    .evaluate((elemento) => getComputedStyle(elemento).backgroundImage);
+    .getAttribute('data-cenario-src');
 
   await page.clock.fastForward(4_000);
   const indiceSeguinte = (indiceAnterior + 1) % 10;
   await expect(galeria).toHaveAttribute('data-cenario-atual', String(indiceSeguinte));
   const proximo = await page
     .locator('.cenario-atual .cenario-ilustracao')
-    .evaluate((elemento) => getComputedStyle(elemento).backgroundImage);
+    .getAttribute('data-cenario-src');
   expect(proximo).not.toEqual(fundoAnterior);
 
   for (const numero of Array.from({ length: 10 }, (_, i) => i + 1)) {
@@ -153,4 +153,24 @@ test('ilustração em loop respeita a preferência por menos animação', async 
   await expect(ilustracao).toHaveCSS('animation-name', 'yokira-cenario-respirar');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(ilustracao).toHaveCSS('animation-name', 'none');
+  await expect(ilustracao.locator('svg')).toBeVisible();
+  expect(await ilustracao.locator('svg').evaluate((svg) =>
+    svg.getAnimations({ subtree: true }).every(animacao => animacao.playState !== 'running')
+  )).toBeTruthy();
+});
+
+test('seletor mostra cada um dos dez temas e permite pausar o movimento', async ({ page }) => {
+  await page.goto('/');
+  for (let indice = 0; indice < 10; indice++) {
+    await page.getByLabel('Cenário animado').selectOption(String(indice));
+    await expect(page.locator('.intro-cenarios')).toHaveAttribute('data-cenario-atual', String(indice));
+    await expect(page.locator('.cenario-atual svg')).toBeVisible();
+  }
+  await page.getByRole('button', { name: 'Pausar animação' }).click();
+  await expect(page.locator('.intro-cenarios')).toHaveClass(/cenario-pausado/);
+  expect(await page.locator('.cenario-atual svg').evaluate((svg) =>
+    svg.getAnimations({ subtree: true }).every(animacao => animacao.playState !== 'running')
+  )).toBeTruthy();
+  await page.getByRole('button', { name: 'Retomar animação' }).click();
+  await expect(page.locator('.intro-cenarios')).not.toHaveClass(/cenario-pausado/);
 });

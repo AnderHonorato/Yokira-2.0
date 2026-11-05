@@ -1,0 +1,1190 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "fa5a4599-035d-4255-bdca-2507ce13c662",
+  "prevId": "9714d545-57c6-48f6-9cf4-e080c31ee6a1",
+  "tables": {
+    "denuncias": {
+      "name": "denuncias",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "autor_id": {
+          "name": "autor_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alvo_tipo": {
+          "name": "alvo_tipo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alvo_id": {
+          "name": "alvo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "motivo": {
+          "name": "motivo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resolvida": {
+          "name": "resolvida",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "denuncia_por_pessoa_alvo": {
+          "name": "denuncia_por_pessoa_alvo",
+          "columns": [
+            "autor_id",
+            "alvo_tipo",
+            "alvo_id"
+          ],
+          "isUnique": true
+        },
+        "denuncias_pendentes": {
+          "name": "denuncias_pendentes",
+          "columns": [
+            "resolvida",
+            "criado_em"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "denuncias_autor_id_usuarios_id_fk": {
+          "name": "denuncias_autor_id_usuarios_id_fk",
+          "tableFrom": "denuncias",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "autor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "catalogo_disponibilidade": {
+      "name": "catalogo_disponibilidade",
+      "columns": {
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "oculto": {
+          "name": "oculto",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "episodios": {
+      "name": "episodios",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "temporada_id": {
+          "name": "temporada_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo": {
+          "name": "titulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sinopse": {
+          "name": "sinopse",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "duracao": {
+          "name": "duracao",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "video_url": {
+          "name": "video_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "poster": {
+          "name": "poster",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "publicado": {
+          "name": "publicado",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "0"
+        },
+        "estreia_em": {
+          "name": "estreia_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "arquivado": {
+          "name": "arquivado",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "0"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "episodios_numero_unico": {
+          "name": "episodios_numero_unico",
+          "columns": [
+            "titulo_id",
+            "coalesce(\"temporada_id\",'')",
+            "numero"
+          ],
+          "isUnique": true
+        },
+        "episodios_disponibilidade": {
+          "name": "episodios_disponibilidade",
+          "columns": [
+            "titulo_id",
+            "publicado",
+            "arquivado",
+            "estreia_em"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "episodios_temporada_id_titulo_id_temporadas_id_titulo_id_fk": {
+          "name": "episodios_temporada_id_titulo_id_temporadas_id_titulo_id_fk",
+          "tableFrom": "episodios",
+          "tableTo": "temporadas",
+          "columnsFrom": [
+            "temporada_id",
+            "titulo_id"
+          ],
+          "columnsTo": [
+            "id",
+            "titulo_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "episodios_numero_valido": {
+          "name": "episodios_numero_valido",
+          "value": "\"episodios\".\"numero\" BETWEEN 1 AND 100000"
+        },
+        "episodios_duracao_valida": {
+          "name": "episodios_duracao_valida",
+          "value": "\"episodios\".\"duracao\" BETWEEN 1 AND 600"
+        },
+        "episodios_publicado_valido": {
+          "name": "episodios_publicado_valido",
+          "value": "\"episodios\".\"publicado\" IN (0,1)"
+        },
+        "episodios_arquivado_valido": {
+          "name": "episodios_arquivado_valido",
+          "value": "\"episodios\".\"arquivado\" IN (0,1)"
+        },
+        "episodios_video_publicado": {
+          "name": "episodios_video_publicado",
+          "value": "\"episodios\".\"publicado\"=0 OR length(\"episodios\".\"video_url\")>0"
+        }
+      }
+    },
+    "jogos": {
+      "name": "jogos",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "modo": {
+          "name": "modo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "dados": {
+          "name": "dados",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "jogos_usuario": {
+          "name": "jogos_usuario",
+          "columns": [
+            "usuario_id",
+            "criado_em"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "jogos_usuario_id_usuarios_id_fk": {
+          "name": "jogos_usuario_id_usuarios_id_fk",
+          "tableFrom": "jogos",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "usuario_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "limites": {
+      "name": "limites",
+      "columns": {
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "janela": {
+          "name": "janela",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantidade": {
+          "name": "quantidade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "limites_usuario_id_janela_pk": {
+          "columns": [
+            "usuario_id",
+            "janela"
+          ],
+          "name": "limites_usuario_id_janela_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "lista": {
+      "name": "lista",
+      "columns": {
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "situacao": {
+          "name": "situacao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'planejado'"
+        },
+        "episodios_vistos": {
+          "name": "episodios_vistos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "nota": {
+          "name": "nota",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "lista_usuario_id_usuarios_id_fk": {
+          "name": "lista_usuario_id_usuarios_id_fk",
+          "tableFrom": "lista",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "usuario_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "lista_usuario_id_titulo_id_pk": {
+          "columns": [
+            "usuario_id",
+            "titulo_id"
+          ],
+          "name": "lista_usuario_id_titulo_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "lista_situacao_valida": {
+          "name": "lista_situacao_valida",
+          "value": "\"lista\".\"situacao\" in ('planejado','assistindo','concluido','pausado','abandonado')"
+        },
+        "lista_episodios_validos": {
+          "name": "lista_episodios_validos",
+          "value": "\"lista\".\"episodios_vistos\" >= 0 and \"lista\".\"episodios_vistos\" <= 100000"
+        },
+        "lista_nota_valida": {
+          "name": "lista_nota_valida",
+          "value": "\"lista\".\"nota\" is null or (\"lista\".\"nota\" >= 1 and \"lista\".\"nota\" <= 10)"
+        }
+      }
+    },
+    "opcoes": {
+      "name": "opcoes",
+      "columns": {
+        "publicacao_id": {
+          "name": "publicacao_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "opcoes_publicacao_id_publicacoes_id_fk": {
+          "name": "opcoes_publicacao_id_publicacoes_id_fk",
+          "tableFrom": "opcoes",
+          "tableTo": "publicacoes",
+          "columnsFrom": [
+            "publicacao_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "opcoes_publicacao_id_titulo_id_pk": {
+          "columns": [
+            "publicacao_id",
+            "titulo_id"
+          ],
+          "name": "opcoes_publicacao_id_titulo_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "progresso": {
+      "name": "progresso",
+      "columns": {
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "segundos": {
+          "name": "segundos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "progresso_usuario_id_usuarios_id_fk": {
+          "name": "progresso_usuario_id_usuarios_id_fk",
+          "tableFrom": "progresso",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "usuario_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "progresso_usuario_id_titulo_id_pk": {
+          "columns": [
+            "usuario_id",
+            "titulo_id"
+          ],
+          "name": "progresso_usuario_id_titulo_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "publicacoes": {
+      "name": "publicacoes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "autor_id": {
+          "name": "autor_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "oculto": {
+          "name": "oculto",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo": {
+          "name": "titulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "corpo": {
+          "name": "corpo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "publicacoes_criado": {
+          "name": "publicacoes_criado",
+          "columns": [
+            "criado_em"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "publicacoes_autor_id_usuarios_id_fk": {
+          "name": "publicacoes_autor_id_usuarios_id_fk",
+          "tableFrom": "publicacoes",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "autor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "registros_moderacao": {
+      "name": "registros_moderacao",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "autor_id": {
+          "name": "autor_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "acao": {
+          "name": "acao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alvo_tipo": {
+          "name": "alvo_tipo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alvo_id": {
+          "name": "alvo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "motivo": {
+          "name": "motivo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "registros_criado": {
+          "name": "registros_criado",
+          "columns": [
+            "criado_em"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "registros_moderacao_autor_id_usuarios_id_fk": {
+          "name": "registros_moderacao_autor_id_usuarios_id_fk",
+          "tableFrom": "registros_moderacao",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "autor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "respostas": {
+      "name": "respostas",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "publicacao_id": {
+          "name": "publicacao_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "oculto": {
+          "name": "oculto",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "autor_id": {
+          "name": "autor_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "corpo": {
+          "name": "corpo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "respostas_publicacao": {
+          "name": "respostas_publicacao",
+          "columns": [
+            "publicacao_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "respostas_publicacao_id_publicacoes_id_fk": {
+          "name": "respostas_publicacao_id_publicacoes_id_fk",
+          "tableFrom": "respostas",
+          "tableTo": "publicacoes",
+          "columnsFrom": [
+            "publicacao_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "respostas_autor_id_usuarios_id_fk": {
+          "name": "respostas_autor_id_usuarios_id_fk",
+          "tableFrom": "respostas",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "autor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "sobreposicoes_conteudo": {
+      "name": "sobreposicoes_conteudo",
+      "columns": {
+        "tipo": {
+          "name": "tipo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alvo_id": {
+          "name": "alvo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "dados": {
+          "name": "dados",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "oculto": {
+          "name": "oculto",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "sobreposicoes_slug_unico": {
+          "name": "sobreposicoes_slug_unico",
+          "columns": [
+            "json_extract(\"dados\",'$.slug')"
+          ],
+          "isUnique": true,
+          "where": "\"sobreposicoes_conteudo\".\"tipo\"='titulo'"
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "sobreposicoes_conteudo_tipo_alvo_id_pk": {
+          "columns": [
+            "tipo",
+            "alvo_id"
+          ],
+          "name": "sobreposicoes_conteudo_tipo_alvo_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "sobreposicoes_tipo_valido": {
+          "name": "sobreposicoes_tipo_valido",
+          "value": "\"sobreposicoes_conteudo\".\"tipo\" IN ('titulo','editorial')"
+        },
+        "sobreposicoes_dados_validos": {
+          "name": "sobreposicoes_dados_validos",
+          "value": "json_valid(\"sobreposicoes_conteudo\".\"dados\") AND json_type(\"sobreposicoes_conteudo\".\"dados\")='object'"
+        },
+        "sobreposicoes_oculto_valido": {
+          "name": "sobreposicoes_oculto_valido",
+          "value": "\"sobreposicoes_conteudo\".\"oculto\" IN (0,1)"
+        }
+      }
+    },
+    "temporadas": {
+      "name": "temporadas",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ordem": {
+          "name": "ordem",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "arquivado": {
+          "name": "arquivado",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "0"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "temporadas_titulo_id_numero_unique": {
+          "name": "temporadas_titulo_id_numero_unique",
+          "columns": [
+            "titulo_id",
+            "numero"
+          ],
+          "isUnique": true
+        },
+        "temporadas_id_titulo_id_unique": {
+          "name": "temporadas_id_titulo_id_unique",
+          "columns": [
+            "id",
+            "titulo_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "temporadas_numero_valido": {
+          "name": "temporadas_numero_valido",
+          "value": "\"temporadas\".\"numero\" BETWEEN 1 AND 10000"
+        },
+        "temporadas_ordem_valida": {
+          "name": "temporadas_ordem_valida",
+          "value": "\"temporadas\".\"ordem\" BETWEEN 1 AND 100000"
+        },
+        "temporadas_arquivado_valido": {
+          "name": "temporadas_arquivado_valido",
+          "value": "\"temporadas\".\"arquivado\" IN (0,1)"
+        }
+      }
+    },
+    "usuarios": {
+      "name": "usuarios",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "papel": {
+          "name": "papel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'membro'"
+        },
+        "suspenso": {
+          "name": "suspenso",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "xp": {
+          "name": "xp",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "votos": {
+      "name": "votos",
+      "columns": {
+        "publicacao_id": {
+          "name": "publicacao_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "titulo_id": {
+          "name": "titulo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "votos_publicacao_id_publicacoes_id_fk": {
+          "name": "votos_publicacao_id_publicacoes_id_fk",
+          "tableFrom": "votos",
+          "tableTo": "publicacoes",
+          "columnsFrom": [
+            "publicacao_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "votos_usuario_id_usuarios_id_fk": {
+          "name": "votos_usuario_id_usuarios_id_fk",
+          "tableFrom": "votos",
+          "tableTo": "usuarios",
+          "columnsFrom": [
+            "usuario_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "votos_publicacao_id_titulo_id_opcoes_publicacao_id_titulo_id_fk": {
+          "name": "votos_publicacao_id_titulo_id_opcoes_publicacao_id_titulo_id_fk",
+          "tableFrom": "votos",
+          "tableTo": "opcoes",
+          "columnsFrom": [
+            "publicacao_id",
+            "titulo_id"
+          ],
+          "columnsTo": [
+            "publicacao_id",
+            "titulo_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "votos_publicacao_id_usuario_id_pk": {
+          "columns": [
+            "publicacao_id",
+            "usuario_id"
+          ],
+          "name": "votos_publicacao_id_usuario_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {
+      "episodios_numero_unico": {
+        "columns": {
+          "coalesce(\"temporada_id\",'')": {
+            "isExpression": true
+          }
+        }
+      },
+      "sobreposicoes_slug_unico": {
+        "columns": {
+          "json_extract(\"dados\",'$.slug')": {
+            "isExpression": true
+          }
+        }
+      }
+    }
+  }
+}

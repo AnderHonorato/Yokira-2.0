@@ -1,0 +1,51 @@
+.administracao{padding:36px 0 70px;min-width:0;color:var(--text)}
+.administracao-cabecalho{position:relative;padding-bottom:30px;border-bottom:1px solid var(--border)}
+.administracao-sobrelinha{color:var(--accent);font:600 10px var(--mono);letter-spacing:1.8px}
+.administracao h1{font:600 clamp(28px,4vw,42px)/1.2 var(--serif);margin:16px 0 12px}
+.administracao-cabecalho>p{max-width:680px;color:var(--muted);line-height:1.8;margin-bottom:16px}
+.administracao-link-editor{display:inline-flex;align-items:center;min-height:44px;margin-left:16px;color:var(--accent);font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.administracao-selo{display:inline-flex;align-items:center;padding:5px 8px;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;line-height:1.4}
+.administracao-abas{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}
+.administracao-abas button{min-height:44px;padding:10px 15px;border:1px solid var(--border);border-radius:5px;color:var(--muted);display:flex;align-items:center;gap:10px}
+.administracao-abas button[aria-current=page]{background:color-mix(in srgb,var(--accent) 12%,transparent);border-color:var(--accent);color:var(--text)}
+.administracao-abas span{font:11px var(--mono);color:var(--accent)}
+.administracao-busca{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px}
+.administracao-busca label{flex:1;max-width:520px}
+.administracao label{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
+.administracao input,.administracao select,.administracao textarea{min-height:44px;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:10px 12px;color:var(--text);font:14px var(--sans)}
+.administracao input{width:100%}
+.administracao textarea{resize:vertical;min-height:100px;width:100%;line-height:1.7}
+.administracao .button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:1px solid var(--border);border-radius:5px;font:600 12px var(--sans);white-space:normal;text-align:center}
+.administracao .button-primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.administracao .button-subtle{background:var(--surface);color:var(--text)}
+.administracao .button:hover:not(:disabled){border-color:var(--accent)}
+.administracao :disabled{opacity:.5;cursor:default}
+.administracao-ajuda{color:var(--muted);font-size:12px;line-height:1.7;margin:10px 0 20px}
+.administracao-aviso{padding:16px;border:1px solid var(--accent);border-radius:6px;margin:20px 0;line-height:1.7;overflow-wrap:anywhere}
+.administracao-aviso .button{margin-top:10px}
+.administracao-confirmacao{padding:22px;margin:24px 0;border:1px solid var(--accent);background:var(--surface);border-radius:7px}
+.administracao h2{font-size:19px;font-weight:600;line-height:1.5;margin:0 0 20px}
+.administracao h2 small{font-size:13px;color:var(--muted)}
+.administracao-confirmacao h2{margin-bottom:10px}
+.administracao-confirmacao>p{margin-bottom:18px}
+.administracao-resumo{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow-y:auto;line-height:1.8}
+.administracao-lista{margin-top:32px}
+.administracao-item{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-top:1px solid var(--border);padding:22px 0}
+.administracao-item-corpo{flex:1;min-width:0;overflow-wrap:anywhere}
+.administracao-item h3{font-size:15px;line-height:1.6;margin:4px 0 8px}
+.administracao-item p{font-size:13px;line-height:1.8;margin:7px 0}
+.administracao-item small{display:block;color:var(--muted);font-size:11px;line-height:1.8;margin-top:8px}
+.administracao-acoes{display:flex;align-items:flex-end;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.administracao-item>.administracao-acoes{max-width:330px}
+.administracao-papel{font-size:11px!important;max-width:210px}
+.administracao-identificador{color:var(--muted);font:11px/1.6 var(--mono)!important}
+.administracao-vazia{text-align:center;padding:38px 18px;color:var(--muted);line-height:1.8}
+.administracao-vazia h1{color:var(--text)}
+.administracao-vazia .button{margin-top:20px}
+.administracao :focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:760px){.administracao-item{flex-direction:column;gap:15px}.administracao-item>.administracao-acoes{max-width:none;width:100%;justify-content:flex-start}.administracao-item>.button{align-self:flex-start}.administracao-cabecalho>p{font-size:13px}.administracao h1{font-size:32px}}
+@media(max-width:480px){.administracao{padding-top:22px}.administracao-abas{gap:6px}.administracao-abas button{flex:1 0 40%;justify-content:center;padding:10px;font-size:12px}.administracao-busca{flex-wrap:wrap}.administracao-busca label{flex:1 0 100%}.administracao-busca>.button{flex:1}.administracao input,.administracao textarea,.administracao select{font-size:16px}.administracao-confirmacao{padding:16px}.administracao-acoes{justify-content:stretch}.administracao-confirmacao .administracao-acoes .button{flex:1}.administracao-papel{max-width:100%;flex:1}.administracao-item p{font-size:14px}}
+
+.sc-secoes .sc-denunciar{min-height:44px;padding:10px 8px}.sc-denuncia-dialogo .sc-modal-heading>button{display:grid;place-items:center;min-width:44px;min-height:44px}.sc-denuncia-dialogo .sc-modal-footer .button{min-height:44px}
+
+.sc-conversa-titulo{font:inherit;text-align:left;line-height:inherit;min-height:44px}.sc-secoes .sc-conversa-destino{border-color:var(--accent);scroll-margin-top:100px}.sc-destino-aviso{padding:18px;margin:20px 0;border:1px solid var(--border);border-radius:6px;line-height:1.8;color:var(--muted)}.sc-destino-aviso .button{margin:12px 8px 0 0;min-height:44px}

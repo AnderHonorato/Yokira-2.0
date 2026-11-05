@@ -74,6 +74,6 @@ if (!raiz) throw new Error('A raiz da prévia do Yokira não foi encontrada.');
 
 createRoot(raiz).render(
   <React.StrictMode>
-    <Portal parametrosIniciais={window.location.search.replace(/^\?/, '')} />
+    <Portal parametrosIniciais={window.location.search.replace(/^\?/, '')} acervoInicial={{catalogo,editoriais}} />
   </React.StrictMode>
 );

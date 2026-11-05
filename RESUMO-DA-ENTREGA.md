@@ -431,3 +431,12 @@ sinopses e anos próprios. Os pôsteres são gradientes SVG gerados por
 
 O administrador carrega as artes reais que tiver direito de usar. Isso não muda
 o layout — só a origem das imagens.
+
+## Atualização da versão GPT em 05/11/2026
+
+A versão React/Vinext em `versao-sites` possui fluxo próprio de publicação,
+administração, episódios, fontes de vídeo, mídia R2 e notificações. Consulte
+`versao-sites/docs/ATUALIZACAO-20261105.md`. A exceção preexistente ao limite de
+180 linhas em `versao-sites/lib/servidor/yokira.ts` é mantida nesta integração:
+o arquivo concentra as ações legadas de comunidade e jogos. Novos domínios foram
+separados em módulos; snapshots de migração são arquivos gerados.
