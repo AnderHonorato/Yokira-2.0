@@ -1,35 +1,5 @@
-.marca .marca-emblema {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 auto;
-  object-fit: contain;
-  transform-origin: center;
-  filter: drop-shadow(0 0 3px rgb(145 40 235 / 24%));
-  animation: emblema-yokira-vivo 5.6s ease-in-out infinite;
-}
-
-@keyframes emblema-yokira-vivo {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1) drop-shadow(0 0 3px rgb(145 40 235 / 24%));
-  }
-  50% {
-    transform: translateY(-1.5px) scale(1.035);
-    filter: brightness(1.12) drop-shadow(0 0 6px rgb(145 40 235 / 54%));
-  }
-}
-
-@media (max-width: 760px) {
-  .marca .marca-emblema {
-    width: 36px;
-    height: 36px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marca .marca-emblema {
-    animation: none;
-    transform: none;
-    filter: drop-shadow(0 0 3px rgb(145 40 235 / 24%));
-  }
-}
+.marca .marca-emblema{width:48px;height:48px;flex:0 0 auto;object-fit:contain}
+.marca .marca-animada{width:52px;height:52px}
+.marca-original{display:inline-flex;align-items:center;gap:10px}
+.marca-original img{object-fit:contain}
+@media(max-width:980px){.topbar .marca .marca-animada{width:44px;height:44px}}

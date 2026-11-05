@@ -55,6 +55,11 @@ async function midiaPublica(db: Db, id: string, tipo: Midia['tipo']) {
     const url = `/api/midia/${id}`;
     const acervo = await obterAcervo(db);
     if (tipo === 'imagem' && (acervo.catalogo.some(t => t.poster === url || t.capa === url) || acervo.editoriais.some(e => e.imagem === url))) return true;
+    if (tipo === 'imagem') {
+        const banners = await db.all<{ tituloId: string }>(sql`select titulo_id as tituloId from banners
+            where arquivado=0 and ativo=1 and (imagem=${url} or personagem=${url})`);
+        if (banners.some(b => acervo.catalogo.some(t => t.id === b.tituloId))) return true;
+    }
     const referencias = await db.all<{ titulo_id: string; temporada_id: string | null; numero: number }>(sql`select distinct e.titulo_id,e.temporada_id,e.numero from episodios e
         left join temporadas t on t.id=e.temporada_id and t.titulo_id=e.titulo_id
         where ${tipo === 'imagem' ? sql`e.poster=${url}` : sql`(e.video_url=${url} or exists(select 1 from episodio_fontes f where f.episodio_id=e.id and f.ativo=1 and f.tipo='direto' and f.url=${url}))`}

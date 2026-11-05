@@ -31,3 +31,5 @@
 @keyframes notificacao-entrada{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:760px){.notificacoes-painel{position:fixed;top:74px;left:16px;right:16px;width:auto;max-height:calc(100dvh - 94px)}.notificacoes-sino{width:26px}}
 @media(prefers-reduced-motion:reduce){.notificacoes-painel{animation:none}}
+
+.notificacoes-insignia>.emblema-nivel,.notificacoes-insignia>.emblema-conquista{flex:none}

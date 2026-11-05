@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { loteAtomico, type Db, type Usuario } from './permissoes';
 import { ErroApi } from './validacao';
+import { sincronizarConquistas } from './conquistas';
 import { origemNotificacao, type Notificacao } from '../notificacoes';
 
 export type { Notificacao } from '../notificacoes';
@@ -13,7 +14,7 @@ export function registrarNivelAlcancado(usuarioId: string, pontos: number, desti
             'Esta participação abriu um novo capítulo da sua jornada.',${origem},${Date.now()}
         from usuarios where id=${usuarioId} and changes()>0 and xp>=100 and xp%100<${pontos}`;
 }
-const colunas = sql`id,tipo,titulo,descricao,destino,criado_em as criadoEm,lida_em as lidaEm,celebrada_em as celebradaEm`;
+const colunas = sql`id,tipo,titulo,descricao,destino,criado_em as criadoEm,lida_em as lidaEm,celebrada_em as celebradaEm,badge_id as badgeId`;
 function eventos(resultado: { results?: unknown[] }): Notificacao[] {
     return ((resultado.results || []) as Notificacao[]).map(item => ({
         ...item, destino: origemNotificacao(item.destino).caminho,
@@ -23,21 +24,7 @@ function eventos(resultado: { results?: unknown[] }): Notificacao[] {
 export async function listarNotificacoes(db: Db, usuario: Usuario): Promise<Notificacao[]> {
     const agora = Date.now(), id = usuario.id;
     const resultado = await loteAtomico(db, [
-        sql`insert or ignore into notificacoes(id,usuario_id,evento,tipo,titulo,descricao,destino,criado_em)
-            select lower(hex(randomblob(16))),${id},evento,'conquista',titulo,descricao,destino,${agora} from (
-                select 'boas-vindas' evento,'Sua jornada começa' titulo,'Você agora faz parte do universo Yokira.' descricao,'/?p=perfil' destino
-                where exists(select 1 from usuarios where id=${id})
-                union all select 'primeira-publicacao','Sua voz na comunidade','Você compartilhou sua primeira publicação.',
-                    (select '/?p='||(case when tipo='lista' then 'listas' else 'forum' end)||'&post='||id
-                    from publicacoes where autor_id=${id} and oculto=0 order by criado_em,id limit 1)
-                where exists(select 1 from publicacoes where autor_id=${id} and oculto=0)
-                union all select 'primeiro-jogo','Primeiro desafio','Você começou sua jornada nos jogos Yokira.',
-                    '/?p=jogos&modo='||(select modo from jogos where usuario_id=${id} order by criado_em,id limit 1)
-                where exists(select 1 from jogos where usuario_id=${id})
-                union all select 'primeira-colecao','Uma coleção só sua','Você salvou o primeiro título na sua lista.',
-                    '/?p=listas&editar='||(select titulo_id from lista where usuario_id=${id} order by criado_em,titulo_id limit 1)
-                where exists(select 1 from lista where usuario_id=${id})
-            )`,
+        ...sincronizarConquistas(id),
         sql`with recursive niveis(n,limite) as (
                 select 2,cast(max(0,xp)/100 as integer)+1 from usuarios where id=${id} and xp>=100
                 union all select n+1,limite from niveis where n<limite
@@ -46,7 +33,7 @@ export async function listarNotificacoes(db: Db, usuario: Usuario): Promise<Noti
                 'Sua participação abriu um novo capítulo da sua jornada.','/?p=perfil',${agora} from niveis`,
         sql`select ${colunas} from notificacoes where usuario_id=${id} order by criado_em desc,rowid desc`,
     ]);
-    return eventos(resultado[2]);
+    return eventos(resultado[resultado.length - 1]);
 }
 /** UPDATE RETURNING é a reivindicação: duas abas nunca recebem o mesmo evento. */
 export async function verNotificacoes(db: Db, usuario: Usuario, dados: Record<string, unknown>): Promise<{ eventos: Notificacao[] }> {

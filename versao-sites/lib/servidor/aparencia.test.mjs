@@ -104,7 +104,7 @@ test('migração incremental mantém dados antigos, singleton e restrições de 
   assert.equal(Object.keys(atual.tables).length, Object.keys(anterior.tables).length + 1);
   assert.equal(atual.tables.aparencia_global.name, 'aparencia_global');
   const entradas = JSON.parse(ler('meta/_journal.json')).entries;
-  assert.deepEqual(entradas.map(e => e.idx), Array.from({ length: 11 }, (_, i) => i));
-  assert.equal(entradas.at(-1).tag, '0010_aparencia_global');
+  assert.deepEqual(entradas.filter(e => e.idx <= 10).map(e => e.idx), Array.from({ length: 11 }, (_, i) => i));
+  assert.equal(entradas[10].tag, '0010_aparencia_global');
   for (const entrada of entradas) assert.ok(existsSync(new URL(entrada.tag + '.sql', pasta)));
 });

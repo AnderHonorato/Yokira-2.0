@@ -440,3 +440,9 @@ administração, episódios, fontes de vídeo, mídia R2 e notificações. Consu
 180 linhas em `versao-sites/lib/servidor/yokira.ts` é mantida nesta integração:
 o arquivo concentra as ações legadas de comunidade e jogos. Novos domínios foram
 separados em módulos; snapshots de migração são arquivos gerados.
+
+A evolução social acrescenta contas, amizades, salas privadas, hall de conquistas
+e banners administráveis. As cores dos emblemas SVG, do metal da marca e das
+camadas de arte cinematográfica são parte das ilustrações; são exceções à regra
+de tokens da interface. Formulários e demais controles continuam usando os tokens
+do site. Os schemas foram separados em módulos menores e `db/schema.ts` os reúne.

@@ -1,22 +1,21 @@
 'use client';
-
 import {useCallback,useEffect,useId,useRef,useState,type KeyboardEvent} from 'react';
 import type Hls from 'hls.js';
 import {Icone} from './icones';
 import './player-extra.css';
-
+import {usePlayerSala} from './player-sala';
+import type {SincronizacaoPlayer} from '../../lib/salas';
 type NivelHls={height:number;bitrate:number};
 type Falha='midia'|'hls'|'inicio'|'tela'|null;
 type VideoIos=HTMLVideoElement & {webkitEnterFullscreen?:()=>void};
-type Props={url:string;titulo:string;poster?:string;onProgresso?:(segundos:number)=>void;inicio?:number;idioma?:string};
-
+type Props={url:string;titulo:string;poster?:string;onProgresso?:(segundos:number)=>void;inicio?:number;idioma?:string;sincronizacao?:SincronizacaoPlayer};
 function tempo(segundos:number){
  const seguro=Number.isFinite(segundos)?Math.max(0,Math.floor(segundos)):0;
  return `${Math.floor(seguro/60)}:${String(seguro%60).padStart(2,'0')}`;
 }
-
-export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='pt'}:Props){
+export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='pt',sincronizacao}:Props){
  const video=useRef<HTMLVideoElement>(null);
+ const sala=usePlayerSala(video,sincronizacao,url);
  const box=useRef<HTMLDivElement>(null);
  const hls=useRef<Hls|null>(null);
  const progressoRef=useRef(onProgresso);
@@ -42,7 +41,6 @@ export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='p
   inicio:tr('Não foi possível iniciar o vídeo. Tente novamente.','Could not start the video. Please try again.','No se pudo iniciar el vídeo. Inténtalo de nuevo.'),
   tela:tr('A tela cheia não está disponível neste navegador.','Fullscreen is unavailable in this browser.','La pantalla completa no está disponible en este navegador.')
  };
-
  useEffect(()=>{progressoRef.current=onProgresso;},[onProgresso]);
  const registrar=useCallback((v:HTMLVideoElement,forcar=false)=>{
   if(!interagiu.current||v.readyState<1||!Number.isFinite(v.currentTime))return;
@@ -61,7 +59,6 @@ export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='p
   ultimoSalvo.current=Math.floor(inicio);
  },[inicio]);
  useEffect(()=>{retomar();},[retomar]);
-
  useEffect(()=>{
   const v=video.current;
   if(!v)return;
@@ -102,16 +99,16 @@ export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='p
    v.load();
   };
  },[url,ehHls,tentativa,registrar]);
-
  const toggle=async()=>{
   const v=video.current;if(!v)return;
+  sala.ativar();if(sala.bloqueado)return;
   interagiu.current=true;
   if(!v.paused){v.pause();return;}
   try{await v.play();}catch{setFalha('inicio');setCarregando(false);}
  };
  const buscar=(segundos:number)=>{
-  const v=video.current;if(!v||v.readyState<1)return;
-  interagiu.current=true;
+  const v=video.current;if(!v||v.readyState<1||sala.bloqueado)return;
+  sala.ativar();interagiu.current=true;
   v.currentTime=Math.max(0,Math.min(Number.isFinite(v.duration)?v.duration:segundos,segundos));
   setTime(v.currentTime);
   registrar(v,true);
@@ -148,7 +145,6 @@ export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='p
  const legendaSom=muted||volume===0?tr('Ativar som','Unmute','Activar sonido'):tr('Silenciar','Mute','Silenciar');
  const legendaPlay=playing?tr('Pausar','Pause','Pausar'):tr('Reproduzir','Play','Reproducir');
  const erroBloqueante=falha&&falha!=='tela';
-
  return <div className="player-shell">
   <div className="yokira-player player-accessible" ref={box} tabIndex={0} role="group" aria-label={tr(`Player: ${titulo}`,`Player: ${titulo}`,`Reproductor: ${titulo}`)} aria-describedby={ajudaId} onKeyDown={teclado}>
    <video ref={video} poster={poster} playsInline preload="metadata" onClick={()=>void toggle()} onPlay={()=>{interagiu.current=true;setPlaying(true);setFalha(null);}} onPlaying={()=>setCarregando(false)} onPause={()=>{setPlaying(false);if(video.current)registrar(video.current,true);}} onWaiting={()=>setCarregando(true)} onCanPlay={()=>setCarregando(false)} onLoadStart={()=>{setCarregando(true);setPlaying(false);setFalha(null);}} onError={()=>{setFalha('midia');setCarregando(false);}} onLoadedMetadata={()=>{
@@ -161,19 +157,20 @@ export default function Player({url,titulo,poster,onProgresso,inicio=0,idioma='p
    {erroBloqueante&&<div className="player-error" role="alert"><p>{mensagens[falha!]}</p><button className="button" onClick={tentarNovamente}>{tr('Tentar novamente','Try again','Reintentar')}</button></div>}
    {falha==='tela'&&<div className="player-fullscreen-note" role="status">{mensagens.tela}<button onClick={()=>setFalha(null)} aria-label={tr('Fechar aviso','Dismiss notice','Cerrar aviso')}><Icone nome="fechar" tamanho={14}/></button></div>}
    <div className="player-controls">
-    <label className="player-progress"><span className="sr-only">{tr('Progresso do vídeo','Video progress','Progreso del vídeo')}</span><input type="range" min="0" max={limite} value={Math.min(time,limite)} step=".1" disabled={!limite||!!erroBloqueante} aria-valuetext={`${tempo(time)} / ${tempo(duration)}`} onChange={e=>buscar(Number(e.target.value))}/></label>
+    <label className="player-progress"><span className="sr-only">{tr('Progresso do vídeo','Video progress','Progreso del vídeo')}</span><input type="range" min="0" max={limite} value={Math.min(time,limite)} step=".1" disabled={!limite||!!erroBloqueante||sala.bloqueado} aria-valuetext={`${tempo(time)} / ${tempo(duration)}`} onChange={e=>buscar(Number(e.target.value))}/></label>
     <div className="player-control-row">
      <button onClick={()=>void toggle()} aria-label={legendaPlay} title={`${legendaPlay} (K)`} disabled={!!erroBloqueante}><Icone nome={playing?'pause':'play'}/></button>
      <button onClick={alternarSom} aria-label={legendaSom} title={`${legendaSom} (M)`} aria-pressed={muted||volume===0}><Icone nome="som"/>{(muted||volume===0)&&<span className="muted-cross">×</span>}</button>
      <input className="volume-slider" type="range" min="0" max="1" step=".05" value={muted?0:volume} aria-label="Volume" onChange={e=>{const v=video.current;if(v){v.volume=Number(e.target.value);v.muted=v.volume===0;}}}/>
      <span className="player-clock mono">{tempo(time)} / {tempo(duration)}</span>
      <span className="player-spacer"/>
-     <select aria-label={tr('Velocidade','Playback speed','Velocidad')} title={tr('Velocidade','Playback speed','Velocidad')} value={speed} onChange={e=>{if(video.current)video.current.playbackRate=Number(e.target.value);}}><option value=".5">0.5×</option><option value=".75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+     <select disabled={!!sincronizacao} aria-label={tr('Velocidade','Playback speed','Velocidad')} title={tr('Velocidade','Playback speed','Velocidad')} value={speed} onChange={e=>{if(video.current)video.current.playbackRate=Number(e.target.value);}}><option value=".5">0.5×</option><option value=".75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
      {levels.length>0?<select aria-label={tr('Qualidade','Quality','Calidad')} title={tr('Qualidade','Quality','Calidad')} value={quality} onChange={e=>{setQuality(e.target.value);if(hls.current)hls.current.currentLevel=Number(e.target.value);}}><option value="-1">Auto</option>{levels.map((l,i)=><option value={i} key={i}>{l.height?`${l.height}p`:`${Math.round(l.bitrate/1000)} kbps`}</option>)}</select>:<span className="source-quality">{ehHls?'HLS':'MP4'}</span>}
      <button onClick={()=>void telaCheia()} aria-label={tr('Tela cheia','Fullscreen','Pantalla completa')} title={tr('Tela cheia (F)','Fullscreen (F)','Pantalla completa (F)')}><Icone nome="tela"/></button>
     </div>
    </div>
   </div>
+  {sincronizacao&&<p className="player-keyboard-help">{sala.bloqueado?'O dono controla a reprodução e a posição.':'Seus controles sincronizam a sala.'}{sala.aguardaGesto&&<button className="button" onClick={sala.ativar}>Ativar reprodução sincronizada</button>}</p>}
   <p className="player-keyboard-help" id={ajudaId}>{tr('Com o player em foco: espaço ou K para pausar, ← → para voltar ou avançar 10 s, M para som e F para tela cheia.','With the player focused: Space or K to pause, ← → to seek 10 s, M for sound and F for fullscreen.','Con el reproductor enfocado: espacio o K para pausar, ← → para saltar 10 s, M para sonido y F para pantalla completa.')}</p>
  </div>;
 }

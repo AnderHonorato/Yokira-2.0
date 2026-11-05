@@ -93,3 +93,14 @@ test('imagem de acervo só fica pública enquanto o pai visível referencia o ar
     sqlite.exec('update episodios set publicado=0');assert.equal((await ler(imagem.id)).status,200);
     sqlite.prepare('update catalogo_disponibilidade set oculto=1 where titulo_id=?').run('2');await rejeita(()=>ler(imagem.id),404);
 });
+
+test('imagem de banner só fica pública em destaque ativo de título visível',async()=>{
+ const {salvarBanner,arquivarBanner}=await import('./banners.ts');
+ const payload={tituloId:'4',imagem:imagem.url,personagem:'',link:'',intervaloSegundos:null,ordem:9,ativo:true,motivo:'Publicar imagem no destaque.'};
+ const {id}=await salvarBanner(db,admin,payload);assert.equal((await ler(imagem.id)).status,200);
+ await salvarBanner(db,admin,{...payload,id,ativo:false});await rejeita(()=>ler(imagem.id),404);
+ await salvarBanner(db,admin,{...payload,id});assert.equal((await ler(imagem.id)).status,200);
+ sqlite.prepare('insert into catalogo_disponibilidade(titulo_id,oculto) values(?,1)').run('4');await rejeita(()=>ler(imagem.id),404);
+ sqlite.exec("update catalogo_disponibilidade set oculto=0 where titulo_id='4'");
+ await arquivarBanner(db,admin,{id,motivo:'Arquivar banner de teste.'});await rejeita(()=>ler(imagem.id),404);
+});

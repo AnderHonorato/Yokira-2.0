@@ -109,8 +109,8 @@ test('fundo segue a configuração global e não oferece escolha ao visitante', 
   }
 });
 
-test('o que vale descobrir cabe inteiramente no mobile, inclusive em 320px', async ({ page }) => {
-  for (const largura of [320, 360, 390, 430]) {
+test('os cards em destaque cabem inteiramente no mobile, inclusive em 320px', async ({ page }) => {
+  for (const largura of [320, 360, 390, 430, 768]) {
     await page.setViewportSize({ width: largura, height: 800 });
     await page.goto('/');
     const secao = page.locator('.trending-section');

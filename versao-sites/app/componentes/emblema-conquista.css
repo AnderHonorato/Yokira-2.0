@@ -1,0 +1,15 @@
+.emblema-conquista{position:relative;display:inline-grid;place-items:center;flex-shrink:0;width:var(--emblema-tamanho);height:var(--emblema-tamanho);color:var(--emblema-cor);isolation:isolate;vertical-align:middle}
+.emblema-conquista>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 9px #0008)}
+.emblema-conquista>.emblema-conquista-icone{position:relative;width:35%;height:35%;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--emblema-cor),transparent 45%))}
+.emblema-conquista-aura{position:absolute;inset:8%;z-index:-1;border-radius:50%;background:var(--emblema-cor);opacity:.1;filter:blur(15px)}
+.emblema-conquista-luz{position:absolute;inset:7%;border-radius:50%;background:linear-gradient(125deg,transparent 30%,#fff5 49%,transparent 60%);opacity:0;pointer-events:none}
+.emblema-conquista[data-animado=true]{animation:emblema-flutuar 4s ease-in-out infinite}
+.emblema-conquista[data-animado=true] .emblema-conquista-luz{animation:emblema-cintilar 5s ease-in-out infinite}
+.emblema-conquista[data-raridade=epica] .emblema-conquista-aura{opacity:.2}
+.emblema-conquista[data-raridade=lendaria] .emblema-conquista-aura{opacity:.3;inset:0}
+.emblema-conquista[data-raridade=lendaria][data-animado=true] .emblema-conquista-aura{animation:emblema-aura 3s ease-in-out infinite}
+[data-pausa=true] .emblema-conquista,[data-pausa=true] .emblema-conquista *{animation-play-state:paused!important}
+@keyframes emblema-flutuar{50%{transform:translateY(-4px) rotate(2deg)}}
+@keyframes emblema-cintilar{0%,65%,100%{opacity:0;transform:translateX(-10%)}75%{opacity:.4}85%{opacity:0;transform:translateX(10%)}}
+@keyframes emblema-aura{50%{opacity:.13;transform:scale(1.18)}}
+@media(prefers-reduced-motion:reduce){.emblema-conquista,.emblema-conquista *{animation:none!important}}

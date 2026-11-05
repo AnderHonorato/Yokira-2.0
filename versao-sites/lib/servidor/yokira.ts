@@ -9,6 +9,7 @@ import { ErroApi, identificador, inteiro, nomeInicial, texto } from './validacao
 import { exigirAtivo, loteAtomico, promoverAdministradorConfigurado } from './permissoes';
 import { denunciar, moderar, titulosOcultos, exigirTituloDisponivel } from './moderacao';
 import { registrarNivelAlcancado } from './notificacoes';
+import { obterSessaoConta } from './autenticacao';
 type Db = ReturnType<typeof getDb>;
 type Usuario = typeof s.usuarios.$inferSelect;
 const dia = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -19,13 +20,16 @@ function itemColecao(item: typeof s.lista.$inferSelect): ItemColecao {
         criadoEm: new Date(item.criadoEm).toISOString(), atualizadoEm: new Date(item.atualizadoEm || item.criadoEm).toISOString() };
 }
 export async function contexto(request: Request) {
-    const id = request.headers.get('oai-authenticated-user-id');
+    const chatgptId = request.headers.get('oai-authenticated-user-id');
+    const conta = chatgptId ? null : await obterSessaoConta(request);
+    const id = chatgptId || conta?.id;
     if (!id || id.length > 160)
         throw new ErroApi('Entre com sua conta para continuar.', 401);
+    if (chatgptId?.startsWith('conta:')) throw new ErroApi('Identidade inválida.', 401);
     const db = getDb();
-    await db.insert(s.usuarios).values({ id, nome: nomeInicial(request.headers), criadoEm: Date.now() }).onConflictDoNothing();
+    await db.insert(s.usuarios).values({ id, nome: conta?.nome || nomeInicial(request.headers), criadoEm: Date.now() }).onConflictDoNothing();
     const [usuario] = await db.select().from(s.usuarios).where(eq(s.usuarios.id, id)).limit(1);
-    return { db, usuario: await promoverAdministradorConfigurado(db, usuario, request.headers) };
+    return { db, usuario: chatgptId ? await promoverAdministradorConfigurado(db, usuario, request.headers) : usuario };
 }
 async function limitar(db: Db, usuarioId: string, janela: string, max: number) {
     const [linha] = await db.insert(s.limites).values({ usuarioId, janela, quantidade: 1 }).onConflictDoUpdate({
