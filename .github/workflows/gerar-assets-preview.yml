@@ -1,0 +1,72 @@
+name: Gerar assets públicos da prévia Yokira
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main-ChatGPT
+    paths:
+      - 'versao-sites/**'
+      - '.github/workflows/gerar-assets-preview.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yokira-preview-assets
+  cancel-in-progress: true
+
+jobs:
+  gerar:
+    name: Gerar bundle estático versionado
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências e compilar Vite
+        run: |
+          npm install --global pnpm@11.25.0
+          cd versao-sites
+          pnpm install --frozen-lockfile
+          pnpm run build:preview
+
+      - name: Validar compilação e copiar artefatos
+        run: |
+          test -s versao-sites/dist-preview/index.html
+          test -s versao-sites/dist-preview/favicon.svg
+          test "$(find versao-sites/dist-preview/arte/cenarios -maxdepth 1 -name '*.svg' | wc -l)" -eq 10
+          mkdir -p "$RUNNER_TEMP/yokira-publico"
+          cp -a versao-sites/dist-preview/. "$RUNNER_TEMP/yokira-publico/"
+          touch "$RUNNER_TEMP/yokira-publico/.nojekyll"
+
+      - name: Atualizar somente a branch gerada yokira-preview-build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin yokira-preview-build >/dev/null; then
+            git fetch origin yokira-preview-build
+            git switch -C yokira-preview-build FETCH_HEAD
+          else
+            git switch --orphan yokira-preview-build
+          fi
+          git rm -rf --ignore-unmatch . >/dev/null || true
+          git clean -ffdx >/dev/null
+          cp -a "$RUNNER_TEMP/yokira-publico/." .
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Bundle público sem mudanças."
+          else
+            git commit -m "build(preview): atualiza artefatos públicos de Yokira 2.0"
+            git push origin HEAD:refs/heads/yokira-preview-build
+          fi
+          echo "Bundle publicado na branch isolada yokira-preview-build."

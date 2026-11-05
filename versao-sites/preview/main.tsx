@@ -11,9 +11,35 @@ import '../app/globals.css';
 const basePublica = window.location.pathname.startsWith('/Yokira-2.0/')
   ? '/Yokira-2.0'
   : '';
-if (basePublica) {
+// AppDeploy hospeda somente a casca estática: imagens, fonte e vídeo demo
+// continuam públicos na branch gerada pelo CI, sem credenciais ou banco.
+const origemEstatica = window.location.hostname.endsWith('.v2.appdeploy.ai')
+  ? 'https://cdn.jsdelivr.net/gh/AnderHonorato/Yokira-2.0@yokira-preview-build'
+  : '';
+if (basePublica || origemEstatica) {
+  // No AppDeploy a casca é servida separadamente dos recursos públicos.
+  // Sobrescrever as fontes locais garante a tipografia quando o bundle
+  // compilado e os arquivos estáticos estão no CDN.
+  if (origemEstatica) {
+    const fontes = [
+      ['Inter', 'inter.woff2', 'normal'],
+      ['Fraunces', 'fraunces.woff2', 'normal'],
+      ['Fraunces', 'fraunces-italic.woff2', 'italic'],
+      ['JetBrains Mono', 'jetbrains-mono.woff2', 'normal']
+    ] as const;
+    const estiloFontes = document.createElement('style');
+    estiloFontes.setAttribute('data-yokira-fontes', 'cdn');
+    estiloFontes.textContent = fontes
+      .map(
+        ([familia, arquivo, estilo]) =>
+          `@font-face{font-family:"${familia}";src:url("${origemEstatica}/fontes/${arquivo}") format("woff2");font-style:${estilo};font-weight:100 900;font-display:swap}`
+      )
+      .join('\n');
+    document.head.appendChild(estiloFontes);
+  }
+
   const corrigirRecurso = (endereco: string): string =>
-    endereco.startsWith('/') ? basePublica + endereco : endereco;
+    endereco.startsWith('/') ? (origemEstatica || basePublica) + endereco : endereco;
 
   for (const titulo of catalogo) {
     titulo.poster = corrigirRecurso(titulo.poster);
@@ -32,14 +58,16 @@ if (basePublica) {
     cenarios[indice] = corrigirRecurso(endereco);
   });
 
-  // A navegação SPA continua dentro da rota do repositório no Pages.
-  const original = window.history.pushState.bind(window.history);
-  window.history.pushState = (dados, titulo, url) => {
-    const destino = typeof url === 'string' && (url === '/' || url.startsWith('/?'))
-      ? basePublica + url
-      : url;
-    return original(dados, titulo, destino);
-  };
+  // Apenas no GitHub Pages a rota interna precisa do prefixo /Yokira-2.0/.
+  if (basePublica) {
+    const original = window.history.pushState.bind(window.history);
+    window.history.pushState = (dados, titulo, url) => {
+      const destino = typeof url === 'string' && (url === '/' || url.startsWith('/?'))
+        ? basePublica + url
+        : url;
+      return original(dados, titulo, destino);
+    };
+  }
 }
 
 // Modo de demonstração. O banco, os usuários e as operações de escrita não
