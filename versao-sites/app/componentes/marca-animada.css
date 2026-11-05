@@ -1,10 +1,5 @@
-.marca-animada{display:block;overflow:visible;flex:none;filter:drop-shadow(0 0 3px #813cd74d)}
-.marca-cobra-borda,.marca-cobra-corpo,.marca-cobra-luz{fill:none;stroke-linecap:round;stroke-dasharray:170 370;animation:marca-serpentear 14s linear infinite}
-.marca-cobra-borda{stroke:#251337;stroke-width:9}
-.marca-cobra-corpo{stroke-width:6.8}
-.marca-cobra-luz{stroke:#b85fff;stroke-width:.8;opacity:.85;transform:translateY(-2px)}
-.marca-cobra-cabeca{offset-path:path('M 39 41 C 12 20 18 4 43 8 C 84 14 91 38 62 52 C 29 68 10 50 25 32 C 42 11 88 18 86 43 C 84 67 48 81 28 61 C 9 42 34 30 57 36 C 92 46 89 74 64 79 C 34 86 13 64 23 46 C 27 39 33 38 39 41 Z');offset-distance:31.48148%;offset-rotate:auto;offset-anchor:0 0;animation:marca-cabeca 14s linear infinite}
-@keyframes marca-serpentear{to{stroke-dashoffset:-540}}
-@keyframes marca-cabeca{from{offset-distance:31.48148%}to{offset-distance:131.48148%}}
-html[data-efeitos=suave] .marca-animada *{animation:none}
-@media(prefers-reduced-motion:reduce){.marca-animada *{animation:none!important}}
+.marca-animada{display:block;flex:none;overflow:visible;filter:drop-shadow(0 0 3px #813cd730)}
+.marca-cobra-original{transform-origin:128px 61px}
+.marca-animada[data-animado=true] .marca-cobra-original{animation:marca-original-respirar 6s ease-in-out infinite}
+@keyframes marca-original-respirar{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(1.8px,-1.3px) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.marca-cobra-original{animation:none!important;transform:none}}

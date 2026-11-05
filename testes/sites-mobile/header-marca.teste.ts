@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
 
 for (const autenticado of [false, true]) {
   test(`o cabeçalho completo cabe em cada tela ${autenticado ? 'com' : 'sem'} sessão`, async ({
@@ -21,28 +22,33 @@ for (const autenticado of [false, true]) {
       await page.setViewportSize({ width: largura, height: 900 });
       await page.goto('/');
       const header = page.locator('.topbar');
-      const barra = page.getByRole('navigation', { name: 'Navegação inferior' });
+      const barra = page.getByRole('navigation', { name: 'Ações e navegação' });
       const menu = page.getByRole('navigation', { name: 'Navegação principal' });
       const sino = header.getByRole('button', { name: /^Notificações/ });
       if (autenticado) {
         await expect(sino).toHaveCount(1);
         await expect(sino).toBeVisible();
         await expect(page.locator('.notificacoes')).toHaveCount(1);
-      } else await expect(header.getByRole('link', { name: 'Entrar', exact: true })).toBeVisible();
+      } else if (largura > 980)
+        await expect(header.getByRole('link', { name: 'Entrar', exact: true })).toBeVisible();
       await expect(header.getByRole('button', { name: 'Buscar animes' })).toBeVisible();
-      await expect(header.getByRole('button', { name: 'Alternar tema' })).toBeVisible();
+      if (largura > 980)
+        await expect(header.getByRole('button', { name: 'Alternar tema' })).toBeVisible();
       await expect(header.getByRole('button', { name: 'Meu perfil' })).toBeVisible();
       const topo = (await header.boundingBox())!;
       if (largura <= 980) {
         await expect(barra).toBeVisible();
         await expect(menu).toBeHidden();
+        await expect(barra.locator('.nav-inicio')).toBeVisible();
         const inferior = (await barra.boundingBox())!;
         expect(topo.y, `${largura}: cabeçalho deve ficar embaixo`).toBeGreaterThan(450);
-        expect(Math.abs(topo.y + topo.height - inferior.y)).toBeLessThanOrEqual(1);
+        expect(topo.height, 'Uma única barra compacta').toBeLessThanOrEqual(80);
+        expect(inferior.y).toBeGreaterThanOrEqual(topo.y);
+        expect(inferior.y + inferior.height).toBeLessThanOrEqual(topo.y + topo.height + 1);
         expect(Math.abs(inferior.y + inferior.height - 900)).toBeLessThanOrEqual(1);
       } else {
         await expect(menu).toBeVisible();
-        await expect(barra).toBeHidden();
+        await expect(barra.locator('.nav-inicio')).toBeHidden();
         expect(topo.y).toBe(0);
       }
       const controles = await page
@@ -78,7 +84,10 @@ for (const autenticado of [false, true]) {
   });
 }
 
-test('a cobra percorre as siglas em camadas e respeita movimento reduzido', async ({ page }) => {
+test('anima o mesmo arquivo original da marca e respeita movimento reduzido', async ({
+  page,
+  request
+}) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.route('**/api/yokira?acao=aparencia', (rota) =>
     rota.fulfill({
@@ -88,30 +97,33 @@ test('a cobra percorre as siglas em camadas e respeita movimento reduzido', asyn
     })
   );
   await page.goto('/');
-  const marca = page.locator('.topbar .marca-animada');
+  const marca = page.locator('.topbar .marca-animada:visible');
+  await expect(marca).toHaveCount(1);
   await expect(marca).toBeVisible();
-  await expect(marca.locator('.marca-siglas path')).toHaveCount(3);
-  await expect(marca.locator('.marca-cobra-atras')).toHaveCount(1);
-  await expect(marca.locator('.marca-cobra-frente')).toHaveAttribute('mask', /^url\(#.+\)$/);
-  const corpo = marca.locator('.marca-cobra-atras .marca-cobra-corpo');
-  const cabeca = marca.locator('.marca-cobra-atras .marca-cobra-cabeca');
-  await expect(corpo).toHaveCSS('animation-name', 'marca-serpentear');
-  await expect(cabeca).toHaveCSS('animation-name', 'marca-cabeca');
-  expect(await cabeca.evaluate((elemento) => getComputedStyle(elemento).offsetPath)).toContain(
-    'path('
-  );
-  const posicao = await cabeca.evaluate((elemento) => getComputedStyle(elemento).offsetDistance);
+  await expect(marca).toHaveAttribute('data-original', '/marca/emblema-192.png');
+  await expect(marca).toHaveAttribute('data-animado', 'true');
+  const imagens = marca.locator('image');
+  await expect(imagens).toHaveCount(2);
+  for (const imagem of await imagens.all())
+    await expect(imagem).toHaveAttribute('href', '/marca/emblema-192.png');
+  const resposta = await request.get('/marca/emblema-192.png');
+  expect(
+    createHash('sha256')
+      .update(await resposta.body())
+      .digest('hex')
+  ).toBe('a9a6cb37c2ebc8e3710e5d7039815852e2f98e674e0321a6c85ea197c890db73');
+  const cobra = marca.locator('.marca-cobra-original');
+  await expect(cobra).toHaveCSS('animation-name', 'marca-original-respirar');
+  const anterior = await cobra.evaluate((el) => getComputedStyle(el).transform);
   await expect
-    .poll(() => cabeca.evaluate((elemento) => getComputedStyle(elemento).offsetDistance))
-    .not.toBe(posicao);
-  const traco = await corpo.evaluate((elemento) => getComputedStyle(elemento).strokeDashoffset);
-  await expect
-    .poll(() => corpo.evaluate((elemento) => getComputedStyle(elemento).strokeDashoffset))
-    .not.toBe(traco);
+    .poll(() => cobra.evaluate((el) => getComputedStyle(el).transform))
+    .not.toBe(anterior);
+  await expect(marca.locator('animate')).toHaveAttribute('repeatCount', 'indefinite');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(corpo).toHaveCSS('animation-name', 'none');
-  await expect(cabeca).toHaveCSS('animation-name', 'none');
-  await expect(marca).toBeVisible();
+  await expect(marca).toHaveAttribute('data-animado', 'false');
+  await expect(cobra).toHaveCSS('animation-name', 'none');
+  await expect(marca.locator('animate')).toHaveCount(0);
+  await expect(marca.locator('feDisplacementMap')).toHaveAttribute('scale', '0');
 });
 
 test('a página inicial não exibe os slogans removidos', async ({ page }) => {

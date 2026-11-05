@@ -6,7 +6,7 @@ test('a navegação ocupa o rodapé no celular e o cabeçalho no desktop', async
   page
 }, informacao) => {
   await page.goto('/');
-  const barra = page.getByRole('navigation', { name: 'Navegação inferior' });
+  const barra = page.getByRole('navigation', { name: 'Ações e navegação' });
   const menuTopo = page.getByRole('navigation', { name: 'Navegação principal' });
 
   if (informacao.project.name === 'celular-390') {
@@ -25,7 +25,7 @@ test('a navegação ocupa o rodapé no celular e o cabeçalho no desktop', async
     await expect(painel).toBeHidden();
   } else {
     await expect(menuTopo).toBeVisible();
-    await expect(barra).toBeHidden();
+    await expect(barra.locator('.nav-inicio')).toBeHidden();
   }
 });
 

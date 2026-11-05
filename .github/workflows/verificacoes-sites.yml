@@ -84,8 +84,8 @@ jobs:
       - name: Verificar navegação inferior, encaixe dos cards e indicadores
         run: npx playwright test --config=playwright.sites.config.ts
 
-      - name: Salvar relatório em caso de falha
-        if: failure()
+      - name: Salvar relatório e captura de validação
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: relatorio-mobile-sites
