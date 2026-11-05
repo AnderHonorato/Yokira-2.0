@@ -17,6 +17,27 @@ const origemEstatica = window.location.hostname.endsWith('.v2.appdeploy.ai')
   ? 'https://cdn.jsdelivr.net/gh/AnderHonorato/Yokira-2.0@yokira-preview-build'
   : '';
 if (basePublica || origemEstatica) {
+  // No AppDeploy a casca é servida separadamente dos recursos públicos.
+  // Sobrescrever as fontes locais garante a tipografia quando o bundle
+  // compilado e os arquivos estáticos estão no CDN.
+  if (origemEstatica) {
+    const fontes = [
+      ['Inter', 'inter.woff2', 'normal'],
+      ['Fraunces', 'fraunces.woff2', 'normal'],
+      ['Fraunces', 'fraunces-italic.woff2', 'italic'],
+      ['JetBrains Mono', 'jetbrains-mono.woff2', 'normal']
+    ] as const;
+    const estiloFontes = document.createElement('style');
+    estiloFontes.setAttribute('data-yokira-fontes', 'cdn');
+    estiloFontes.textContent = fontes
+      .map(
+        ([familia, arquivo, estilo]) =>
+          `@font-face{font-family:"${familia}";src:url("${origemEstatica}/fontes/${arquivo}") format("woff2");font-style:${estilo};font-weight:100 900;font-display:swap}`
+      )
+      .join('\n');
+    document.head.appendChild(estiloFontes);
+  }
+
   const corrigirRecurso = (endereco: string): string =>
     endereco.startsWith('/') ? (origemEstatica || basePublica) + endereco : endereco;
 
