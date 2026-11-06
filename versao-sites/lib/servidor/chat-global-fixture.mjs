@@ -6,6 +6,7 @@ export const sqlite=new DatabaseSync(':memory:');
 sqlite.exec('PRAGMA foreign_keys=ON');
 const pasta=new URL('../../drizzle/',import.meta.url);
 for(const arquivo of readdirSync(pasta).filter(a=>a.endsWith('.sql')).sort())sqlite.exec(readFileSync(new URL(arquivo,pasta),'utf8'));
+export const consultas=[];
 let interceptar=()=>{};
 class Prepared{
  constructor(query,params=[]){this.query=query;this.params=params;}
@@ -15,7 +16,7 @@ class Prepared{
  async all(){return this.executar();}
  run(){const r=sqlite.prepare(this.query).run(...this.params);return {success:true,results:[],meta:{changes:Number(r.changes)}};}
 }
-globalThis.__chatGlobalEnv={DB:{prepare:q=>new Prepared(q),async batch(stmts){
+globalThis.__chatGlobalEnv={DB:{prepare:q=>{consultas.push(q);return new Prepared(q);},async batch(stmts){
  interceptar(stmts);sqlite.exec('BEGIN');
  try{const rs=stmts.map(s=>s.executar());sqlite.exec('COMMIT');return rs;}
  catch(e){sqlite.exec('ROLLBACK');throw e;}
@@ -45,4 +46,4 @@ export function antesEscrita(acao,tabela='chat_mensagens'){
  interceptar=stmts=>{if(stmts.some(s=>new RegExp(`(?:insert\\s+(?:or\\s+\\w+\\s+)?into|update)\\s+["\x60]?${tabela}\\b`,'i').test(s.query))){interceptar=()=>{};acao();}};
 }
 export const quantidade=()=>sqlite.prepare('select count(*) n from chat_mensagens').get().n;
-export function limpar(){interceptar=()=>{};sqlite.exec('delete from chat_mensagens;delete from limites');}
+export function limpar(){interceptar=()=>{};consultas.length=0;sqlite.exec('delete from chat_mensagens;delete from limites');}

@@ -108,7 +108,7 @@ export async function prepararChat(page: Page, opcoes: Opcoes = {}) {
       case 'sala':
         return rota.fulfill({ status: 404, json: { erro: 'Sala de teste sem reprodução.' } });
       default:
-        return rota.fulfill({ json: {} });
+        return rota.continue();
     }
   });
   return { envios, entradas };

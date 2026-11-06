@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test,beforeEach} from 'node:test';
-import {sqlite,db,usuario,imagem,antesEscrita,quantidade,limpar} from './chat-global-fixture.mjs';
+import {sqlite,db,usuario,imagem,antesEscrita,quantidade,limpar,consultas} from './chat-global-fixture.mjs';
 
 const {listarChatGlobal}=await import('./chat-global.ts');
 const {enviarChatGlobal}=await import('./chat-global-escrita.ts');
@@ -107,4 +107,13 @@ test('limite de oito envios é atômico e repetir nonce aceito não consome outr
   const aceito=resultados.findIndex(r=>r.status==='fulfilled');assert.equal((await enviar(20,payloads[aceito])).id,resultados[aceito].value.id);
   assert.equal(quantidade(),8);
  }finally{Date.now=agora;}
+});
+
+test('chat sem convite usa uma consulta e salas mantêm o título público atualizado',async()=>{
+ consultas.length=0;assert.equal((await publico()).mensagens.length,0);assert.equal(consultas.length,1);
+ await enviar(21);consultas.length=0;assert.equal((await publico()).mensagens.length,1);assert.equal(consultas.length,1);
+ const s=await criarSala(21);await enviar(21,{salaId:s.salaId});consultas.length=0;
+ const p=await publico(),convite=p.mensagens.find(m=>m.sala);
+ assert.ok(convite);assert.equal(convite.sala.id,s.salaId);assert.notEqual(convite.sala.titulo,'Título indisponível');
+ assert.equal(convite.sala.encerrada,false);assert.equal(consultas.length,3);
 });

@@ -19,6 +19,7 @@ export default function BannerDestaque({ navegar }: Props) {
     const resposta = await fetch('/api/yokira?acao=banners', { signal: controle.signal, cache: 'no-store' });
     if (!resposta.ok) throw new Error();
     const dados = await resposta.json() as { banners: BannerDestaqueDTO[] };
+    if (!Array.isArray(dados.banners)) throw new Error('Resposta de destaques inválida.');
     if (ativo) { setBanners(dados.banners); setErro(false); }
    } catch { if (ativo && !controle.signal.aborted) setErro(true); }
    finally { if (ativo) setCarregando(false); }

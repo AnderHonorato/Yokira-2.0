@@ -11,7 +11,7 @@ automaticamente o repositório próprio do Sites.
 - Amizades: busca por nome ou `@`, pedidos, aceitar, recusar, cancelar, remover e
   bloquear. Perfis começam privados; o usuário pode permitir a busca no perfil.
 - Salas: dupla até duas pessoas ou grupo até doze, episódio publicado específico,
-  convite privado, conversa, expulsão e encerramento pelo dono.
+  convite privado, conversa, expulsão, bloqueio de novas entradas e encerramento pelo dono.
 - Reprodução sincronizada: o dono controla o player nativo; posição e revisão
   ficam no servidor. Convidados precisam autorizar a reprodução no navegador.
   Iframes de terceiros não oferecem controle universal de tempo; a interface
@@ -44,7 +44,7 @@ remove a associação necessária à sala no mesmo lote, preservando a gestão d
 
 ## Dados e operação
 
-Migrações incrementais `0011_contas` até `0015_banners`, com snapshots e journal
+Migrações incrementais `0011_contas` até `0016_comunidade_global`, com snapshots e journal
 correspondentes. Não alterar migrações que já tenham sido aplicadas. O schema foi
 dividido em `db/esquema-*.ts`, reunidos por `db/schema.ts`.
 
@@ -71,3 +71,42 @@ somente sua região da cobra recebe animação em loop. O banner móvel usa cerc
 de 244 px e a abertura da página foi compactada.
 Níveis evoluem em oito faixas, com refinamento dentro de cada faixa e limite de
 partículas; emblemas de conquistas distinguem cor, forma, desenho e raridade.
+
+## Chat global e perfis enriquecidos
+
+O chat flutuante fica encostado na direita, acima da barra inferior móvel. Todos
+podem ler; contas ativas podem enviar texto e fotos. A consulta ocorre a cada
+quatro segundos apenas quando o painel e a aba estão visíveis, com cancelamento
+e recuo em falhas. O envio preserva o rascunho e reutiliza seu UUID em retries.
+A listagem traz até 60 mensagens; bloqueios e suspensões são aplicados no servidor.
+
+Fotos, avatar e banner usam `/api/comunidade/imagens`. O cliente redimensiona e
+converte para imagem estática; o servidor valida JPEG/PNG/WebP real, até 4 MiB,
+4096 px por dimensão e 16 megapixels. Limites: cinco tentativas por minuto,
+20 imagens por dia e 100 MiB por conta. SVG e imagens animadas são rejeitados.
+O R2 permanece privado: a rota libera somente a imagem vinculada a mensagem
+visível, avatar atual, banner autorizado ou prévia do proprietário/moderação.
+Avatares são públicos; o editor explica isso. Banners seguem a privacidade do perfil.
+
+Nome e avatar abrem um cartão por mouse, toque ou teclado, com nível, destaques
+salvos e atividade autorizada. O perfil completo acrescenta bio, XP e data de
+entrada. Compartilhar o que está assistindo exige consentimento explícito e
+perfil público, amizade ou acesso próprio. Conteúdo não publicado não aparece.
+A migração recupera a última atividade de episódios conhecida; o compartilhamento
+permanece desligado por padrão. Nenhuma resposta expõe URL de vídeo ou e-mail.
+
+Somente o dono compartilha ou compartilha novamente a sala no chat. Os cartões
+não contêm o convite privado: a entrada passa por uma mensagem pública válida,
+com nova checagem de conta, bloqueios, publicação, capacidade e trava no SQL.
+Trancar impede novas entradas e preserva os participantes atuais. Encerrar
+invalida os cartões já publicados. Admin/moderador pode ocultar/restaurar mensagens;
+somente admin edita texto, com motivo obrigatório e auditoria atômica.
+
+## Telas amplas
+
+O conteúdo acompanha a largura da janela com margens proporcionais, mantendo
+cartões de catálogo com tamanho limitado e ampliando as colunas disponíveis.
+Rankings reorganizam-se em telas amplas; o primeiro colocado recebe movimento
+no cartão e na foto. A marca usa três recortes da mesma imagem original para
+mover corpo e cabeça da cobra, com pausa fora da tela, aba oculta e movimento
+reduzido. Não substituir a imagem nem criar outra barra de navegação móvel.

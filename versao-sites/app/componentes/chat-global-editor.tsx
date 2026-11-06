@@ -27,7 +27,7 @@ export default function ChatGlobalEditor({ ativo, autenticado, entrar, enviar, a
   <textarea id="chat-global-texto" rows={2} maxLength={1000} value={corpo} disabled={enviando} placeholder="Converse com a comunidade…"
    onChange={e => setCorpo(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); formulario.current?.requestSubmit(); } }}/>
   {imagem && <div className="chat-global-anexo"><img src={imagem} alt="Foto anexada à sua mensagem"/><button type="button" onClick={() => { setImagem(''); setRevisao(v => v + 1); }} disabled={enviando} aria-label="Remover foto"><Icone nome="fechar" tamanho={14}/></button><span>Foto pronta para enviar</span></div>}
-  <div className="chat-global-editor-acoes"><ImagemComunidade key={revisao} compacto finalidade="chat" onEnviada={setImagem} onOcupado={setUpload} disabled={enviando || upload}/><small>{corpo.length}/1000</small><button type="submit" className="chat-global-enviar" disabled={enviando || upload || (!corpo.trim() && !imagem)}>{enviando ? 'Enviando…' : 'Enviar'}<Icone nome="seta" tamanho={15}/></button></div>
+  <div className="chat-global-editor-acoes"><ImagemComunidade key={revisao} compacto finalidade="chat" onEnviada={setImagem} onOcupado={ocupado=>{setUpload(ocupado);if(ocupado)setImagem('');}} disabled={enviando || upload}/><small>{corpo.length}/1000</small><button type="submit" className="chat-global-enviar" disabled={enviando || upload || (!corpo.trim() && !imagem)}>{enviando ? 'Enviando…' : 'Enviar'}<Icone nome="seta" tamanho={15}/></button></div>
   {erro && <p className="chat-global-erro" role="alert">{erro}</p>}
  </form>;
 }
