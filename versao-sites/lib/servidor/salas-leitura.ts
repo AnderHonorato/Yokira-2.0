@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm';
 import type { SalaResumo, SalaDetalhe, MembroSala, MensagemSala } from '../salas';
 import { loteAtomico,type Db,type Usuario } from './permissoes';
 import { ErroApi, identificador } from './validacao';
-import { acesso,ativoSocial,limiteSala } from './salas-base';
+import { acesso,ativoSocial,gestaoDono,limiteSala } from './salas-base';
 import { obterEpisodiosPublicos } from './temporadas';
 
 type LinhaSala={id:string;titulo_id:string;episodio_id:string;dono_id:string;modo:'dupla'|'grupo';trancada:number;convite:string;pausado:number;posicao:number;revisao:number;atualizado_em:number;criado_em:number;participantes:number};
@@ -10,9 +10,9 @@ const resumo=(s:LinhaSala):SalaResumo=>({id:s.id,tituloId:s.titulo_id,episodioId
 export async function obterSalas(db:Db,usuario:Usuario):Promise<{salas:SalaResumo[]}> {
  if(usuario.suspenso)throw new ErroApi('Sua conta está suspensa.',403);
  await consumirLeitura(db,usuario.id,'listar',30,ativoSocial(usuario.id));
- const salas=await db.all<LinhaSala>(sql`select s.*,(select count(*) from sala_membros m where m.sala_id=s.id and m.ativo=1) participantes
- from salas s where ${acesso(usuario.id)} order by s.criado_em desc limit 30`);
- return {salas:salas.map(resumo)};
+ const salas=await db.all<LinhaSala & {disponivel:number}>(sql`select s.*,${acesso(usuario.id)} disponivel,(select count(*) from sala_membros m where m.sala_id=s.id and m.ativo=1) participantes
+ from salas s where (${acesso(usuario.id)} or ${gestaoDono(usuario.id)}) order by (s.dono_id=${usuario.id}) desc,s.criado_em desc limit 30`);
+ return {salas:salas.map(s=>({...resumo(s),disponivel:!!s.disponivel,propria:s.dono_id===usuario.id}))};
 }
 export async function obterSala(db:Db,usuario:Usuario,valor:unknown,origem?:string):Promise<SalaDetalhe> {
  const id=identificador(valor);

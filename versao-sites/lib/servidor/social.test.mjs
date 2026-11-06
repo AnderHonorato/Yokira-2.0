@@ -101,7 +101,7 @@ test('suspensão entre leitura e escrita impede mutações usando o estado atual
  sqlite.prepare('update usuarios set suspenso=0 where id=?').run(b.id);
 });
 test('constraints persistentes rejeitam par invertido, auto bloqueio e @ duplicado',()=>{
- assert.throws(()=>sqlite.exec("insert into amizades values('social-b','social-a','social-a','pendente',1,1)"),/CHECK/);
+ assert.throws(()=>sqlite.exec("insert into amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em) values('social-b','social-a','social-a','pendente',1,1)"),/CHECK/);
  assert.throws(()=>sqlite.exec("insert into bloqueios_sociais values('social-a','social-a',1)"),/CHECK/);
  assert.throws(()=>sqlite.exec("update perfis_sociais set handle='unico_123' where usuario_id='social-b'"),/UNIQUE/);
  assert.throws(()=>sqlite.exec("update perfis_sociais set handle='UPPER' where usuario_id='social-b'"),/CHECK/);

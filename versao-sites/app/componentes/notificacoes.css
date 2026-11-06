@@ -33,3 +33,5 @@
 @media(prefers-reduced-motion:reduce){.notificacoes-painel{animation:none}}
 
 .notificacoes-insignia>.emblema-nivel,.notificacoes-insignia>.emblema-conquista{flex:none}
+
+.notificacoes-insignia.amizade{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,var(--border));background:color-mix(in srgb,var(--accent) 8%,transparent)}

@@ -16,3 +16,6 @@
 html[data-efeitos=suave] .emblema-nivel *{animation:none!important}
 html[data-efeitos=equilibrado] .nivel-particulas circle:nth-child(2n){display:none}
 @media(prefers-reduced-motion:reduce){.emblema-nivel *{animation:none!important}.nivel-reflexo{display:none}}
+
+.nivel-marca{position:absolute;left:28%;top:22%;width:44%;height:44%;pointer-events:none}
+.nivel-marca>.marca-animada{width:100%;height:100%}

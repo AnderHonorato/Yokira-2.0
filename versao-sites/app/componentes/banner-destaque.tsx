@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { previaBanner, type BannerDestaqueDTO } from '../../lib/banners';
+import { criarRelogioBanner, type RelogioBanner } from '../../lib/relogio-banner';
 import './banner-destaque.css';
 type Props = { navegar: (pagina: string, valores?: Record<string, string>) => void };
 export default function BannerDestaque({ navegar }: Props) {
@@ -11,6 +12,8 @@ export default function BannerDestaque({ navegar }: Props) {
  const [visivel, setVisivel] = useState(true), [naTela, setNaTela] = useState(true), [reduzir, setReduzir] = useState(false);
  const [carregando, setCarregando] = useState(true), [erro, setErro] = useState(false), [tentativa, setTentativa] = useState(0);
  const raiz = useRef<HTMLElement>(null), toque = useRef<number | null>(null);
+ const progresso = useRef<HTMLSpanElement>(null), relogio = useRef<RelogioBanner | null>(null);
+ const [reinicio, setReinicio] = useState(0);
  useEffect(() => {
   const controle = new AbortController(); let ativo = true;
   async function carregar() {
@@ -41,17 +44,22 @@ export default function BannerDestaque({ navegar }: Props) {
  }, [carregando]);
  const atual = banners[indice % Math.max(1, banners.length)];
  const rodando = !pausado && !interagindo && visivel && naTela && !reduzir;
+ const total = banners.length, duracao = (atual?.intervaloEfetivoSegundos || 0) * 1000;
+ const identidade = atual ? `${atual.id}:${atual.atualizadoEm}:${indice}:${reinicio}` : '';
  useEffect(() => {
-  if (!rodando || banners.length < 2 || !atual) return;
-  const tempo = setTimeout(() => setIndice(valor => (valor + 1) % banners.length), atual.intervaloEfetivoSegundos * 1000);
-  return () => clearTimeout(tempo);
- }, [rodando, banners.length, atual, indice]);
+  if (!progresso.current || total < 2 || reduzir) return;
+  const novo = criarRelogioBanner(progresso.current, duracao, () => setIndice(valor => (valor + 1) % total));
+  relogio.current = novo;
+  return () => { novo.destruir(); if (relogio.current === novo) relogio.current = null; };
+ }, [identidade, duracao, total, reduzir]);
+ useEffect(() => { relogio.current?.definirRodando(rodando); }, [rodando, identidade, duracao, total, reduzir]);
  useEffect(() => {
   if (banners.length < 2) return;
   const proximo = banners[(indice + 1) % banners.length]; const cena = new Image(); cena.src = proximo.imagem;
   if (proximo.personagem) { const figura = new Image(); figura.src = proximo.personagem; }
  }, [banners, indice]);
- function trocar(passo: number) { setIndice(valor => (valor + passo + banners.length) % banners.length); }
+ function selecionar(posicao: number) { setIndice(posicao); setReinicio(valor => valor + 1); }
+ function trocar(passo: number) { selecionar((indice + passo + total) % total); }
  if (carregando) return <section className="banner-destaque banner-carregando" aria-label="Destaques" aria-busy="true"><span>Carregando destaques…</span></section>;
  if (!atual) return erro ? <div className="banner-falha" role="status">Não foi possível carregar os destaques. <button className="button button-subtle" onClick={() => { setCarregando(true); setTentativa(v => v + 1); }}>Tentar novamente</button></div> : null;
  const previa = previaBanner(atual.imagem);
@@ -73,7 +81,7 @@ export default function BannerDestaque({ navegar }: Props) {
      {atual.link && <a className="button button-subtle" href={atual.link} target={atual.link.startsWith('https:') ? '_blank' : undefined} rel="noopener noreferrer">Saiba mais<span className="sr-only"> sobre {atual.titulo.nome}</span></a>}</div>
    </div>
   </div>
-  {banners.length > 1 && <div className="banner-controles"><div className="banner-paginacao" aria-label="Escolher destaque">{banners.map((item, posicao) => <button key={item.id} aria-label={`Mostrar ${item.titulo.nome}`} aria-pressed={posicao === indice % banners.length} onClick={() => setIndice(posicao)} style={{ '--banner-tempo': `${atual.intervaloEfetivoSegundos}s` } as CSSProperties}><span/></button>)}</div>
+  {banners.length > 1 && <div className="banner-controles"><div className="banner-paginacao" aria-label="Escolher destaque">{banners.map((item, posicao) => <button key={item.id} aria-label={`Mostrar ${item.titulo.nome}`} aria-pressed={posicao === indice % banners.length} onClick={() => selecionar(posicao)}><span ref={posicao === indice % total ? progresso : undefined}/></button>)}</div>
    <span className="banner-contagem" aria-hidden="true">{String(indice % banners.length + 1).padStart(2, '0')} / {String(banners.length).padStart(2, '0')}</span>
    <button onClick={() => trocar(-1)} aria-label="Destaque anterior"><ChevronLeft size={19}/></button><button onClick={() => setPausado(!pausado)} aria-label={pausado ? 'Retomar rotação dos destaques' : 'Pausar rotação dos destaques'} aria-pressed={pausado}>{pausado ? <Play size={15}/> : <Pause size={15}/>}</button><button onClick={() => trocar(1)} aria-label="Próximo destaque"><ChevronRight size={19}/></button>
   </div>}

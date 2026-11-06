@@ -34,7 +34,7 @@ function Perfil({ handle, usuarioId, navegar }: Props) {
    {usuarioId && perfil.relacao !== 'proprio' && <AcoesAmizade pessoa={perfil} atualizar={carregar}/>}
    {perfil.relacao === 'proprio' && navegar && <button type="button" onClick={() => navegar('perfil')}>Editar meu perfil</button>}
    {!usuarioId && <p className="social-ajuda">Entre na sua conta para enviar uma solicitação de amizade.</p>}
-   {perfil.mostrarConquistas && <div className="social-destaques"><h2>Conquistas em destaque</h2>{perfil.conquistas.length ? <ul>{perfil.conquistas.slice(0,3).map(c => <li key={c.badgeId}><EmblemaConquista badgeId={c.badgeId} tamanho={76}/><strong>{c.titulo}</strong><span>{c.descricao}</span></li>)}</ul> : <p className="social-ajuda">Nenhuma conquista em destaque.</p>}</div>}
+   {perfil.mostrarConquistas && <div className="social-destaques"><h2>Conquistas em destaque</h2>{perfil.conquistas.length ? <ul>{perfil.conquistas.slice(0,3).map(c => <li key={c.badgeId}><EmblemaConquista badgeId={c.badgeId} tamanho={76} animado/><strong>{c.titulo}</strong><span>{c.descricao}</span></li>)}</ul> : <p className="social-ajuda">Nenhuma conquista em destaque.</p>}</div>}
   </>}
  </section>;
 }

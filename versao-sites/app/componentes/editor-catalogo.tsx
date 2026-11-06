@@ -6,6 +6,7 @@ import type { Anime, Editorial } from '../../lib/catalogo';
 import './editor-catalogo.css';
 import { EditorTemporadas } from './editor-temporadas';
 import { EnviarMidia } from './enviar-midia';
+import { useEnviosMidia } from './envios-midia';
 
 type ItemTitulo = Anime & { oculto: boolean };
 type ItemEditorial = Editorial & { oculto: boolean };
@@ -39,6 +40,7 @@ function formulario(item: ItemTitulo | ItemEditorial): Record<string, string> {
     return Object.fromEntries(Object.entries(item).filter(([chave]) => !['id', 'oculto'].includes(chave)).map(([chave, valor]) => [chave, Array.isArray(valor) ? valor.join(', ') : String(valor)]));
 }
 export default function EditorCatalogo({ usuario, notificar, recarregar }: Props) {
+    const envios = useEnviosMidia();
     const permitido = !!usuario && usuario.papel === 'administrador' && !usuario.suspenso;
     const [acervo, setAcervo] = useState<Acervo | null>(null);
     const [tipo, setTipo] = useState<'titulo' | 'editorial'>('titulo');
@@ -75,6 +77,7 @@ export default function EditorCatalogo({ usuario, notificar, recarregar }: Props
         void carregar(); return () => controle.abort();
     }, [permitido, usuario?.id, versao]);
     function selecionar(novoTipo: typeof tipo, id = '') {
+        if (envios.temEnvios()) return;
         const itens = novoTipo === 'titulo' ? acervo?.catalogo : acervo?.editoriais;
         const item = itens?.find(valor => valor.id === id) || itens?.[0];
         slugPersonalizado.current = true;
@@ -87,6 +90,7 @@ export default function EditorCatalogo({ usuario, notificar, recarregar }: Props
         setForm(atual => ({ ...atual, [chave]: valor, ...(criando && chave === 'nome' && !slugPersonalizado.current ? { slug: valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 120).replace(/^-+|-+$/g, '') } : {}) }));
     }
     function novo(formato: 'Série' | 'Filme') {
+        if (envios.temEnvios()) return;
         slugPersonalizado.current = false;
         selecao.current = { tipo: 'titulo', id: '', criando: true };
         setTipo('titulo'); setCriando(true); setAlvoId(''); setOculto(true); setMotivo(''); setErro(''); setSucesso('');
@@ -95,7 +99,7 @@ export default function EditorCatalogo({ usuario, notificar, recarregar }: Props
     }
     async function salvar(evento: React.FormEvent<HTMLFormElement>) {
         evento.preventDefault();
-        if (!permitido || enviando || (!alvoId && !criando) || motivo.trim().length < 3) return;
+        if (!permitido || enviando || envios.temEnvios() || (!alvoId && !criando) || motivo.trim().length < 3) return;
         setEnviando(true); setErro(''); setSucesso('');
         const dados: Record<string, unknown> = { ...form };
         if (tipo === 'titulo') {
@@ -118,7 +122,7 @@ export default function EditorCatalogo({ usuario, notificar, recarregar }: Props
     if (!usuario) return <section className="editor-acervo"><h1>Entre para editar o acervo</h1><p>Use sua conta de administrador para continuar.</p><a className="button button-primary" href="/signin-with-chatgpt?return_to=%2F%3Fp%3Dacervo-admin" target="_top">Entrar com ChatGPT</a></section>;
     if (!permitido) return <section className="editor-acervo"><h1>Acesso restrito</h1><p>{usuario.suspenso ? 'Sua conta está suspensa.' : 'A edição do acervo está disponível para administradores.'}</p><Link className="button button-subtle" href="/?p=perfil">Voltar ao perfil</Link></section>;
     const itens = tipo === 'titulo' ? acervo?.catalogo : acervo?.editoriais;
-    const bloqueado = carregando || enviando;
+    const bloqueado = carregando || enviando || envios.ocupado;
     const tituloSalvo = tipo === 'titulo' && !criando ? acervo?.catalogo.find(item => item.id === alvoId) : undefined;
     return <section className="editor-acervo">
         <header className="editor-acervo-cabecalho"><span>YOKIRA / ADMINISTRAÇÃO</span><h1>Editar acervo</h1><p>Crie séries e filmes ou atualize títulos, imagens e textos editoriais. Toda alteração exige um motivo e fica registrada.</p><Link href="/?p=admin">Abrir painel de moderação</Link></header>
@@ -131,22 +135,22 @@ export default function EditorCatalogo({ usuario, notificar, recarregar }: Props
         {sucesso && <p className="editor-acervo-aviso" role="status">{sucesso}</p>}
         {carregando && <p role="status">Carregando acervo…</p>}
         {(criando || (acervo && alvoId)) && <form onSubmit={salvar} aria-busy={bloqueado} className="editor-acervo-form">
-            <fieldset disabled={bloqueado}><legend>{tipo === 'titulo' ? 'Dados do título' : 'Dados editoriais'}</legend>
+            <fieldset disabled={carregando || enviando}><legend>{tipo === 'titulo' ? 'Dados do título' : 'Dados editoriais'}</legend>
                 <p className="editor-acervo-ajuda">Envie imagens do dispositivo ou informe um caminho local (ex.: /arte/imagem.webp) ou URL HTTPS sem credenciais. As alterações só são publicadas ao salvar.</p>
                 {tipo === 'titulo' && <p className="editor-acervo-ajuda">{criando ? 'Salve o título para cadastrar seus vídeos nas temporadas ou no filme abaixo.' : 'Cadastre os vídeos nas temporadas ou no filme, na seção abaixo.'}</p>}
                 <div className="editor-acervo-campos">{(tipo === 'titulo' ? camposTitulo : camposEditorial).map(campo => {
                     const id = 'acervo-' + campo.nome;
-                    const comuns = { id, name: campo.nome, value: form[campo.nome] || '', onChange: (evento: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => atualizarCampo(campo.nome, evento.target.value), required: !campo.opcional, 'aria-describedby': campo.ajuda ? id + '-ajuda' : undefined };
+                    const comuns = { id, disabled: bloqueado, name: campo.nome, value: form[campo.nome] || '', onChange: (evento: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => atualizarCampo(campo.nome, evento.target.value), required: !campo.opcional, 'aria-describedby': campo.ajuda ? id + '-ajuda' : undefined };
                     return <div key={tipo + ':' + (alvoId || form.tipo) + ':' + campo.nome} className={campo.longo ? 'editor-acervo-longo' : undefined}><label htmlFor={id}>{campo.rotulo}
                         {campo.opcoes ? <select {...comuns}>{campo.opcoes.map(opcao => <option key={opcao}>{opcao}</option>)}</select> : campo.longo ? <textarea {...comuns} maxLength={campo.tamanho} rows={campo.nome === 'corpo' ? 16 : 4} minLength={10} /> : <input {...comuns} type={campo.tipo || 'text'} min={campo.min} max={campo.max} step={campo.passo || 1} maxLength={campo.tamanho} />}
                         {campo.ajuda && <small id={id + '-ajuda'}>{campo.ajuda}</small>}
-                    </label>{['poster', 'capa', 'imagem'].includes(campo.nome) && <EnviarMidia tipo="imagem" onEnviado={url => setForm(atual => ({ ...atual, [campo.nome]: url }))} />}</div>;
+                    </label>{['poster', 'capa', 'imagem'].includes(campo.nome) && <EnviarMidia key={tipo + alvoId + campo.nome} identidade={tipo + alvoId + campo.nome} tipo="imagem" disabled={bloqueado} onOcupado={valor => envios.ocupar(campo.nome, valor)} onEnviado={url => setForm(atual => ({ ...atual, [campo.nome]: url }))} />}</div>;
                 })}</div>
-                <label className="editor-acervo-disponibilidade" htmlFor="acervo-oculto"><input id="acervo-oculto" type="checkbox" checked={oculto} onChange={evento => setOculto(evento.target.checked)} />Ocultar da versão pública</label><p className="editor-acervo-ajuda">O conteúdo oculto continua disponível neste editor para correções e restauração.</p>
-                <label htmlFor="acervo-motivo">Motivo da alteração<textarea id="acervo-motivo" value={motivo} onChange={evento => setMotivo(evento.target.value)} required minLength={3} maxLength={500} rows={3} aria-describedby="acervo-motivo-ajuda" /></label><small id="acervo-motivo-ajuda">De 3 a 500 caracteres. Explique o que foi alterado para a auditoria.</small>
+                <label className="editor-acervo-disponibilidade" htmlFor="acervo-oculto"><input id="acervo-oculto" type="checkbox" disabled={bloqueado} checked={oculto} onChange={evento => setOculto(evento.target.checked)} />Ocultar da versão pública</label><p className="editor-acervo-ajuda">O conteúdo oculto continua disponível neste editor para correções e restauração.</p>
+                <label htmlFor="acervo-motivo">Motivo da alteração<textarea disabled={bloqueado} id="acervo-motivo" value={motivo} onChange={evento => setMotivo(evento.target.value)} required minLength={3} maxLength={500} rows={3} aria-describedby="acervo-motivo-ajuda" /></label><small id="acervo-motivo-ajuda">De 3 a 500 caracteres. Explique o que foi alterado para a auditoria.</small>
             </fieldset>
             <div className="editor-acervo-acoes"><button className="button button-primary" disabled={bloqueado || motivo.trim().length < 3}>{enviando ? 'Salvando…' : 'Salvar alterações'}</button><span>{oculto ? 'Será mantido oculto' : 'Será exibido ao público'}</span></div>
         </form>}
-        {tituloSalvo && <EditorTemporadas key={tituloSalvo.id} tituloId={tituloSalvo.id} tipo={tituloSalvo.tipo} />}
+        {tituloSalvo && <EditorTemporadas onOcupado={valor => envios.ocupar('temporadas', valor)} bloqueado={carregando || enviando} key={tituloSalvo.id} tituloId={tituloSalvo.id} tipo={tituloSalvo.tipo} />}
     </section>;
 }

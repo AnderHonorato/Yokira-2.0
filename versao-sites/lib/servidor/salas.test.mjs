@@ -1,33 +1,6 @@
 import assert from 'node:assert/strict';
-import {DatabaseSync} from 'node:sqlite';
-import {existsSync,readFileSync,readdirSync} from 'node:fs';
-import {registerHooks} from 'node:module';
 import {test} from 'node:test';
-const sqlite=new DatabaseSync(':memory:');sqlite.exec('PRAGMA foreign_keys=ON');
-const pasta=new URL('../../drizzle/',import.meta.url);
-for(const arq of readdirSync(pasta).filter(a=>a.endsWith('.sql')).sort())sqlite.exec(readFileSync(new URL(arq,pasta),'utf8'));
-let antesLote=()=>{};
-class Prepared {
- constructor(query,params=[]){this.query=query;this.params=params;}
- bind(...params){return new Prepared(this.query,params);}
- raw(){const st=sqlite.prepare(this.query);st.setReturnArrays(true);return st.all(...this.params);}
- executar(){return {success:true,results:sqlite.prepare(this.query).all(...this.params),meta:{}};}
- async all(){return this.executar();}
- run(){const r=sqlite.prepare(this.query).run(...this.params);return {success:true,results:[],meta:{changes:Number(r.changes)}};}
-}
-globalThis.__salasEnv={DB:{prepare:q=>new Prepared(q),async batch(stmts){antesLote();sqlite.exec('BEGIN');try{const rs=stmts.map(s=>s.executar());sqlite.exec('COMMIT');return rs;}catch(e){sqlite.exec('ROLLBACK');throw e;}}}};
-registerHooks({resolve(spec,ctx,next){if(spec==='cloudflare:workers')return {url:'data:text/javascript,export const env=globalThis.__salasEnv',shortCircuit:true};try{return next(spec,ctx);}catch(e){if(spec.startsWith('.'))for(const suffix of ['.ts','/index.ts']){const u=new URL(spec+suffix,ctx.parentURL);if(existsSync(u))return next(u.href,ctx);}throw e;}}});
-const {getDb}=await import('../../db/index.ts');
-const {mutarSala,obterSala,obterSalas}=await import('./salas.ts');
-const {moderarMensagemSala,listarMensagensSalasAdmin}=await import('./salas-moderacao.ts');
-const db=getDb();
-for(let i=0;i<22;i++)sqlite.prepare('insert into usuarios(id,nome,papel,criado_em) values(?,?,?,1)').run(`u${i}`,i===21?'privado@email.test':`Pessoa ${i}`,i===0?'administrador':'membro');
-const u=i=>({id:`u${i}`,nome:`Pessoa ${i}`,papel:i===0?'administrador':'membro',suspenso:false});
-sqlite.exec("insert into temporadas(id,titulo_id,numero,nome,ordem,criado_em,atualizado_em) values('t','1',1,'Primeira',1,1,1)");
-sqlite.exec("insert into episodios(id,temporada_id,titulo_id,numero,titulo,duracao,video_url,publicado,criado_em,atualizado_em) values('ep','t','1',1,'Publicado',24,'https://cdn.example.test/video.mp4',1,1,1)");
-const criar=(i=0,modo='dupla')=>mutarSala(db,u(i),{acao:'sala-criar',tituloId:'1',episodioId:'ep',modo});
-const entrar=(i,convite)=>mutarSala(db,u(i),{acao:'sala-entrar',convite});
-const msg=(i,salaId,corpo='Olá')=>mutarSala(db,u(i),{acao:'sala-mensagem',salaId,corpo});
+import {sqlite,db,u,criar,entrar,msg,mutarSala,obterSala,obterSalas,moderarMensagemSala,listarMensagensSalasAdmin,lote} from './salas-fixture.mjs';
 let dupla,grupo;
 test('convites privados imprevisíveis e leitura exige associação ativa',async()=>{
  dupla=await criar();assert.match(dupla.convite,/^[a-f0-9]{64}$/);assert.notEqual(dupla.convite,dupla.salaId);
@@ -76,7 +49,7 @@ test('bloqueio social impede leitura/mensagem/entrada mas dono pode remover bloq
  assert.equal((await obterSala(db,u(0),dupla.salaId)).participantes,1);
 });
 test('suspensão concorrente à escrita é revalidada dentro do lote SQL',async()=>{
- antesLote=()=>{antesLote=()=>{};sqlite.exec("update usuarios set suspenso=1 where id='u3'");};
+ lote.antes=()=>{lote.antes=()=>{};sqlite.exec("update usuarios set suspenso=1 where id='u3'");};
  await assert.rejects(()=>msg(3,grupo.salaId));
  await assert.rejects(()=>obterSala(db,u(3),grupo.salaId));
  assert.equal(sqlite.prepare('select count(*) n from sala_mensagens where autor_id=?').get('u3').n,0);
@@ -87,11 +60,11 @@ test('saída e revogações concorrentes impedem escritas sem deixar associaçã
  await mutarSala(db,u(6),{acao:'sala-sair',salaId:nova.salaId});
  await assert.rejects(()=>obterSala(db,u(6),nova.salaId));await assert.rejects(()=>msg(6,nova.salaId));
  await entrar(6,nova.convite);
- antesLote=()=>{antesLote=()=>{};sqlite.prepare('update sala_membros set ativo=0,expulso=1 where sala_id=? and usuario_id=?').run(nova.salaId,'u6');};
+ lote.antes=()=>{lote.antes=()=>{};sqlite.prepare('update sala_membros set ativo=0,expulso=1 where sala_id=? and usuario_id=?').run(nova.salaId,'u6');};
  await assert.rejects(()=>msg(6,nova.salaId));
  assert.equal(sqlite.prepare('select count(*) n from sala_mensagens where sala_id=?').get(nova.salaId).n,0);
  const antes=sqlite.prepare('select count(*) n from salas').get().n;
- antesLote=()=>{antesLote=()=>{};sqlite.exec("update episodios set publicado=0 where id='ep'");};
+ lote.antes=()=>{lote.antes=()=>{};sqlite.exec("update episodios set publicado=0 where id='ep'");};
  await assert.rejects(()=>criar(7));
  assert.equal(sqlite.prepare('select count(*) n from salas').get().n,antes);
  assert.equal(sqlite.prepare('select count(*) n from sala_membros m left join salas s on s.id=m.sala_id where s.id is null').get().n,0);
@@ -143,21 +116,21 @@ test('trancar preserva membros atuais e só dono ativo pode reabrir',async()=>{
  await assert.rejects(()=>mutarSala(db,u(13),{acao:'sala-trancar',salaId:s.salaId,trancada:true}));await assert.rejects(()=>controle('sim'));await controle(true);
  assert.equal((await obterSala(db,u(13),s.salaId)).trancada,true);assert.equal((await obterSalas(db,u(12))).salas.find(x=>x.id===s.salaId).trancada,true);await entrar(13,s.convite);await assert.rejects(()=>entrar(14,s.convite));
  await mutarSala(db,u(13),{acao:'sala-sair',salaId:s.salaId});await assert.rejects(()=>entrar(13,s.convite));
- antesLote=()=>{antesLote=()=>{};sqlite.exec("update usuarios set suspenso=1 where id='u12'");};await assert.rejects(()=>controle(false));sqlite.exec("update usuarios set suspenso=0 where id='u12'");
+ lote.antes=()=>{lote.antes=()=>{};sqlite.exec("update usuarios set suspenso=1 where id='u12'");};await assert.rejects(()=>controle(false));sqlite.exec("update usuarios set suspenso=0 where id='u12'");
  assert.equal(sqlite.prepare('select trancada from salas where id=?').get(s.salaId).trancada,1);await controle(false);await entrar(14,s.convite);
 });
 test('convite do chat exige mensagem visível, dono atual e autorização fresca',async()=>{
  const s=await criar(14,'grupo'),id=crypto.randomUUID(),entrarChat=i=>mutarSala(db,u(i),{acao:'sala-entrar-chat',mensagemId:id});sqlite.prepare('insert into chat_mensagens(id,autor_id,sala_id,criado_em) values(?,?,?,1)').run(id,'u14',s.salaId);
  await entrarChat(15);assert.equal((await obterSala(db,u(15),s.salaId)).convite,undefined);
  sqlite.prepare('update chat_mensagens set autor_id=? where id=?').run('u16',id);await assert.rejects(()=>entrarChat(16));sqlite.prepare('update chat_mensagens set autor_id=? where id=?').run('u14',id);
- antesLote=()=>{antesLote=()=>{};sqlite.prepare('update chat_mensagens set oculto=1 where id=?').run(id);};await assert.rejects(()=>entrarChat(16));assert.equal(sqlite.prepare('select count(*) n from sala_membros where sala_id=? and usuario_id=?').get(s.salaId,'u16').n,0);
+ lote.antes=()=>{lote.antes=()=>{};sqlite.prepare('update chat_mensagens set oculto=1 where id=?').run(id);};await assert.rejects(()=>entrarChat(16));assert.equal(sqlite.prepare('select count(*) n from sala_membros where sala_id=? and usuario_id=?').get(s.salaId,'u16').n,0);
  sqlite.prepare('update chat_mensagens set oculto=0 where id=?').run(id);sqlite.exec("insert into bloqueios_sociais(autor_id,alvo_id,criado_em) values('u16','u14',1)");await assert.rejects(()=>entrarChat(16));sqlite.exec("delete from bloqueios_sociais where autor_id='u16'");
- for(const [revogar,restaurar] of [["update usuarios set suspenso=1 where id='u14'","update usuarios set suspenso=0 where id='u14'"],["update episodios set publicado=0 where id='ep'","update episodios set publicado=1 where id='ep'"]]){antesLote=()=>{antesLote=()=>{};sqlite.exec(revogar);};await assert.rejects(()=>entrarChat(16));sqlite.exec(restaurar);}
+ for(const [revogar,restaurar] of [["update usuarios set suspenso=1 where id='u14'","update usuarios set suspenso=0 where id='u14'"],["update episodios set publicado=0 where id='ep'","update episodios set publicado=1 where id='ep'"]]){lote.antes=()=>{lote.antes=()=>{};sqlite.exec(revogar);};await assert.rejects(()=>entrarChat(16));sqlite.exec(restaurar);}
  await mutarSala(db,u(14),{acao:'sala-trancar',salaId:s.salaId,trancada:true});await assert.rejects(()=>entrarChat(16));await entrarChat(15);await mutarSala(db,u(14),{acao:'sala-trancar',salaId:s.salaId,trancada:false});
  await mutarSala(db,u(14),{acao:'sala-encerrar',salaId:s.salaId});await assert.rejects(()=>entrarChat(15));
 });
 test('chat mantém limite atômico e tranca concorrente revoga nova entrada',async()=>{
  const s=await criar(16,'grupo'),id=crypto.randomUUID(),entrarChat=i=>mutarSala(db,u(i),{acao:'sala-entrar-chat',mensagemId:id});sqlite.prepare('insert into chat_mensagens(id,autor_id,sala_id,criado_em) values(?,?,?,1)').run(id,'u16',s.salaId);
- antesLote=()=>{antesLote=()=>{};sqlite.prepare('update salas set trancada=1 where id=?').run(s.salaId);};await assert.rejects(()=>entrarChat(17));sqlite.prepare('update salas set trancada=0 where id=?').run(s.salaId);
+ lote.antes=()=>{lote.antes=()=>{};sqlite.prepare('update salas set trancada=1 where id=?').run(s.salaId);};await assert.rejects(()=>entrarChat(17));sqlite.prepare('update salas set trancada=0 where id=?').run(s.salaId);
  const resultados=await Promise.allSettled(Array.from({length:22},(_,i)=>i).filter(i=>i!==16).map(entrarChat));assert.equal(resultados.filter(r=>r.status==='fulfilled').length,11);assert.equal((await obterSala(db,u(16),s.salaId)).participantes,12);
 });

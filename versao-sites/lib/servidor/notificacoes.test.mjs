@@ -90,7 +90,8 @@ test('conteúdo oculto não gera conquista e destinos maliciosos são bloqueados
  const usuario = pessoa('oculto');
  sqlite.prepare("INSERT INTO publicacoes(id,autor_id,oculto,tipo,titulo,corpo,criado_em) VALUES('oculto-post','oculto',1,'forum','Segredo','Segredo',1)").run();
  assert.equal((await listarNotificacoes(db, usuario)).length, 1);
- const destinos = ['https://evil.test', '//evil.test', 'javascript:alert(1)', '/?p=forum&post=javascript%3Aalert(1)', '/?p=perfil&next=https://evil.test', '/?p=admin', '/?p=__proto__', '/?p=constructor', '/?p=jogos&modo=externo', '/?p=forum#javascript:alert(1)'];
+ const destinos = ['https://evil.test', '//evil.test', 'javascript:alert(1)', '/?p=forum&post=javascript%3Aalert(1)', '/?p=perfil&next=https://evil.test', '/?p=admin', '/?p=__proto__', '/?p=constructor', '/?p=jogos&modo=externo', '/?p=forum#javascript:alert(1)', '/?p=amizades&aba=admin'];
+ assert.equal(origemNotificacao('/?p=amizades&aba=recebidas').caminho,'/?p=amizades&aba=recebidas');
  for (const destino of destinos) assert.equal(origemNotificacao(destino).caminho, '/?p=perfil');
  assert.equal(origemNotificacao('/?p=forum&post=post-a').caminho, '/?p=forum&post=post-a');
  assert.throws(() => sqlite.prepare("UPDATE notificacoes SET destino='javascript:alert(1)' WHERE usuario_id='oculto'").run(), /CHECK constraint/);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import AtmosferaCenario from './atmosfera-cenario';
+import {useMovimentoVisivel} from './movimento-visivel';
 
 export const CENARIOS_HERO = [
  '/arte/cenarios/01-sakura-luar.webp', '/arte/cenarios/02-metropole-chuva.webp',
@@ -18,6 +19,7 @@ function Arte({indice}:{indice:number}) {
  return <div className="cenario-ilustracao" data-cenario-src={endereco}><img src={endereco} alt="" decoding="async" fetchPriority="high" onError={evento=>{const imagem=evento.currentTarget;if(!imagem.dataset.fallback){imagem.dataset.fallback='true';imagem.src=endereco.replace('.webp','.svg');}}}/></div>;
 }
 export default function CenariosHero({indice=0}:{indice?:number}) {
+ const {referencia:referenciaMovimento,ativo:movimentoAtivo}=useMovimentoVisivel<HTMLDivElement>();
  const seguro=Number.isInteger(indice)&&indice>=0&&indice<10?indice:0;
  const [cena,setCena]=useState<Cena>({atual:seguro,anterior:null});
  useEffect(()=>{
@@ -33,7 +35,7 @@ export default function CenariosHero({indice=0}:{indice?:number}) {
   const tempo=setTimeout(()=>setCena(antes=>({...antes,anterior:null})),1800);
   return()=>clearTimeout(tempo);
  },[cena.anterior,cena.atual]);
- return <div className="intro-cenarios" aria-hidden="true" data-cenario-atual={cena.atual}>
+ return <div ref={referenciaMovimento} className="intro-cenarios" aria-hidden="true" data-pausado={!movimentoAtivo} data-cenario-atual={cena.atual}>
   {cena.anterior!==null&&<div className="cenario-camada cenario-anterior" key={'anterior-'+cena.anterior}><Arte indice={cena.anterior}/></div>}
   <div className="cenario-camada cenario-atual" key={cena.atual}><Arte indice={cena.atual}/></div>
   <div className="cenario-aurora"/><div className="cenario-nevoa"/><div className="cenario-raios"/>

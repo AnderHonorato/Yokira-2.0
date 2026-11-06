@@ -1,5 +1,8 @@
+'use client';
 import { useId, type CSSProperties } from 'react';
 import './emblema-nivel.css';
+import {MarcaAnimada} from './marca-animada';
+import {useMovimentoVisivel} from './movimento-visivel';
 
 type Props = { nivel: number; tamanho?: number; animado?: boolean; rotulo?: string };
 const faixas = [
@@ -23,10 +26,10 @@ export function perfilNivel(valor: number) {
  return { ...faixa, cor, nivel, tier, progresso, particulas: Math.min(24, tier === 0 ? 1 + Math.floor(progresso * 4) : 2 + tier * 3 + Math.floor(progresso * 3)), intensidade: Math.min(1, .14 + tier * .1 + progresso * .09) };
 }
 export function EmblemaNivel({ nivel: valor, tamanho = 96, animado = true, rotulo }: Props) {
- const id = useId().replace(/:/g, '');
+ const id = useId().replace(/:/g, ''),{referencia:referenciaMovimento,ativo:movimentoAtivo}=useMovimentoVisivel<HTMLSpanElement>(animado),comMarca=tamanho>=76;
  const { nivel, tier, cor, apoio, progresso, intensidade, particulas } = perfilNivel(valor);
  const estilo = { '--nivel-cor': cor, '--nivel-apoio': apoio, '--nivel-intensidade': intensidade, '--nivel-progresso': progresso, width: tamanho, height: tamanho } as CSSProperties;
- return <span className="emblema-nivel" data-tier={tier} data-animado={animado} style={estilo} role="img" aria-label={rotulo || `Nível ${nivel}`}>
+ return <span ref={referenciaMovimento} className="emblema-nivel" data-tier={tier} data-marca-original={comMarca} data-animado={movimentoAtivo} style={estilo} role="img" aria-label={rotulo || `Nível ${nivel}`}>
   <svg viewBox="0 0 160 160" fill="none" aria-hidden="true" focusable="false">
    <defs>
     <linearGradient id={`${id}-metal`} x1="28" y1="22" x2="131" y2="139" gradientUnits="userSpaceOnUse"><stop stopColor="#f8f6ff"/><stop offset=".26" stopColor={cor}/><stop offset=".5" stopColor={apoio}/><stop offset=".72" stopColor={cor}/><stop offset="1" stopColor="#e4dcef"/></linearGradient>
@@ -43,10 +46,11 @@ export function EmblemaNivel({ nivel: valor, tamanho = 96, animado = true, rotul
    <g clipPath={`url(#${id}-recorte)`}><path className="nivel-reflexo" d="m-20 10 24-10 99 160-24 10Z" fill="#ffffff" fillOpacity=".2"/></g>
    {tier >= 4 && <path className="nivel-coroa" d="m57 35-4-20 17 10L80 9l10 16 17-10-4 20Z" fill={`url(#${id}-metal)`} stroke={cor}/>}
    {tier < 4 && <path d="m80 20 4 7-4 7-4-7Z" fill={cor}/>}
-   <text x="80" y="91" textAnchor="middle" fill="#f8f4ff" fontFamily="var(--mono),monospace" fontWeight="600" fontSize={nivel > 99 ? 29 : 38}>{nivel}</text>
+   <text x="80" y={comMarca?130:91} textAnchor="middle" fill="#f8f4ff" fontFamily="var(--mono),monospace" fontWeight="600" fontSize={comMarca?(nivel>99?20:25):(nivel>99?29:38)}>{nivel}</text>
    <path d="m65 106 15 8 15-8" stroke={cor} strokeWidth="2"/>
    <g className="nivel-particulas">{Array.from({ length: particulas }, (_, i) => <circle key={i} cx="80" cy="15" r={i % 3 === 0 ? 1.4 : .8} fill={i % 2 ? cor : '#f6eeff'} style={{ '--i': i, '--total': particulas } as CSSProperties}/>)}</g>
    {tier >= 6 && <g className="nivel-satelites" stroke={cor}><path d="m80 1 3 5-3 5-3-5Zm0 148 3 5-3 5-3-5ZM2 80l5-3 5 3-5 3Zm146 0 5-3 5 3-5 3Z" fill={apoio}/></g>}
   </svg>
+  {comMarca&&<span className="nivel-marca" aria-hidden="true"><MarcaAnimada tamanho={Math.round(tamanho*.44)} destaque={tier>=2} animado={movimentoAtivo}/></span>}
  </span>;
 }

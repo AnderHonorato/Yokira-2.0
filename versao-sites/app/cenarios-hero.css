@@ -34,3 +34,5 @@ html[data-efeitos=suave] .cenario-aurora,html[data-efeitos=suave] .cenario-raios
 
 @media(max-width:480px){.cenario-aurora,.cenario-raios{display:none}.intro-cenarios::after{background:linear-gradient(90deg,color-mix(in srgb,var(--bg) 96%,transparent),color-mix(in srgb,var(--bg) 64%,transparent) 45%,color-mix(in srgb,var(--bg) 20%,transparent))}.trending-section .section-title{gap:8px}.trending-section .section-title .text-link{max-width:100%;margin-left:0}}
 @media(prefers-reduced-motion:reduce){.intro-cenarios *{animation:none!important;transition:none!important;will-change:auto!important}.cenario-atmosfera{display:none}}
+
+.intro-cenarios[data-pausado=true] :is(.cenario-ilustracao,.cenario-aurora,.cenario-nevoa,.cenario-raios){animation-play-state:paused;will-change:auto}

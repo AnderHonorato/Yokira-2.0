@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import type { Db, Usuario } from './permissoes';
 import { ErroApi, identificador, inteiro, texto } from './validacao';
-import { acesso, ativoSocial, donoAtivo, donoSala, episodioSalaPublico, executarSala, limiteSala } from './salas-base';
+import { acesso, ativoSocial, donoAtivo, donoSala, episodioSalaPublico, executarSala, gestaoDono, limiteSala } from './salas-base';
 import { obterEpisodiosPublicos } from './temporadas';
 
 export async function criarSala(db:Db,usuario:Usuario,p:Record<string,unknown>,origem?:string) {
@@ -59,7 +59,8 @@ export async function mensagemSala(db:Db,usuario:Usuario,p:Record<string,unknown
 }
 export async function controlarSala(db:Db,usuario:Usuario,p:Record<string,unknown>) {
  const salaId=identificador(p.salaId);
- const permitido=sql`exists(select 1 from salas s where s.id=${salaId} and ${donoSala(usuario.id)})`;
+ const dono=p.acao==='sala-encerrar'?gestaoDono(usuario.id):donoSala(usuario.id);
+ const permitido=sql`exists(select 1 from salas s where s.id=${salaId} and ${dono})`;
  if(p.acao==='sala-sincronizar') {
   if(typeof p.pausado!=='boolean'||typeof p.posicao!=='number'||!Number.isFinite(p.posicao)||p.posicao<0||p.posicao>36000)throw new ErroApi('Estado do player inválido.');
   const revisao=inteiro(p.revisao,'Revisão',0,Number.MAX_SAFE_INTEGER);
@@ -73,7 +74,7 @@ export async function controlarSala(db:Db,usuario:Usuario,p:Record<string,unknow
     where id=${salaId} and changes()>0 and ${donoSala(usuario.id)} returning id`]);
  } else if(p.acao==='sala-encerrar') {
   await executarSala(db,usuario,[limiteSala(usuario.id,'encerrar',20,60000,permitido),
-   sql`update salas as s set encerrada=1,pausado=1,revisao=revisao+1,atualizado_em=${Date.now()} where id=${salaId} and changes()>0 and ${donoSala(usuario.id)} returning id`]);
+   sql`update salas as s set encerrada=1,pausado=1,revisao=revisao+1,atualizado_em=${Date.now()} where id=${salaId} and changes()>0 and ${gestaoDono(usuario.id)} returning id`]);
  } else if(p.acao==='sala-expulsar') {
   const alvo=identificador(p.usuarioId);
   if(alvo===usuario.id)throw new ErroApi('Encerre a sala para sair como dono.');

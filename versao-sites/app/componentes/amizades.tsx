@@ -4,11 +4,12 @@ import type { PainelAmizades, PessoaSocial } from '@/lib/social';
 import { requisicaoSocial } from '@/lib/social-cliente';
 import AcoesAmizade from './acoes-amizade';
 import './social.css';
-type Props = { usuarioId: string; navegar?: (pagina: string, params?: Record<string,string>) => void };
-export default function Amizades(props: Props) { return <Painel key={props.usuarioId} {...props}/>; }
-function Painel({ navegar }: Props) {
+type Aba='amigos'|'recebidas'|'enviadas'|'bloqueados';
+type Props = { abaInicial?:string; usuarioId: string; navegar?: (pagina: string, params?: Record<string,string>) => void };
+export default function Amizades(props: Props) { return <Painel key={`${props.usuarioId}:${props.abaInicial||'amigos'}`} {...props}/>; }
+function Painel({ navegar,abaInicial }: Props) {
  const [painel, setPainel] = useState<PainelAmizades | null>(null), [busca, setBusca] = useState(''), [termo, setTermo] = useState('');
- const [erro, setErro] = useState(''), [carregando, setCarregando] = useState(true), [aba, setAba] = useState<'amigos'|'recebidas'|'enviadas'|'bloqueados'>('amigos');
+ const [erro, setErro] = useState(''), [carregando, setCarregando] = useState(true), [aba, setAba] = useState<Aba>(['amigos','recebidas','enviadas','bloqueados'].includes(abaInicial||'')?abaInicial as Aba:'amigos');
  const vivo = useRef(true), versao = useRef(0);
  const carregar = useCallback(async () => {
   const atual=++versao.current;setCarregando(true);
@@ -22,7 +23,7 @@ function Painel({ navegar }: Props) {
  function card(p:PessoaSocial){return <li key={p.id}><div className="social-pessoa"><span className="social-avatar pequeno" aria-hidden="true">{p.nome.slice(0,1).toUpperCase()}</span><div><button type="button" className="social-nome" disabled={!navegar || p.relacao==='bloqueado'} onClick={()=>navegar?.('perfil-publico',{handle:p.handle})}>{p.nome}</button><p>@{p.handle} · Nível {p.nivel}</p></div></div><AcoesAmizade pessoa={p} atualizar={carregar}/></li>;}
  const abas = [['amigos','Amizades'],['recebidas','Recebidas'],['enviadas','Enviadas'],['bloqueados','Bloqueados']] as const;
  return <section className="social-painel" aria-labelledby="amizades-titulo">
-  <header><div><span className="social-legenda">ENCONTROS NA JORNADA</span><h1 id="amizades-titulo">Amizades</h1><p>Encontre pessoas pelo @ ou nome público e envie uma solicitação.</p></div></header>
+  <header><div><h1 id="amizades-titulo">Amizades</h1><p>Encontre pessoas pelo @ ou nome público e envie uma solicitação.</p></div></header>
   <form className="social-busca" onSubmit={e=>{e.preventDefault();setTermo(busca.trim());}}><label htmlFor="social-busca">Buscar pessoas</label><div><input id="social-busca" type="search" minLength={2} maxLength={60} value={busca} onChange={e=>setBusca(e.target.value)} placeholder="@identificador ou nome"/><button type="submit" disabled={carregando}>Buscar</button></div></form>
   {erro && <p role="alert" className="social-erro">{erro} <button type="button" onClick={()=>void carregar()}>Tentar novamente</button></p>}
   {carregando && <p role="status">Carregando amizades…</p>}

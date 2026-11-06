@@ -1,4 +1,5 @@
 import { sql } from 'drizzle-orm';
+import { registrarNotificacaoAmizade } from './notificacoes-sociais';
 import { loteAtomico, type Db, type Usuario } from './permissoes';
 import { ErroApi, identificador, texto } from './validacao';
 import type { PainelAmizades, PessoaSocial } from '../social';
@@ -60,8 +61,8 @@ export async function alterarAmizade(db: Db, usuario: Usuario, dados: Record<str
   return { ok: true };
  }
  let consulta;
- if (op === 'solicitar') consulta = sql`insert into amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em)
-  select min(${id},${alvo}),max(${id},${alvo}),${id},'pendente',${Date.now()},${Date.now()} where ${permitido}
+ if (op === 'solicitar') consulta = sql`insert into amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em,ciclo)
+  select min(${id},${alvo}),max(${id},${alvo}),${id},'pendente',${Date.now()},${Date.now()},${crypto.randomUUID()} where ${permitido}
   and exists(select 1 from perfis_sociais where usuario_id=${alvo} and (publico=1 or exists(select 1 from chat_mensagens where autor_id=${alvo} and oculto=0)))
   on conflict(usuario_a,usuario_b) do update set atualizado_em=amizades.atualizado_em returning estado`;
  else if (op === 'aceitar') consulta = sql`update amizades set estado='aceita',atualizado_em=${Date.now()}
@@ -69,7 +70,7 @@ export async function alterarAmizade(db: Db, usuario: Usuario, dados: Record<str
  else consulta = sql`delete from amizades where ${par} and ${permitido} and
   (${op === 'remover' ? 1 : 0}=1 and estado='aceita' or estado='pendente' and
    (${op === 'cancelar' ? 1 : 0}=1 and solicitante_id=${id} or ${op === 'recusar' ? 1 : 0}=1 and solicitante_id<>${id})) returning estado`;
- const [r] = await loteAtomico(db, [consulta]);
+ const [r] = await loteAtomico(db, [consulta, ...(op === 'solicitar' || op === 'aceitar' ? [registrarNotificacaoAmizade(id, alvo, op)] : [])]);
  if (!r.results.length) throw new ErroApi('Esta relação não está disponível para a ação escolhida.', 409);
  return { ok: true };
 }

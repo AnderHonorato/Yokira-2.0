@@ -4,6 +4,7 @@ import { BookOpen, BookMarked, Crown, Eye, Flag, Flame, Gem, HeartHandshake, Hou
  MessageCircle, MessagesSquare, Orbit, PenLine, ShieldCheck, Sparkles, Sprout, Swords, Trophy } from 'lucide-react';
 import { nomesRaridades, obterConquista } from '@/lib/conquistas';
 import './emblema-conquista.css';
+import {useMovimentoVisivel} from './movimento-visivel';
 const icones = { 'boas-vindas': Sprout, 'primeira-publicacao': PenLine, 'primeiro-jogo': Swords,
  'primeira-colecao': BookMarked, colecionador: Eye, 'biblioteca-viva': Library, 'tres-finais': Flag,
  'vinte-finais': BookOpen, 'cem-finais': Crown, critico: Gem, cronista: MessageCircle,
@@ -21,10 +22,10 @@ const formas = {
 export function EmblemaConquista({ badgeId, tamanho = 76, animado = false, rotulo = true }: {
  badgeId: string; tamanho?: number; animado?: boolean; rotulo?: boolean;
 }) {
- const id = useId().replace(/:/g, ''), conquista = obterConquista(badgeId);
+ const id = useId().replace(/:/g, ''), conquista = obterConquista(badgeId),{referencia:referenciaMovimento,ativo:movimentoAtivo}=useMovimentoVisivel<HTMLSpanElement>(animado&&!!conquista);
  if (!conquista) return null;
  const Icone = icones[badgeId as keyof typeof icones] || Gem;
- return <span className="emblema-conquista" data-raridade={conquista.raridade} data-animado={animado}
+ return <span ref={referenciaMovimento} className="emblema-conquista" data-raridade={conquista.raridade} data-animado={movimentoAtivo}
   style={{ '--emblema-cor': conquista.cor, '--emblema-tamanho': `${tamanho}px` } as CSSProperties}
   role={rotulo ? 'img' : undefined} aria-label={rotulo ? `${conquista.titulo}, ${nomesRaridades[conquista.raridade]}` : undefined}
   aria-hidden={!rotulo || undefined}>

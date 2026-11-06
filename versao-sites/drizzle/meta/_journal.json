@@ -120,6 +120,20 @@
       "when": 1793932053090,
       "tag": "0016_comunidade_global",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1793961159247,
+      "tag": "0017_ciclo_salas",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1793961310339,
+      "tag": "0018_notificacoes_sociais",
+      "breakpoints": true
     }
   ]
 }

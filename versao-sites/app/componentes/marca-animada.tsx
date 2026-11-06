@@ -1,19 +1,11 @@
 'use client';
-import {useEffect,useId,useRef,useState} from 'react';
+import {useId} from 'react';
+import {useMovimentoVisivel} from './movimento-visivel';
 import './marca-animada.css';
 
 /** A arte original permanece intacta; somente a região da cobra recebe movimento. */
-export function MarcaAnimada({tamanho=52,destaque=false}:{tamanho?:number;destaque?:boolean}){
- const id=useId().replace(/:/g,''),raiz=useRef<SVGSVGElement>(null);
- const [animar,setAnimar]=useState(false);
- useEffect(()=>{
-  const midia=window.matchMedia('(prefers-reduced-motion: reduce)');let naTela=true;
-  const atualizar=()=>setAnimar(naTela&&!midia.matches&&document.visibilityState==='visible');
-  const observador=new IntersectionObserver(([entrada])=>{naTela=entrada.isIntersecting;atualizar();});
-  if(raiz.current)observador.observe(raiz.current);
-  atualizar();midia.addEventListener('change',atualizar);document.addEventListener('visibilitychange',atualizar);
-  return()=>{observador.disconnect();midia.removeEventListener('change',atualizar);document.removeEventListener('visibilitychange',atualizar);};
- },[]);
+export function MarcaAnimada({tamanho=52,destaque=false,animado=true}:{tamanho?:number;destaque?:boolean;animado?:boolean}){
+ const id=useId().replace(/:/g,''),{referencia:raiz,ativo:animar}=useMovimentoVisivel<SVGSVGElement>(animado);
  const recorte='M71 15C101-5 159-2 172 43L180 78 154 102 124 96 98 80 82 63 95 45 79 31Z';
  const cabeca='M109 50C127 46 160 54 176 73L170 96 150 103 125 92 111 77Z';
  const arte=<image href="/marca/emblema-192.png" width="192" height="192"/>;

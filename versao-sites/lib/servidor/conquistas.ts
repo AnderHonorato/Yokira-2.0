@@ -4,9 +4,13 @@ import { exigirAtivo, loteAtomico, type Db, type Usuario } from './permissoes';
 import { ErroApi } from './validacao';
 import { fatosConquistas } from './conquistas-fatos';
 
+/** JSON concentra definições: D1 aceita no máximo 100 variáveis por consulta. */
 function regrasConquistas() {
- return sql.join(conquistas.map(c => sql`select ${c.badgeId} badgeId,${c.titulo} titulo,${c.descricao} descricao,
-  ${c.meta} meta,${sql.identifier(c.feito)} progresso from fatos`), sql` union all `);
+ const definicoes=JSON.stringify(conquistas.map(({badgeId,titulo,descricao,meta})=>({badgeId,titulo,descricao,meta})));
+ const progresso=sql.join(conquistas.map((c,i)=>sql`when ${i} then ${sql.identifier(c.feito)}`),sql` `);
+ return sql`select json_extract(regra.value,'$.badgeId') badgeId,json_extract(regra.value,'$.titulo') titulo,
+  json_extract(regra.value,'$.descricao') descricao,json_extract(regra.value,'$.meta') meta,
+  case regra.key ${progresso} end progresso from fatos cross join json_each(${definicoes}) regra`;
 }
 function destinoConquista(id: string) {
  return sql`case badge_id

@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import { loteAtomico, type Db, type Usuario } from './permissoes';
 import { ErroApi } from './validacao';
 import { sincronizarConquistas } from './conquistas';
+import { listarNotificacoesSociais, lerNotificacoesSociais } from './notificacoes-sociais';
 import { origemNotificacao, type Notificacao } from '../notificacoes';
 
 export type { Notificacao } from '../notificacoes';
@@ -32,8 +33,10 @@ export async function listarNotificacoes(db: Db, usuario: Usuario): Promise<Noti
             select lower(hex(randomblob(16))),${id},'nivel:'||n,'nivel','Nível '||n||' alcançado',
                 'Sua participação abriu um novo capítulo da sua jornada.','/?p=perfil',${agora} from niveis`,
         sql`select ${colunas} from notificacoes where usuario_id=${id} order by criado_em desc,rowid desc`,
+        listarNotificacoesSociais(id),
     ]);
-    return eventos(resultado[resultado.length - 1]);
+    return [...eventos(resultado[resultado.length - 2]), ...eventos(resultado[resultado.length - 1])]
+        .sort((a,b) => b.criadoEm-a.criadoEm || b.id.localeCompare(a.id));
 }
 /** UPDATE RETURNING é a reivindicação: duas abas nunca recebem o mesmo evento. */
 export async function verNotificacoes(db: Db, usuario: Usuario, dados: Record<string, unknown>): Promise<{ eventos: Notificacao[] }> {
@@ -45,12 +48,15 @@ export async function verNotificacoes(db: Db, usuario: Usuario, dados: Record<st
         throw new ErroApi('Notificações inválidas.');
     }
     if (Array.isArray(ids) && ids.length === 0) return { eventos: [] };
-    const filtro = ids === undefined ? sql`1=1` : sql`id in (${sql.join((ids as string[]).map(id => sql`${id}`), sql`,`)})`;
+    // Cada statement fica abaixo das 100 variáveis do D1, inclusive marcar 200 itens.
+    const grupos=ids===undefined?[undefined]:Array.from({length:Math.ceil(ids.length/80)},(_,i)=>ids.slice(i*80,i*80+80) as string[]);
+    const filtros=grupos.map(grupo=>grupo===undefined?sql`1=1`:sql`id in (${sql.join(grupo.map(id=>sql`${id}`),sql`,`)})`);
     const agora = Date.now();
-    const [resultado] = await loteAtomico(db, [sql`update notificacoes set
+    const resultados = await loteAtomico(db, filtros.flatMap(filtro=>[sql`update notificacoes set
         lida_em=case when ${dados.ler === true ? 1 : 0}=1 then coalesce(lida_em,${agora}) else lida_em end,
         celebrada_em=case when ${dados.celebrar === true ? 1 : 0}=1 then ${agora} else celebrada_em end
         where usuario_id=${usuario.id} and ${filtro}
-        and (${dados.celebrar === true ? 1 : 0}=0 or celebrada_em is null) returning ${colunas}`]);
-    return { eventos: eventos(resultado) };
+        and (${dados.celebrar === true ? 1 : 0}=0 or celebrada_em is null) returning ${colunas}`,
+        ...(dados.ler === true && dados.celebrar !== true ? [lerNotificacoesSociais(usuario.id, filtro)] : [])]));
+    return { eventos: resultados.flatMap(eventos) };
 }

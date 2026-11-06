@@ -64,7 +64,7 @@ export default function CartaoPerfil({ pessoa, usuarioId, navegar, children }: P
    <button type="button" className="cartao-perfil-fechar" aria-label="Fechar cartão de perfil" onClick={() => {gatilho.current?.focus();cancelar();setAberto(false);}}>Fechar</button>
    <div className="cartao-perfil-identidade"><AvatarComunidade nome={atual.nome} avatar={atual.avatar}/><div><strong>{atual.nome}</strong><span>@{atual.handle}</span><span>Nível {atual.nivel}</span></div></div>
    {!perfil && !erro && <p role="status">Carregando perfil…</p>}{erro && <p role="alert" className="social-erro">{erro}</p>}
-   {perfil && <><div className="cartao-perfil-emblemas">{perfil.conquistas.map(c => <EmblemaConquista key={c.badgeId} badgeId={c.badgeId} tamanho={54}/>)}</div>
+   {perfil && <><div className="cartao-perfil-emblemas">{perfil.conquistas.map(c => <EmblemaConquista key={c.badgeId} badgeId={c.badgeId} tamanho={54} animado/>)}</div>
     <AtividadeComunidade atividade={perfil.atividade}/>{!perfil.acessivel && <p className="social-ajuda">Perfil privado. Envie uma solicitação de amizade para conhecer esta pessoa.</p>}
     {usuarioId && perfil.relacao !== 'proprio' && perfil.relacao !== 'amigo' && <AcoesAmizade pessoa={perfil} atualizar={carregar}/>}
     {perfil.acessivel && navegar && <button type="button" onClick={() => {setAberto(false);navegar('perfil-publico',{handle:perfil.handle});}}>Ver perfil completo</button>}

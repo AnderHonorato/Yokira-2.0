@@ -17,8 +17,11 @@ export function episodioSalaPublico(): SQL {
  and not exists(select 1 from catalogo_disponibilidade d where d.titulo_id=s.titulo_id and d.oculto=1)
  and not exists(select 1 from sobreposicoes_conteudo o where o.tipo='titulo' and o.alvo_id=s.titulo_id and o.oculto=1)`;
 }
+export function gestaoDono(usuarioId:string):SQL {
+ return sql`s.encerrada=0 and s.dono_id=${usuarioId} and ${ativoSocial(usuarioId)}`;
+}
 export function donoSala(usuarioId:string):SQL {
- return sql`s.encerrada=0 and s.dono_id=${usuarioId} and ${ativoSocial(usuarioId)}
+ return sql`${gestaoDono(usuarioId)}
  and exists(select 1 from sala_membros m where m.sala_id=s.id and m.usuario_id=${usuarioId} and m.ativo=1 and m.expulso=0)`;
 }
 export function donoAtivo():SQL { return sql`exists(select 1 from usuarios u where u.id=s.dono_id and u.suspenso=0)`; }

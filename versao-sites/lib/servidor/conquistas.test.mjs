@@ -87,7 +87,7 @@ test('top três persistem na ordem e rejeitam não obtidas, duplicatas e outro u
 });
 test('feitos de jogos e amizade exigem resultado e aceitação persistidos', async () => {
  const usuario = pessoa('jogador'), amigo = pessoa('jogador-amigo');
- sqlite.prepare('INSERT INTO amizades VALUES(?,?,?,?,1,1)').run(usuario.id, amigo.id, usuario.id, 'pendente');
+ sqlite.prepare('INSERT INTO amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em) VALUES(?,?,?,?,1,1)').run(usuario.id, amigo.id, usuario.id, 'pendente');
  const jogo = sqlite.prepare('INSERT INTO jogos VALUES(?,?,?, ?,1,1)');
  for (let i = 0; i < 10; i++) jogo.run(`vitoria-${i}`, usuario.id, 'adivinhe', JSON.stringify({ concluido: i < 5, ganhou: true }));
  let painel = await listarConquistas(db, usuario);

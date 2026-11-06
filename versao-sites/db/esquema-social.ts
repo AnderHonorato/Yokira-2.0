@@ -16,6 +16,7 @@ export const perfisSociais = sqliteTable('perfis_sociais', {
  check('perfil_visibilidade', sql`${t.publico} IN (0,1) AND ${t.mostrarConquistas} IN (0,1)`),
 ]);
 export const amizades = sqliteTable('amizades', {
+ ciclo: text('ciclo').notNull().default(''),
  usuarioA: text('usuario_a').notNull().references(() => usuarios.id, { onDelete: 'cascade' }),
  usuarioB: text('usuario_b').notNull().references(() => usuarios.id, { onDelete: 'cascade' }),
  solicitanteId: text('solicitante_id').notNull().references(() => usuarios.id, { onDelete: 'cascade' }),
