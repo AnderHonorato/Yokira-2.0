@@ -29,7 +29,7 @@ export async function podeLerImagem(db: Db, imagem: { id: string; usuarioId: str
   or exists(select 1 from chat_mensagens c join usuarios u on u.id=c.autor_id
    where c.imagem_id=${imagem.id} and c.autor_id=${imagem.usuarioId} and c.oculto=0 and c.sala_id is null and u.suspenso=0)
   or exists(select 1 from perfis_sociais p where p.usuario_id=${imagem.usuarioId} and p.avatar=${url})
-  or exists(select 1 from perfis_sociais p where p.usuario_id=${imagem.usuarioId} and p.banner=${url} and
+  or exists(select 1 from perfis_sociais p where p.usuario_id=${imagem.usuarioId} and p.banner=${url} and json_extract(p.visual,'$.capa')='pessoal' and
    (p.publico=1 or (${ativoSocial(leitor)} and ${semBloqueio(leitor, imagem.usuarioId)} and
     (${leitor}=${imagem.usuarioId} or ${amizadeAceita(leitor, imagem.usuarioId)}))))
  )`);

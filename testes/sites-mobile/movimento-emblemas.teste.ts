@@ -18,7 +18,7 @@ test('nível reutiliza a marca original com cobra em movimento e respeita reduç
   await prepararChat(page, { autenticado: true });
   await efeitosIntensos(page);
   await page.goto('/?p=perfil');
-  const nivel = page.locator('.perfil-resumo .emblema-nivel');
+  const nivel = page.locator('.perfil-pagina .perfil-vitrine .emblema-nivel');
   await expect(nivel).toBeVisible();
   await expect(nivel).toHaveAttribute('data-marca-original', 'true');
   const marca = nivel.locator('.marca-animada');

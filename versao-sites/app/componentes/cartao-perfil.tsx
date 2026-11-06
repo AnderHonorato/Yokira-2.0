@@ -3,6 +3,9 @@ import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type 
 import { createPortal } from 'react-dom';
 import type { AtividadePerfil, CartaoPerfil as Cartao, PessoaSocial } from '@/lib/social';
 import { requisicaoSocial } from '@/lib/social-cliente';
+import {recompensaPerfil,visualDoPerfil} from '@/lib/personalizacao-perfil';
+import {useMovimentoVisivel} from './movimento-visivel';
+import './perfil-ornamentos.css';
 import AcoesAmizade from './acoes-amizade';
 import { EmblemaConquista } from './emblema-conquista';
 import './social.css';
@@ -23,6 +26,7 @@ export function AtividadeComunidade({ atividade }: { atividade: AtividadePerfil 
 }
 export default function CartaoPerfil({ pessoa, usuarioId, navegar, children }: Props) {
  const [aberto, setAberto] = useState(false), [perfil, setPerfil] = useState<Cartao | null>(null), [erro, setErro] = useState('');
+ const {referencia:movimentoRef,ativo:movimentoAtivo}=useMovimentoVisivel<HTMLDivElement>(aberto);
  const [posicao, setPosicao] = useState({left:8,top:8}), id = useId();
  const gatilho = useRef<HTMLButtonElement>(null), cartao = useRef<HTMLDivElement>(null), timer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const vivo = useRef(true), pedido = useRef(0);
@@ -50,19 +54,21 @@ export default function CartaoPerfil({ pessoa, usuarioId, navegar, children }: P
   document.addEventListener('pointerdown',fora);
   return () => {observer.disconnect();window.removeEventListener('resize',posicionar);window.removeEventListener('scroll',posicionar,true);document.removeEventListener('pointerdown',fora);};
  }, [aberto,posicionar]);
- const atual = perfil || pessoa;
+ const atual = perfil || pessoa,visual=visualDoPerfil(perfil||{});
+ const capa=perfil?.acessivel?(visual.capa==='pessoal'?perfil.banner:recompensaPerfil('capa',visual.capa)?.imagem):'';
+ const vincularCartao=(el:HTMLDivElement|null)=>{cartao.current=el;movimentoRef.current=el;};
  return <span className="cartao-perfil-ancora" onMouseEnter={abrir} onMouseLeave={fecharDepois}>
   <button type="button" ref={gatilho} className="cartao-perfil-gatilho" aria-label={`Ver perfil de ${pessoa.nome}`} aria-haspopup="dialog" aria-expanded={aberto} aria-controls={aberto ? id : undefined}
    onFocus={abrir} onBlur={e => {if (!cartao.current?.contains(e.relatedTarget as Node)) fecharDepois();}} onClick={abrir}
    onKeyDown={e => {if(e.key==='Escape'){e.stopPropagation();cancelar();setAberto(false);}if(aberto && (e.key==='ArrowDown' || (e.key==='Tab' && !e.shiftKey))){e.preventDefault();cartao.current?.querySelector<HTMLButtonElement>('button')?.focus();}}}>
    {children || <><AvatarComunidade nome={pessoa.nome} avatar={pessoa.avatar} pequeno/><span>{pessoa.nome}</span></>}
   </button>
-  {aberto && createPortal(<div id={id} ref={cartao} role="dialog" aria-label={`Perfil de ${pessoa.nome}`} className="cartao-perfil social-painel" style={posicao}
+  {aberto && createPortal(<div id={id} ref={vincularCartao} data-moldura={visual.moldura} data-aura={visual.aura} data-animado={movimentoAtivo} role="dialog" aria-label={`Perfil de ${pessoa.nome}`} className="cartao-perfil social-painel" style={posicao}
    onMouseEnter={cancelar} onMouseLeave={fecharDepois} onFocus={cancelar} onBlur={e => {if (!e.currentTarget.contains(e.relatedTarget as Node) && e.relatedTarget !== gatilho.current) fecharDepois();}}
    onKeyDown={e => {if(e.key==='Escape'){e.stopPropagation();gatilho.current?.focus();cancelar();setAberto(false);}if(e.key==='Tab' && e.shiftKey && e.target===cartao.current?.querySelector('button')){e.preventDefault();gatilho.current?.focus();}}}>
-   {perfil?.banner && <img className="perfil-banner" src={perfil.banner} alt=""/>}
+   <div className="cartao-perfil-capa" aria-hidden="true">{capa&&<img src={capa} alt=""/>}<span/></div>
    <button type="button" className="cartao-perfil-fechar" aria-label="Fechar cartão de perfil" onClick={() => {gatilho.current?.focus();cancelar();setAberto(false);}}>Fechar</button>
-   <div className="cartao-perfil-identidade"><AvatarComunidade nome={atual.nome} avatar={atual.avatar}/><div><strong>{atual.nome}</strong><span>@{atual.handle}</span><span>Nível {atual.nivel}</span></div></div>
+   <div className="cartao-perfil-identidade"><span className="perfil-retrato perfil-retrato-mini" data-moldura={visual.moldura} data-animado={movimentoAtivo}><AvatarComunidade nome={atual.nome} avatar={atual.avatar}/></span><div><strong>{atual.nome}</strong><span>@{atual.handle}</span><span>Nível {atual.nivel}</span></div></div>
    {!perfil && !erro && <p role="status">Carregando perfil…</p>}{erro && <p role="alert" className="social-erro">{erro}</p>}
    {perfil && <><div className="cartao-perfil-emblemas">{perfil.conquistas.map(c => <EmblemaConquista key={c.badgeId} badgeId={c.badgeId} tamanho={54} animado/>)}</div>
     <AtividadeComunidade atividade={perfil.atividade}/>{!perfil.acessivel && <p className="social-ajuda">Perfil privado. Envie uma solicitação de amizade para conhecer esta pessoa.</p>}

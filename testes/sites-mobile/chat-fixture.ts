@@ -92,6 +92,22 @@ export async function prepararChat(page: Page, opcoes: Opcoes = {}) {
             progresso: []
           }
         });
+      case 'perfil-social':
+        return rota.fulfill({
+          json: {
+            perfil: {
+              ...perfil,
+              id: 'qa-eu',
+              nome: 'Pessoa QA',
+              handle: 'pessoa_qa',
+              relacao: 'proprio',
+              xp: 200,
+              nivel: 3
+            }
+          }
+        });
+      case 'conquistas':
+        return rota.fulfill({ json: { conquistas: [], destaques: [] } });
       case 'chat-global':
         return rota.fulfill({ json: { mensagens, servidorEm: Date.now() } });
       case 'cartao-perfil':

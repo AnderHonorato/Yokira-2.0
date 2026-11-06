@@ -1,9 +1,10 @@
 'use client';
-import {useEffect,useState} from 'react';
+import {useCallback,useEffect,useState} from 'react';
+import type {PerfilSocial as Perfil} from '@/lib/social';
+import PerfilVitrine from './perfil-vitrine';
 import type {HallConquistas as PainelConquistas} from '@/lib/conquistas';
 import PerfilSocial from './perfil-social';
 import HallConquistas from './hall-conquistas';
-import {EmblemaNivel,perfilNivel} from './emblema-nivel';
 import AcessoConta,{sairConta} from './conta/acesso-conta';
 import './perfil-pagina.css';
 
@@ -14,7 +15,10 @@ export default function PerfilPagina(props:Props){
 }
 function PerfilAutenticado({usuario,navegar,recarregar,notificar}:Props&{usuario:Record<string,unknown>}){
  const [painel,setPainel]=useState<PainelConquistas|null>(null),[erro,setErro]=useState(''),[versao,setVersao]=useState(0),[saindo,setSaindo]=useState(false);
- const xp=Math.max(0,Number(usuario.xp)||0),nivel=Math.floor(xp/100)+1,faixa=perfilNivel(nivel);
+ const [perfil,setPerfil]=useState<Perfil|null>(null),[previa,setPrevia]=useState<Perfil|null>(null),[aba,setAba]=useState<'hall'|'personalizar'>('hall');
+ const receberPerfil=useCallback((p:Perfil)=>{setPerfil(p);setPrevia(p);},[]);
+ const perfilExibido=aba==='personalizar'?(previa||perfil):perfil;
+ const emPrevia=aba==='personalizar'&&JSON.stringify(previa)!==JSON.stringify(perfil);
  const id=String(usuario.id),papel=String(usuario.papel||'membro');
  useEffect(()=>{
   const controle=new AbortController();
@@ -24,7 +28,10 @@ function PerfilAutenticado({usuario,navegar,recarregar,notificar}:Props&{usuario
  async function salvarDestaques(destaques:string[]){
   const resposta=await fetch('/api/yokira',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acao:'equipar-conquistas',destaques})});
   const dados=await resposta.json() as PainelConquistas&{erro?:string};if(!resposta.ok)throw new Error(dados.erro||'Não foi possível salvar o hall.');
-  setPainel(dados);notificar('Emblemas em destaque atualizados.');
+  setPainel(dados);
+  const conquistas=destaques.flatMap(id=>dados.conquistas.filter(c=>c.badgeId===id));
+  setPerfil(p=>p?{...p,conquistas}:p);setPrevia(p=>p?{...p,conquistas}:p);
+  notificar('Emblemas em destaque atualizados.');
  }
  async function sair(){
   if(saindo)return;setSaindo(true);
@@ -33,11 +40,14 @@ function PerfilAutenticado({usuario,navegar,recarregar,notificar}:Props&{usuario
   finally{setSaindo(false);}
  }
  return <section className="perfil-pagina">
-  <header className="perfil-resumo"><EmblemaNivel nivel={nivel} tamanho={124}/><div><h1>{String(usuario.nome||'Meu perfil')}</h1><p>Nível {nivel} · {faixa.nome}</p><span>{xp} XP</span><progress value={xp%100} max={100} aria-label={`Progresso para o nível ${nivel+1}`}/><small>{100-xp%100} XP para o nível {nivel+1}</small></div></header>
+  {perfilExibido?<PerfilVitrine perfil={perfilExibido} proprio previa={emPrevia} acoes={<><button className="button button-primary" onClick={()=>setAba('personalizar')}>Personalizar perfil</button><button className="button" onClick={()=>navegar('perfil-publico',{handle:(perfil||perfilExibido).handle})}>Ver meu perfil público</button></>}/>:<header className="perfil-vitrine-esqueleto"><h1>Meu perfil</h1></header>}
   {Boolean(usuario.suspenso)&&<p role="alert" className="perfil-erro">Sua conta está suspensa. Algumas ações estão indisponíveis.</p>}
   <nav className="perfil-atalhos" aria-label="Ações do perfil"><button className="button" onClick={()=>navegar('listas')}>Minha lista</button><button className="button" onClick={()=>navegar('amizades')}>Amizades</button><button className="button" onClick={()=>navegar('salas')}>Salas de exibição</button>{['moderador','administrador'].includes(papel)&&<button className="button" onClick={()=>navegar('admin')}>Administração</button>}{papel==='administrador'&&<button className="button" onClick={()=>navegar('acervo-admin')}>Editar catálogo</button>}</nav>
-  <PerfilSocial usuarioId={id} aoSalvar={recarregar} navegar={navegar}/>
+  <nav className="perfil-secoes" aria-label="Seções do perfil"><button type="button" aria-pressed={aba==='hall'} onClick={()=>setAba('hall')}>Meu hall</button><button type="button" aria-pressed={aba==='personalizar'} onClick={()=>setAba('personalizar')}>Personalizar vitrine</button></nav>
+  <div className="perfil-secao" hidden={!!perfil&&aba!=='personalizar'}><PerfilSocial usuarioId={id} aoSalvar={recarregar} navegar={navegar} aoPerfil={receberPerfil} aoPrevia={setPrevia}/></div>
+  <div className="perfil-secao" hidden={aba!=='hall'}>
   {painel?<HallConquistas painel={painel} onSalvar={salvarDestaques}/>:<div className="perfil-hall-estado" aria-live="polite">{erro?<><p role="alert">{erro}</p><button className="button" onClick={()=>setVersao(v=>v+1)}>Tentar novamente</button></>:<p>Carregando conquistas…</p>}</div>}
+  </div>
   <div className="perfil-sessao">{id.startsWith('conta:')?<button className="button" disabled={saindo} onClick={()=>void sair()}>{saindo?'Saindo…':'Sair da conta'}</button>:<a className="button" href="/signout-with-chatgpt?return_to=%2F" target="_top">Sair da conta</a>}</div>
  </section>;
 }

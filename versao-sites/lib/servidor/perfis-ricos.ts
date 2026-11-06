@@ -4,6 +4,8 @@ import { ErroApi, identificador } from './validacao';
 import { ativoSocial, colunasPessoa, pessoa, relacaoSql, semBloqueio } from './social-base';
 import { obterAcervo } from './catalogo-administrativo';
 import { listarDestaquesConquistas } from './conquistas';
+import {visualEquipado} from './personalizacao-perfil';
+import {visualPerfilPadrao} from '../personalizacao-perfil';
 import type { AtividadePerfil, CartaoPerfil, PessoaSocial } from '../social';
 
 export const acessoPerfil = (visitante: string, alvo: SQL): SQL => sql`(p.publico=1 or
@@ -37,14 +39,15 @@ export async function obterAtividadePerfil(db: Db, alvoId: string, visitante = '
 }
 export async function obterCartaoPerfil(db: Db, valor: unknown, usuario: Usuario | null = null): Promise<{ perfil: CartaoPerfil }> {
  const alvoId = identificador(valor), id = usuario?.id || '';
- const [linha] = await db.all<PessoaSocial & { avatar: string; banner: string; acessivel: number; mostrar: number }>(sql`
+ const [linha] = await db.all<PessoaSocial & { avatar: string; banner: string; visual:string; acessivel: number; mostrar: number }>(sql`
  select ${colunasPessoa},${relacaoSql(id)},p.avatar,case when ${acessoPerfil(id, sql`u.id`)} then p.banner else '' end as banner,
- ${acessoPerfil(id, sql`u.id`)} as acessivel,p.mostrar_conquistas as mostrar
+ ${acessoPerfil(id, sql`u.id`)} as acessivel,p.mostrar_conquistas as mostrar,p.visual
  from usuarios u join perfis_sociais p on p.usuario_id=u.id
  left join amizades a on a.usuario_a=min(${id},u.id) and a.usuario_b=max(${id},u.id)
  where u.id=${alvoId} and u.suspenso=0 and ${semBloqueio(id, alvoId)} limit 1`);
  if (!linha) throw new ErroApi('Perfil não encontrado ou indisponível.', 404);
  const conquistas = linha.acessivel && (linha.mostrar || linha.id === id) ? (await listarDestaquesConquistas(db, alvoId)).slice(0, 3) : [];
- return { perfil: { ...pessoa(linha), avatar: linha.avatar, banner: linha.banner, acessivel: !!linha.acessivel,
+ const visual=linha.acessivel?await visualEquipado(db,alvoId,linha.visual):{...visualPerfilPadrao};
+ return { perfil: { ...pessoa(linha), visual, avatar: linha.avatar, banner:visual.capa==='pessoal'?linha.banner:'', acessivel: !!linha.acessivel,
   conquistas, atividade: linha.acessivel ? await obterAtividadePerfil(db, alvoId, id) : null } };
 }

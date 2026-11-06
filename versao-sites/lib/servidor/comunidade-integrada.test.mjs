@@ -19,6 +19,7 @@ async function cartao(i, visitante = null) {
  assert.equal(resposta.status, 200); return (await resposta.json()).perfil;
 }
 function perfil(i, valores) {
+ if('banner' in valores&&!('visual' in valores))valores={...valores,visual:JSON.stringify({capa:valores.banner?'pessoal':'origem',moldura:'essencial',aura:'brisa'})};
  for (const [coluna, valor] of Object.entries(valores)) sqlite.prepare(`update perfis_sociais set ${coluna}=? where usuario_id=?`).run(valor, usuario(i).id);
 }
 beforeEach(() => {

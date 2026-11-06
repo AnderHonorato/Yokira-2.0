@@ -115,6 +115,7 @@ test('avatar público e banner privado respeitam referência atual e amizade ace
  limparLimite(); avatar = await enviarImagemComunidade(db, dono, bucket, pedido(png, { 'x-finalidade': 'avatar' }));
  banner = await enviarImagemComunidade(db, dono, bucket, pedido(png, { 'x-finalidade': 'banner' }));
  sqlite.prepare('insert into perfis_sociais(usuario_id,handle,publico,avatar,banner,atualizado_em) values(?,?,0,?,?,1)').run(dono.id, 'imagem_dono', avatar.url, banner.url);
+ sqlite.prepare("update perfis_sociais set visual=json_set(visual,'$.capa','pessoal') where usuario_id=?").run(dono.id);
  assert.equal((await ler(avatar.id)).status, 200); await rejeita(() => ler(banner.id), 404); await rejeita(() => ler(banner.id, amigo), 404);
  sqlite.prepare("insert into amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em) values(min(?,?),max(?,?),?,'aceita',1,1)").run(dono.id, amigo.id, dono.id, amigo.id, amigo.id);
  assert.equal((await ler(banner.id, amigo)).status, 200);

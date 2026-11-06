@@ -134,6 +134,13 @@
       "when": 1793961310339,
       "tag": "0018_notificacoes_sociais",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1793998191409,
+      "tag": "0019_personalizacao_perfil",
+      "breakpoints": true
     }
   ]
 }

@@ -2,10 +2,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PerfilSocial } from '@/lib/social';
 import { requisicaoSocial } from '@/lib/social-cliente';
-import { EmblemaConquista } from './emblema-conquista';
+import PerfilVitrine from './perfil-vitrine';
+import VitrineDestaques from './vitrine-destaques';
 import AcoesAmizade from './acoes-amizade';
-import { AtividadeComunidade, AvatarComunidade } from './cartao-perfil';
 import './social.css';
+import './perfil-publico.css';
 type Props = { handle: string; usuarioId?: string; navegar?: (pagina: string, params?: Record<string,string>) => void };
 export default function PerfilPublico(props: Props) { return <Perfil key={`${props.usuarioId || 'visitante'}:${props.handle}`} {...props}/>; }
 function Perfil({ handle, usuarioId, navegar }: Props) {
@@ -20,21 +21,16 @@ function Perfil({ handle, usuarioId, navegar }: Props) {
   finally { if(vivo.current && atual === versao.current)setCarregando(false); }
  },[handle]);
  useEffect(() => { vivo.current=true;queueMicrotask(()=>{if(vivo.current)void carregar();});return()=>{vivo.current=false;}; },[carregar]);
- return <section className="social-painel social-perfil-publico" aria-label="Perfil da comunidade">
-  {carregando && <p role="status">Carregando perfil…</p>}
-  {erro && <div><p role="alert" className="social-erro">{erro}</p><button type="button" onClick={() => void carregar()}>Tentar novamente</button></div>}
-  {perfil && <>
-   {perfil.banner && <img className="perfil-banner" src={perfil.banner} alt=""/>}
-   <div className="social-perfil-topo"><AvatarComunidade nome={perfil.nome} avatar={perfil.avatar}/><div><span className="social-legenda">COMUNIDADE YOKIRA</span><h1>{perfil.nome}</h1><p>@{perfil.handle} <span>· Nível {perfil.nivel}</span></p></div></div>
-   <div className="perfil-progresso"><span>Nível {perfil.nivel}</span><progress max={100} value={perfil.xp % 100} aria-label="Progresso para o próximo nível"/><span>{perfil.xp % 100}/100 XP até o nível {perfil.nivel + 1}</span></div>
-   <p className="social-ajuda">Na comunidade desde {new Date(perfil.criadoEm).toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</p>
-   <AtividadeComunidade atividade={perfil.atividade}/>
-   {perfil.bio && <p className="social-biografia">{perfil.bio}</p>}
-   {!perfil.publico && <p className="social-ajuda">Perfil privado. Visível para você e amizades aceitas.</p>}
-   {usuarioId && perfil.relacao !== 'proprio' && <AcoesAmizade pessoa={perfil} atualizar={carregar}/>}
-   {perfil.relacao === 'proprio' && navegar && <button type="button" onClick={() => navegar('perfil')}>Editar meu perfil</button>}
-   {!usuarioId && <p className="social-ajuda">Entre na sua conta para enviar uma solicitação de amizade.</p>}
-   {perfil.mostrarConquistas && <div className="social-destaques"><h2>Conquistas em destaque</h2>{perfil.conquistas.length ? <ul>{perfil.conquistas.slice(0,3).map(c => <li key={c.badgeId}><EmblemaConquista badgeId={c.badgeId} tamanho={76} animado/><strong>{c.titulo}</strong><span>{c.descricao}</span></li>)}</ul> : <p className="social-ajuda">Nenhuma conquista em destaque.</p>}</div>}
+ return <section className="perfil-publico-pagina" aria-label="Perfil da comunidade">
+  {carregando&&<div className="perfil-publico-estado" role="status">Carregando perfil…</div>}
+  {erro&&<div className="social-painel perfil-publico-estado"><p role="alert" className="social-erro">{erro}</p><button type="button" onClick={()=>void carregar()}>Tentar novamente</button></div>}
+  {perfil&&<>
+   <PerfilVitrine perfil={perfil} acoes={<>
+    {usuarioId&&perfil.relacao!=='proprio'&&<AcoesAmizade pessoa={perfil} atualizar={carregar}/>}
+    {perfil.relacao==='proprio'&&navegar&&<button type="button" onClick={()=>navegar('perfil')}>Editar meu perfil</button>}
+    {!usuarioId&&navegar&&<button type="button" onClick={()=>navegar('perfil')}>Entrar para adicionar amizade</button>}
+   </>}/>
+   {perfil.mostrarConquistas?<VitrineDestaques conquistas={perfil.conquistas}/>:<div className="perfil-publico-estado">Esta pessoa mantém suas conquistas em destaque privadas.</div>}
   </>}
  </section>;
 }
