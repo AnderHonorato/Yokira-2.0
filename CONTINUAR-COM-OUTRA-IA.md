@@ -133,6 +133,49 @@ O usuário rejeitou a criação de uma segunda barra inferior e o redesenho SVG 
   automática no primeiro carregamento da prévia. Layout 320–1440 px, SHA256 do
   emblema original e movimento reduzido verificados. Captura de 390 px inspecionada.
 
+## Chat global, ultrawide e marca na abertura — versão 10
+
+- Publicação Sites 10 confirmada no mesmo endereço, origem
+  `cb1927b77ad53c1d003e8d0ea5f37715201ec2e5`, ambiente revisão 2. A versão 9
+  foi salva para revisão; a publicação passou diretamente da 8 para a 10.
+- GitHub: implementação `2c6bf16`, refinamentos `bbeb842`, marca `9e5bff9`
+  e documentação `bb6c5ed`, na mesma branch e PR 21.
+- Correção explícita mais recente: **o emblema original saiu do cabeçalho e foi
+  ampliado ao lado de YOKIRA e “Acervo de animes” na abertura**. No celular,
+  Início usa o ícone de navegação. O desenho PNG permanece idêntico; corpo e
+  cabeça da cobra animam com movimentos mais amplos em loop de 3,2 segundos.
+  Preservar essa composição e a preferência do sistema por movimento reduzido.
+- Layout usa toda a largura com margens proporcionais, até 3440×1440 e além;
+  catálogo limita tamanho dos cards e aumenta as colunas. Primeiro colocado
+  dos rankings anima cartão e retrato/avatar.
+- Chat global flutuante sempre visível, fixado à direita e acima da barra móvel.
+  Leitura pública; conta ativa envia texto/foto. Sem vídeo, HTML ou URL de mídia
+  arbitrária. Rascunhos preservados, UUID de retry e suspensão/bloqueios no SQL.
+- Fotos, avatar e banner em R2 privado com rotas próprias. Até 4 MiB, JPEG/PNG/WebP
+  reais e estáticos, limites de frequência/cota. Avatar público; banner segue
+  privacidade. Não reaproveitar upload de outra conta ou finalidade.
+- Cartão por mouse/toque/teclado com nível, destaques salvos, banner autorizado e
+  atividade consentida; acesso ao perfil completo e amizade. Compartilhar o que
+  assiste começa desligado. Episódios ocultos/futuros/arquivados não vazam.
+- Dono pode compartilhar novamente convites no chat, trancar/destrancar ou encerrar
+  sala. Cartões não revelam convite secreto; entrada é revalidada atomicamente.
+- Admin tem aba de moderação do chat global com motivo/auditoria. Moderador pode
+  ocultar/restaurar; somente admin pode editar o texto.
+- Migração incremental `0016_comunidade_global`: fotos, chat, atividade e campos
+  de perfil/trava, com schema/snapshot/journal coerentes. Migração testada também
+  com progresso existente, empate de horários, órfãos e compartilhamento desligado.
+- Revisão seguinte já aplicada: chat sem convites evita carregar todo o acervo;
+  substituir uma foto limpa o anexo anterior; Salvar perfil aguarda uploads;
+  chat só aceita clique após hidratação e recolhe ao navegar para perfil/sala.
+- Validação: 133 testes backend, typecheck, lint sem erros, audit sem alto/crítico,
+  builds produção/prévia. CI: 30 testes Chromium passaram diretamente e um passou
+  após repetição automática no primeiro carregamento do banner; três cenários
+  duplicados foram omitidos intencionalmente. Inclui leitura/envio/retry do chat,
+  cartão/perfil, trava de salas, marca realmente em movimento e 320–3440px:
+  https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42170409804.
+  Capturas de 390px e 3440px foram inspecionadas. Login real interativo e envio de
+  arquivos reais por conta de produção não foram simulados.
+
 ## Arquivos principais
 
 - `versao-sites/.openai/hosting.json`: identidade Sites, `DB` e `BUCKET`.
