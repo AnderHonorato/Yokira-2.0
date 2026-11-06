@@ -10,6 +10,8 @@ import './chat-global.css';
 type Navegar = (pagina: string, params?: Record<string, string>) => void;
 type Props = { usuario: Record<string, unknown> | null; navegar: Navegar; notificar?: (mensagem: string) => void };
 export default function ChatGlobal({ usuario, navegar }: Props) {
+ const [pronto, setPronto] = useState(false);
+ useEffect(() => { queueMicrotask(() => setPronto(true)); }, []);
  const [aberto, setAberto] = useState(false), id = useId(), controle = useRef<HTMLButtonElement>(null);
  const usuarioId = usuario?.id ? String(usuario.id) : undefined, ativo = !!usuarioId && !usuario?.suspenso;
  const identidade = `${usuarioId || 'anonimo'}:${ativo ? 'ativo' : 'leitura'}`;
@@ -17,7 +19,7 @@ export default function ChatGlobal({ usuario, navegar }: Props) {
  const fechar = () => { setAberto(false); controle.current?.focus(); };
  const navegarDoChat:Navegar=(pagina,params)=>{setAberto(false);navegar(pagina,params);};
  return <aside className={'chat-global' + (aberto ? ' chat-global-aberto' : '')} aria-label="Chat global" onKeyDown={e => { if (aberto && e.key === 'Escape' && !e.defaultPrevented) { e.stopPropagation(); fechar(); } }}>
-  <button type="button" className="chat-global-controle" ref={controle} aria-expanded={aberto} aria-controls={id} aria-label={aberto ? 'Recolher chat global' : 'Abrir chat global'} onClick={() => aberto ? fechar() : setAberto(true)}>
+  <button type="button" className="chat-global-controle" disabled={!pronto} ref={controle} aria-expanded={aberto} aria-controls={id} aria-label={aberto ? 'Recolher chat global' : 'Abrir chat global'} onClick={() => aberto ? fechar() : setAberto(true)}>
    <span className="chat-global-simbolo"><Icone nome="forum" tamanho={20}/></span><span><strong>Chat global</strong>{aberto && <small>Conversa da comunidade</small>}</span><Icone nome={aberto ? 'fechar' : 'mais'} tamanho={16}/>
   </button>
   <div id={id} hidden={!aberto} className="chat-global-painel">

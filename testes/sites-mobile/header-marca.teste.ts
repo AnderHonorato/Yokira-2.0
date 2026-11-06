@@ -97,9 +97,11 @@ test('anima o mesmo arquivo original da marca e respeita movimento reduzido', as
     })
   );
   await page.goto('/');
-  const marca = page.locator('.topbar .marca-animada:visible');
+  const marca = page.locator('.hero-identidade .marca-animada:visible');
   await expect(marca).toHaveCount(1);
   await expect(marca).toBeVisible();
+  await expect(page.locator('.topbar .marca-animada')).toHaveCount(0);
+  await expect(marca).toHaveAttribute('data-destaque', 'true');
   await expect(marca).toHaveAttribute('data-original', '/marca/emblema-192.png');
   await expect(marca).toHaveAttribute('data-animado', 'true');
   const imagens = marca.locator('image');
@@ -115,9 +117,9 @@ test('anima o mesmo arquivo original da marca e respeita movimento reduzido', as
   const cobra = marca.locator('.marca-cobra-original');
   await expect(marca.locator('.marca-cabeca-original')).toHaveCSS(
     'animation-name',
-    'marca-original-cabeca'
+    'marca-cabeca-destaque'
   );
-  await expect(cobra).toHaveCSS('animation-name', 'marca-original-respirar');
+  await expect(cobra).toHaveCSS('animation-name', 'marca-cobra-destaque');
   const anterior = await cobra.evaluate((el) => getComputedStyle(el).transform);
   await expect
     .poll(() => cobra.evaluate((el) => getComputedStyle(el).transform))

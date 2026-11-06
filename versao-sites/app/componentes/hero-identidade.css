@@ -1,0 +1,39 @@
+/* O emblema original acompanha o nome e o título principal do acervo. */
+body .home-intro .intro-copy{width:100%;max-width:960px}
+body .home-intro .hero-identidade{
+ display:flex;align-items:center;gap:clamp(18px,2vw,32px);
+ min-width:0;max-width:100%;
+}
+body .home-intro .hero-identidade>.marca-animada{
+ width:clamp(110px,10vw,150px);height:auto;aspect-ratio:1;flex:none;
+}
+body .home-intro .hero-identidade-texto{
+ display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+ min-width:0;
+}
+body .home-intro .hero-identidade-nome{
+ display:block;color:var(--text);font-family:var(--sans);
+ font-size:clamp(28px,2vw,42px);font-weight:800;line-height:1;
+ letter-spacing:.1em;
+}
+body .home-intro .intro-copy h1{
+ max-width:none;font-size:clamp(32px,3vw,72px);
+ line-height:1.12;letter-spacing:-.035em;
+}
+
+@media(min-width:601px) and (max-width:980px){
+ body .home-intro .hero-identidade{gap:22px}
+ body .home-intro .hero-identidade>.marca-animada{width:clamp(110px,14vw,136px)}
+ body .home-intro .hero-identidade-nome{font-size:32px}
+ body .home-intro .intro-copy h1{font-size:clamp(30px,4vw,42px)}
+}
+
+@media(max-width:600px){
+ body .home-intro .intro-copy{padding-block:16px}
+ body .home-intro .hero-identidade{gap:14px}
+ body .home-intro .hero-identidade>.marca-animada{width:clamp(88px,24vw,100px)}
+ body .home-intro .hero-identidade-texto{gap:7px}
+ body .home-intro .hero-identidade-nome{font-size:clamp(24px,6.5vw,28px)}
+ body .home-intro .intro-copy h1{font-size:clamp(22px,5.7vw,28px);line-height:1.12}
+ body .home-intro .intro-copy>p{margin-block:10px 12px;max-width:none;line-height:1.6}
+}
