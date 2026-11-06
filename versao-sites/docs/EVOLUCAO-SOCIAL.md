@@ -65,7 +65,9 @@ O CI Sites executa Chromium para validar as telas. No ambiente gerenciado sem
 O fundo com dez cenários continua exclusivo do admin e é compartilhado por todos.
 O carrossel de banners é uma configuração separada. Ambos respeitam movimento
 reduzido; efeitos fora da tela e em abas ocultas são suspensos quando aplicável.
-A navegação móvel coloca os controles e as seções em duas barras inferiores, com
-uma única instância do sino. A cobra se move entre as letras YKA em camadas SVG.
+A navegação móvel reúne os controles em uma única barra inferior, com uma única
+instância do sino. O emblema original em `/marca/emblema-192.png` é preservado;
+somente sua região da cobra recebe animação em loop. O banner móvel usa cerca
+de 244 px e a abertura da página foi compactada.
 Níveis evoluem em oito faixas, com refinamento dentro de cada faixa e limite de
 partículas; emblemas de conquistas distinguem cor, forma, desenho e raridade.

@@ -115,6 +115,24 @@ feitas por outras sessões; preservar trabalho concorrente.
   páginas, três banners, imagens e recusa de APIs privadas sem sessão.
   Mais detalhes em `versao-sites/docs/EVOLUCAO-SOCIAL.md`.
 
+## Correção visual publicada na versão 8
+
+O usuário rejeitou a criação de uma segunda barra inferior e o redesenho SVG do
+ícone. **Manter uma única barra e animar a arte original, sem substituí-la.**
+
+- Marca usa o mesmo `/marca/emblema-192.png`, sem alteração de bytes. A região
+  da cobra recebe movimento em loop; letras e identidade original são preservadas.
+- Controles foram incorporados à navegação inferior existente, em uma única linha.
+  Agenda, comunidade e preferências continuam acessíveis pelo menu Mais.
+- Banner de destaques móvel reduzido de 610 para cerca de 244 px; abertura da home
+  reduzida para 220 px e ranking compacto, sem perder os quatro títulos.
+- Origem Sites `46de9ac3ff2f8fda9d9265dfc6d9bef5d37920bb`, versão 8 confirmada
+  como publicada no mesmo link. Código GitHub `03ba469290baa6a85bd06730145594fcf10a3254`.
+- CI aprovado: https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42132879743.
+  Backend e builds aprovados; 22 casos de navegador concluídos, com uma repetição
+  automática no primeiro carregamento da prévia. Layout 320–1440 px, SHA256 do
+  emblema original e movimento reduzido verificados. Captura de 390 px inspecionada.
+
 ## Arquivos principais
 
 - `versao-sites/.openai/hosting.json`: identidade Sites, `DB` e `BUCKET`.
