@@ -45,6 +45,8 @@ test('personalização tem prévia, bloqueia recompensa e preserva rascunho apó
   await editor.getByRole('button', { name: /^Molduras/ }).click();
   await editor.getByRole('button', { name: /^Soberana/ }).click();
   await expect(page.locator('.perfil-vitrine')).toHaveAttribute('data-moldura', 'soberana');
+  if (info.project.name === 'desktop-1440')
+    await editor.screenshot({ path: info.outputPath('editor-personalizacao.png'), scale: 'css' });
   await editor.getByRole('button', { name: 'Salvar perfil', exact: true }).click();
   await expect(editor.getByRole('alert')).toContainText('Conexão interrompida');
   await expect(page.locator('.perfil-vitrine')).toHaveAttribute('data-capa', 'astral');

@@ -11,3 +11,4 @@
 @media(max-width:600px){.perfil-editor-imagens-grade{grid-template-columns:1fr;gap:24px}.perfil-editor-grupo{padding:16px 12px}.perfil-editor-imagens-grade>div+div{padding-top:20px;border-top:1px solid var(--border)}.perfil-editor-imagens-grade .perfil-banner{height:120px}.perfil-editor form{gap:20px}}
 
 .perfil-ver-previa{margin-bottom:20px}.perfil-editor{scroll-margin-top:88px}.perfil-vitrine{scroll-margin-top:88px}@media(max-width:980px){.perfil-editor,.perfil-vitrine{scroll-margin-top:18px}}
+.perfil-editor .perfil-imagens-editor{display:block;padding:20px}.perfil-editor .perfil-editor-imagens-grade{width:100%}@media(max-width:600px){.perfil-editor .perfil-imagens-editor{padding:16px 12px}}
