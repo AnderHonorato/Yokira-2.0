@@ -2,6 +2,9 @@
 
 Site: https://yokira-2-ander.honoratoann.chatgpt.site
 
+Correções publicadas na versão Sites 11; origem
+`27660b04f6dbe5c1fc904da8feb5b8c43a6d96aa`.
+
 A revisão compara os pedidos do usuário com a aplicação `versao-sites`, o código
 e as respostas públicas do site. A raiz Svelte é outra aplicação. Este relatório
 não representa teste interativo de uma conta real de produção nem de todos os
@@ -74,3 +77,13 @@ do player não substitui episódios cadastrados.
 A ordem sugerida é publicar conteúdo real, completar categorias e recuperação de
 conta, depois editoriais e mídia avançada. Preservar o visual atual em todas as
 novas telas e manter backend, permissões e persistência integrados à interface.
+
+## Validação da entrega
+
+148 testes de backend aprovados, TypeScript, lint sem erros, build de produção
+e migrações/snapshots válidos. O CI concluiu 50 casos Chromium diretamente e um
+após retry no carregamento inicial do banner; cinco casos duplicados foram
+omitidos intencionalmente. Novos fluxos de sino social, gestão de salas, uploads,
+movimento dos emblemas e temporização dos banners passaram em suas matrizes.
+
+https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42204674890

@@ -176,6 +176,40 @@ O usuário rejeitou a criação de uma segunda barra inferior e o redesenho SVG 
   Capturas de 390px e 3440px foram inspecionadas. Login real interativo e envio de
   arquivos reais por conta de produção não foram simulados.
 
+## Auditoria e complemento publicados na versão 11
+
+- Publicação Sites 11 confirmada no mesmo link; origem
+  `27660b04f6dbe5c1fc904da8feb5b8c43a6d96aa`; ambiente revisão 2.
+  Código GitHub `53bfb92`, relatório em `docs/auditoria-yokira-20261106.md`.
+- **Falha real de produção no sino:** a segunda consulta de conquistas usava
+  106 parâmetros; D1 permite 100. Regras agora usam JSON e consultas com 41/47
+  parâmetros. Marcação/reivindicação de até 200 IDs usa grupos de 80 dentro do
+  mesmo lote. O teste `conquistas-d1.test.mjs` impõe o limite da hospedagem.
+- Pedido/aceite de amizade geram histórico privado no sino, atômico e idempotente
+  por ciclo. Pedido abre `/?p=amizades&aba=recebidas` com allowlist de aba. Eventos
+  sociais não disparam celebrações nem alteram claims de conquistas/níveis.
+- Convidados suspensos saem das salas alheias e liberam a vaga; reativação não
+  os reinsere automaticamente. O dono preserva sua associação para gerir após
+  reativação. Conteúdo retirado não impede mais o dono de encerrar suas salas;
+  o resumo de gestão não devolve vídeo, conversa ou convite privado.
+- Uploads administrativos bloqueiam Salvar e troca de destino, mantêm Cancelar
+  disponível e possuem timeout real/geração para ignorar respostas antigas.
+- Evolução de nível incorpora marca original/cobra/YKA. Emblemas públicos animam;
+  marca/emblemas/camadas CSS dos cenários pausam fora da tela e em aba oculta.
+- Barra e troca dos banners usam o mesmo relógio; pausa preserva o restante e
+  atualização sem mudanças não reinicia a contagem. Slogans restantes removidos.
+- Migrações incrementais 0017/0018, snapshots/journal coerentes. 148 testes backend
+  passaram; TypeScript, lint sem erros, build e db:generate aprovados. CI:
+  https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42204674890.
+  Chromium: 50 casos passaram diretamente, um após retry no carregamento inicial
+  do banner, cinco duplicados omitidos intencionalmente. Novos fluxos aprovados.
+- **Conteúdo ainda não abastecido:** consulta pública encontrou 20 títulos e zero
+  episódios/fontes publicados. Não confundir cadastro/player implementado com
+  vídeos disponíveis. Foi perguntado ao usuário qual título e links cadastrar.
+- Próximas entregas reais: gestão global de categorias/gêneros; criação de novos
+  editoriais; UI para arquivar/restaurar banners; upload retomável >100 MiB/pacote
+  HLS; envio real de e-mails para verificação/recuperação. Ver relatório detalhado.
+
 ## Arquivos principais
 
 - `versao-sites/.openai/hosting.json`: identidade Sites, `DB` e `BUCKET`.
