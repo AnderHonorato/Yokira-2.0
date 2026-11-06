@@ -112,10 +112,10 @@ incrementais com schema/snapshots/journal coerentes. Não resete o banco real.
 E-mail de verificação/recuperação ainda depende de um serviço de envio real;
 players externos não oferecem sincronização universal de reprodução.
 
-Último estado confirmado nesta entrega: Sites versão 11, origem
-27660b04f6dbe5c1fc904da8feb5b8c43a6d96aa; 148 testes backend aprovados.
+Último estado confirmado nesta entrega: Sites versão 12, origem
+18a4d6b41ff196a3635a27c7738b7cce51debb18; 157 testes backend aprovados.
 CI visual aprovado, incluindo animação medida e telas de 320 a 3440 px:
-https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42204674890
+https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42292399005
 Confira novamente o estado atual, pois pode haver alterações posteriores.
 
 Execute typecheck, testes relevantes, lint e build de produção. Inspecione a

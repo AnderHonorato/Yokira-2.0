@@ -210,6 +210,37 @@ O usuário rejeitou a criação de uma segunda barra inferior e o redesenho SVG 
   editoriais; UI para arquivar/restaurar banners; upload retomável >100 MiB/pacote
   HLS; envio real de e-mails para verificação/recuperação. Ver relatório detalhado.
 
+## Perfil personalizável publicado na versão 12
+
+- Sites 12 publicado no mesmo link, origem
+  `18a4d6b41ff196a3635a27c7738b7cce51debb18`, ambiente revisão 2. Código GitHub
+  `ea7c190` e ajuste `5566483`. Documento: `docs/perfil-personalizavel.md`.
+- Perfil próprio e público compartilham capa cinematográfica, avatar sobreposto,
+  moldura equipada, nível/XP com a marca original, bio, privacidade e atividade
+  autorizada. O cartão do chat reflete capa/moldura conforme acesso.
+- Quinze opções de capa/moldura/aura, incluindo iniciais e imagem pessoal.
+  Desbloqueios usam conquistas persistidas ou nível do banco. Nenhuma compra
+  ou assinatura foi criada. IDs/atributos adicionais/recompensas bloqueadas
+  são rejeitados, com autorização revalidada dentro do UPDATE.
+- Perfil próprio tem Meu hall e Personalizar vitrine, prévia antes de salvar,
+  filtros da coleção e três destaques ordenáveis. O público recebe somente os
+  destaques equipados autorizados, sem inventário privado completo.
+- Migração `0019_personalizacao_perfil`: JSON de três IDs, preserva banners
+  anteriores como capa pessoal e clientes antigos que omitem visual. Escolher
+  preset conserva a URL da imagem própria somente para restauração pelo dono;
+  o DTO público e a rota de imagem não liberam a capa pessoal não equipada.
+- Movimento de capa, aura, moldura, partículas e pedestais usa transform/opacity,
+  pausa fora da tela/aba e respeita movimento reduzido. Preservar PNG original,
+  identidade Yokira e regras de fundo global exclusivo do admin.
+- 157 testes backend, TypeScript, lint sem erros, build e migração/snapshot19
+  aprovados. CI: https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42292399005.
+  Chromium concluiu 58 casos diretamente e um após retry no carregamento inicial
+  do banner; cinco duplicados omitidos. Oito cenários novos de perfil passaram,
+  cobrindo 320–3440px, prévia/retry/salvar/recarregar, hall e movimento reduzido.
+  Capturas de público 390/1440/3440px, próprio e editor foram inspecionadas.
+- Não iniciar browser local improvisado no ambiente gerenciado. Fluxos autenticados
+  foram exercitados com fixtures no CI, sem simular usuário em produção.
+
 ## Arquivos principais
 
 - `versao-sites/.openai/hosting.json`: identidade Sites, `DB` e `BUCKET`.
