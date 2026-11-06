@@ -107,6 +107,9 @@ somente admin edita texto, com motivo obrigatório e auditoria atômica.
 O conteúdo acompanha a largura da janela com margens proporcionais, mantendo
 cartões de catálogo com tamanho limitado e ampliando as colunas disponíveis.
 Rankings reorganizam-se em telas amplas; o primeiro colocado recebe movimento
-no cartão e na foto. A marca usa três recortes da mesma imagem original para
-mover corpo e cabeça da cobra, com pausa fora da tela, aba oculta e movimento
-reduzido. Não substituir a imagem nem criar outra barra de navegação móvel.
+no cartão e na foto. O emblema grande fica ao lado de YOKIRA e de “Acervo de animes” na abertura,
+com 88–150 px conforme a tela. O cabeçalho mantém o nome e o botão Início usa
+seu ícone de navegação. A marca usa três recortes da imagem original para mover
+corpo e cabeça da cobra em loop de 3,2 segundos, com pausa fora da tela, aba
+oculta e movimento reduzido. Não substituir a imagem nem criar outra barra
+de navegação móvel.
