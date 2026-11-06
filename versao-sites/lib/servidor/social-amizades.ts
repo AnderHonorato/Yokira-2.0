@@ -62,7 +62,7 @@ export async function alterarAmizade(db: Db, usuario: Usuario, dados: Record<str
  let consulta;
  if (op === 'solicitar') consulta = sql`insert into amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em)
   select min(${id},${alvo}),max(${id},${alvo}),${id},'pendente',${Date.now()},${Date.now()} where ${permitido}
-  and exists(select 1 from perfis_sociais where usuario_id=${alvo} and publico=1)
+  and exists(select 1 from perfis_sociais where usuario_id=${alvo} and (publico=1 or exists(select 1 from chat_mensagens where autor_id=${alvo} and oculto=0)))
   on conflict(usuario_a,usuario_b) do update set atualizado_em=amizades.atualizado_em returning estado`;
  else if (op === 'aceitar') consulta = sql`update amizades set estado='aceita',atualizado_em=${Date.now()}
   where ${par} and solicitante_id<>${id} and ${permitido} returning estado`;

@@ -13,6 +13,11 @@ import { obterPerfilPublico, obterPerfilSocial, listarAmizades, salvarPerfilSoci
 import { obterSalas, obterSala, mutarSala } from '../../../lib/servidor/salas';
 import { obterBanners, obterBannersAdmin, salvarBanner, arquivarBanner, configurarBanners } from '../../../lib/servidor/banners';
 import { listarMensagensSalasAdmin, moderarMensagemSala } from '../../../lib/servidor/salas-moderacao';
+import { listarChatGlobal } from '../../../lib/servidor/chat-global';
+import { enviarChatGlobal } from '../../../lib/servidor/chat-global-escrita';
+import { listarChatModeracao, moderarChatGlobal } from '../../../lib/servidor/chat-global-moderacao';
+import { obterCartaoPerfil } from '../../../lib/servidor/perfis-ricos';
+import { registrarAtividadeVideo } from '../../../lib/servidor/atividade-video';
 async function usuarioOpcional(request: Request) {
     try { return (await contexto(request)).usuario; }
     catch (erro) { if (erro instanceof ErroApi && erro.status === 401) return null; throw erro; }
@@ -29,6 +34,8 @@ function falha(erro: unknown) {
 export async function GET(request: Request) {
     try {
         const url = new URL(request.url), acao = url.searchParams.get('acao') || 'estado';
+        if (acao === 'chat-global') return resposta(await listarChatGlobal(getDb(), await usuarioOpcional(request)));
+        if (acao === 'cartao-perfil') return resposta(await obterCartaoPerfil(getDb(), url.searchParams.get('usuarioId'), await usuarioOpcional(request)));
         if (acao === 'aparencia') return resposta({aparencia: await obterAparencia(getDb())});
         if (acao === 'banners') return resposta({banners: await obterBanners(getDb())});
         if (acao === 'perfil-publico') return resposta(await obterPerfilPublico(getDb(), url.searchParams.get('handle') || '', await usuarioOpcional(request)));
@@ -50,6 +57,7 @@ export async function GET(request: Request) {
             return resposta({ publicacao });
         }
         const { db, usuario } = await contexto(request);
+        if (acao === 'chat-global-moderacao') return resposta(await listarChatModeracao(db, usuario, url.searchParams.get('busca') || ''));
         if (acao === 'banners-admin') return resposta(await obterBannersAdmin(db, usuario));
         if (acao === 'salas-moderacao') return resposta(await listarMensagensSalasAdmin(db, usuario, url.searchParams.get('busca') || ''));
         if (acao === 'conquistas') return resposta(await listarConquistas(db, usuario));
@@ -80,6 +88,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const payload = await corpoJson(request), { db, usuario } = await contexto(request);
+        if (payload.acao === 'chat-global-enviar') return resposta(await enviarChatGlobal(db, usuario, payload));
+        if (payload.acao === 'chat-global-moderar') return resposta(await moderarChatGlobal(db, usuario, payload));
+        if (payload.acao === 'atividade-video') return resposta(await registrarAtividadeVideo(db, usuario, payload));
         if (payload.acao === 'salvar-banner') return resposta(await salvarBanner(db, usuario, payload));
         if (payload.acao === 'arquivar-banner') return resposta(await arquivarBanner(db, usuario, payload));
         if (payload.acao === 'configurar-banners') return resposta(await configurarBanners(db, usuario, payload));

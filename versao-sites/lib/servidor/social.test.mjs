@@ -27,6 +27,7 @@ registerHooks({resolve(specifier,context,next){
 const {getDb}=await import('../../db/index.ts');
 const {garantirPerfil,consultarHandle,obterPerfilSocial,obterPerfilPublico,salvarPerfilSocial,listarAmizades,alterarAmizade}=await import('./social.ts');
 const db=getDb();
+const {obterCartaoPerfil}=await import('./perfis-ricos.ts');
 function usuario(id,nome=id){sqlite.prepare('insert or ignore into usuarios(id,nome,criado_em) values(?,?,1)').run(id,nome);return {id,nome,papel:'membro',suspenso:false,xp:0,criadoEm:1};}
 const a=usuario('social-a','Email <privado@example.com>'),b=usuario('social-b','Pessoa B'),c=usuario('social-c','Pessoa C');
 const payload=(handle,nome='Pessoa pública')=>({nome,handle,bio:'Uma jornada na comunidade.',publico:true,mostrarConquistas:true});
@@ -111,4 +112,42 @@ test('falha após bloquear reverte tanto bloqueio quanto remoção no mesmo lote
  assert.equal(sqlite.prepare('select count(*) n from bloqueios_sociais').get().n,0);
  assert.equal(sqlite.prepare('select count(*) n from amizades').get().n,1);
  sqlite.exec('DROP TRIGGER falha_amizade');
+});
+test('imagens de perfil exigem URL canônica, titularidade e finalidade na mutação; clientes antigos preservam valores',async()=>{
+ const u=usuario('rico-imagem'),outro=usuario('rico-outro');
+ const id='12233344-5566-7788-99aa-bbccddeeff00',banner='12233344-5566-7788-99aa-bbccddeeff01';
+ sqlite.prepare('insert into chat_imagens(id,usuario_id,chave,mime,tamanho,finalidade,criado_em) values(?,?,?,?,?,?,?)').run(id,u.id,'avatar-key','image/png',12,'avatar',1);
+ sqlite.prepare('insert into chat_imagens(id,usuario_id,chave,mime,tamanho,finalidade,criado_em) values(?,?,?,?,?,?,?)').run(banner,u.id,'banner-key','image/png',12,'banner',1);
+ const avatar='/api/comunidade/imagens/'+id,bannerUrl='/api/comunidade/imagens/'+banner;
+ await salvarPerfilSocial(db,u,{...payload('rico_imagem'),avatar,banner:bannerUrl,compartilharAtividade:true});
+ const preservado=(await salvarPerfilSocial(db,u,payload('rico_imagem'))).perfil;
+ assert.equal(preservado.avatar,avatar);assert.equal(preservado.banner,bannerUrl);assert.equal(preservado.compartilharAtividade,true);
+ await assert.rejects(()=>salvarPerfilSocial(db,outro,{...payload('rico_outro'),avatar}),falha(403));
+ await assert.rejects(()=>salvarPerfilSocial(db,u,{...payload('rico_imagem'),avatar:bannerUrl}),falha(403));
+ for(const valor of ['https://externo.test/foto.png',avatar+'?x=1','/api/comunidade/imagens/../outro'])await assert.rejects(()=>salvarPerfilSocial(db,u,{...payload('rico_imagem'),avatar:valor}),falha(400));
+ const limpo=(await salvarPerfilSocial(db,u,{...payload('rico_imagem'),avatar:'',banner:'',compartilharAtividade:false})).perfil;
+ assert.equal(limpo.avatar,'');assert.equal(limpo.banner,'');assert.equal(limpo.compartilharAtividade,false);
+});
+test('cartão privado expõe apenas identidade e libera banner/conquistas/atividade conforme amizade e consentimento atual',async()=>{
+ const dono=usuario('rico-dono'),visitante=usuario('rico-visitante');
+ await salvarPerfilSocial(db,dono,{...payload('rico_dono'),publico:false});await garantirPerfil(db,visitante);
+ sqlite.prepare('insert into temporadas(id,titulo_id,numero,nome,ordem,arquivado,criado_em,atualizado_em) values(?,?,?,?,?,0,1,1)').run('rico-temporada','1',1,'Primeira',1);
+ sqlite.prepare('insert into episodios(id,temporada_id,titulo_id,numero,titulo,duracao,video_url,publicado,criado_em,atualizado_em) values(?,?,?,?,?,?,?,1,1,1)').run('rico-episodio','rico-temporada','1',1,'Episódio público',24,'https://privado.test/video.mp4');
+ sqlite.prepare('insert into atividade_perfis(usuario_id,titulo_id,episodio_id,atualizado_em) values(?,?,?,?)').run(dono.id,'1','rico-episodio',Date.now());
+ const basico=(await obterCartaoPerfil(db,dono.id,visitante)).perfil;
+ assert.equal(basico.acessivel,false);assert.equal(basico.banner,'');assert.deepEqual(basico.conquistas,[]);assert.equal(basico.atividade,null);assert.equal(basico.handle,'rico_dono');
+ assert.equal((await obterCartaoPerfil(db,dono.id)).perfil.acessivel,false);
+ sqlite.prepare("insert into amizades(usuario_a,usuario_b,solicitante_id,estado,criado_em,atualizado_em) values(?,?,?,'aceita',1,1)").run(dono.id,visitante.id,visitante.id);
+ assert.equal((await obterCartaoPerfil(db,dono.id,visitante)).perfil.acessivel,true);
+ assert.equal((await obterCartaoPerfil(db,dono.id,visitante)).perfil.atividade,null);
+ await salvarPerfilSocial(db,dono,{...payload('rico_dono'),publico:false,compartilharAtividade:true});
+ const consentido=(await obterCartaoPerfil(db,dono.id,visitante)).perfil;
+ assert.equal(consentido.atividade.episodioId,'rico-episodio');assert.equal(JSON.stringify(consentido).includes('privado.test'),false);
+ sqlite.prepare('update episodios set publicado=0 where id=?').run('rico-episodio');assert.equal((await obterCartaoPerfil(db,dono.id,visitante)).perfil.atividade,null);
+ sqlite.prepare('update episodios set publicado=1,estreia_em=? where id=?').run(Date.now()+86400000,'rico-episodio');assert.equal((await obterCartaoPerfil(db,dono.id,visitante)).perfil.atividade,null);
+ sqlite.prepare('update episodios set estreia_em=null where id=?').run('rico-episodio');
+ sqlite.prepare('insert into catalogo_disponibilidade(titulo_id,oculto) values(?,1)').run('1');assert.equal((await obterCartaoPerfil(db,dono.id,visitante)).perfil.atividade,null);
+ sqlite.prepare('delete from catalogo_disponibilidade where titulo_id=?').run('1');
+ await operar(visitante,'remover',dono.id);assert.equal((await obterCartaoPerfil(db,dono.id,visitante)).perfil.atividade,null);
+ await operar(dono,'bloquear',visitante.id);await assert.rejects(()=>obterCartaoPerfil(db,dono.id,visitante),falha(404));
 });

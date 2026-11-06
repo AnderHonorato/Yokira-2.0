@@ -103,7 +103,7 @@ test('anima o mesmo arquivo original da marca e respeita movimento reduzido', as
   await expect(marca).toHaveAttribute('data-original', '/marca/emblema-192.png');
   await expect(marca).toHaveAttribute('data-animado', 'true');
   const imagens = marca.locator('image');
-  await expect(imagens).toHaveCount(2);
+  await expect(imagens).toHaveCount(3);
   for (const imagem of await imagens.all())
     await expect(imagem).toHaveAttribute('href', '/marca/emblema-192.png');
   const resposta = await request.get('/marca/emblema-192.png');
@@ -113,6 +113,10 @@ test('anima o mesmo arquivo original da marca e respeita movimento reduzido', as
       .digest('hex')
   ).toBe('a9a6cb37c2ebc8e3710e5d7039815852e2f98e674e0321a6c85ea197c890db73');
   const cobra = marca.locator('.marca-cobra-original');
+  await expect(marca.locator('.marca-cabeca-original')).toHaveCSS(
+    'animation-name',
+    'marca-original-cabeca'
+  );
   await expect(cobra).toHaveCSS('animation-name', 'marca-original-respirar');
   const anterior = await cobra.evaluate((el) => getComputedStyle(el).transform);
   await expect

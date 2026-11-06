@@ -4,11 +4,14 @@ import { usuarios } from './esquema-base';
 const textoSemCaixa = customType<{ data: string }>({ dataType: () => 'text COLLATE NOCASE' });
 export const perfisSociais = sqliteTable('perfis_sociais', {
  usuarioId: text('usuario_id').primaryKey().references(() => usuarios.id, { onDelete: 'cascade' }),
+ avatar: text('avatar').notNull().default(''), banner: text('banner').notNull().default(''),
+ compartilharAtividade: integer('compartilhar_atividade', { mode: 'boolean' }).notNull().default(sql`0`),
  handle: textoSemCaixa('handle').notNull().unique(), bio: text('bio').notNull().default(''),
  publico: integer('publico', { mode: 'boolean' }).notNull().default(sql`0`),
  mostrarConquistas: integer('mostrar_conquistas', { mode: 'boolean' }).notNull().default(sql`1`),
  atualizadoEm: integer('atualizado_em').notNull(),
 }, t => [check('perfil_handle', sql`length(${t.handle}) BETWEEN 3 AND 24 AND ${t.handle}=lower(${t.handle}) AND ${t.handle} NOT GLOB '*[^a-z0-9_]*' AND substr(${t.handle},1,1) GLOB '[a-z0-9]'`),
+ check('perfil_compartilhar_atividade', sql`${t.compartilharAtividade} IN (0,1)`),
  check('perfil_bio', sql`length(${t.bio})<=280`),
  check('perfil_visibilidade', sql`${t.publico} IN (0,1) AND ${t.mostrarConquistas} IN (0,1)`),
 ]);

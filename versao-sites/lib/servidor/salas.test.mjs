@@ -138,3 +138,26 @@ test('bloquear numa sala preserva gestão do dono e afasta somente quem deve sai
  assert.equal((await obterSala(db,u(8),sala.salaId)).participantes,1);
  assert.equal(sqlite.prepare('select expulso from sala_membros where sala_id=? and usuario_id=?').get(sala.salaId,'u10').expulso,1);
 });
+test('trancar preserva membros atuais e só dono ativo pode reabrir',async()=>{
+ const s=await criar(12,'grupo'),controle=trancada=>mutarSala(db,u(12),{acao:'sala-trancar',salaId:s.salaId,trancada});await entrar(13,s.convite);
+ await assert.rejects(()=>mutarSala(db,u(13),{acao:'sala-trancar',salaId:s.salaId,trancada:true}));await assert.rejects(()=>controle('sim'));await controle(true);
+ assert.equal((await obterSala(db,u(13),s.salaId)).trancada,true);assert.equal((await obterSalas(db,u(12))).salas.find(x=>x.id===s.salaId).trancada,true);await entrar(13,s.convite);await assert.rejects(()=>entrar(14,s.convite));
+ await mutarSala(db,u(13),{acao:'sala-sair',salaId:s.salaId});await assert.rejects(()=>entrar(13,s.convite));
+ antesLote=()=>{antesLote=()=>{};sqlite.exec("update usuarios set suspenso=1 where id='u12'");};await assert.rejects(()=>controle(false));sqlite.exec("update usuarios set suspenso=0 where id='u12'");
+ assert.equal(sqlite.prepare('select trancada from salas where id=?').get(s.salaId).trancada,1);await controle(false);await entrar(14,s.convite);
+});
+test('convite do chat exige mensagem visível, dono atual e autorização fresca',async()=>{
+ const s=await criar(14,'grupo'),id=crypto.randomUUID(),entrarChat=i=>mutarSala(db,u(i),{acao:'sala-entrar-chat',mensagemId:id});sqlite.prepare('insert into chat_mensagens(id,autor_id,sala_id,criado_em) values(?,?,?,1)').run(id,'u14',s.salaId);
+ await entrarChat(15);assert.equal((await obterSala(db,u(15),s.salaId)).convite,undefined);
+ sqlite.prepare('update chat_mensagens set autor_id=? where id=?').run('u16',id);await assert.rejects(()=>entrarChat(16));sqlite.prepare('update chat_mensagens set autor_id=? where id=?').run('u14',id);
+ antesLote=()=>{antesLote=()=>{};sqlite.prepare('update chat_mensagens set oculto=1 where id=?').run(id);};await assert.rejects(()=>entrarChat(16));assert.equal(sqlite.prepare('select count(*) n from sala_membros where sala_id=? and usuario_id=?').get(s.salaId,'u16').n,0);
+ sqlite.prepare('update chat_mensagens set oculto=0 where id=?').run(id);sqlite.exec("insert into bloqueios_sociais(autor_id,alvo_id,criado_em) values('u16','u14',1)");await assert.rejects(()=>entrarChat(16));sqlite.exec("delete from bloqueios_sociais where autor_id='u16'");
+ for(const [revogar,restaurar] of [["update usuarios set suspenso=1 where id='u14'","update usuarios set suspenso=0 where id='u14'"],["update episodios set publicado=0 where id='ep'","update episodios set publicado=1 where id='ep'"]]){antesLote=()=>{antesLote=()=>{};sqlite.exec(revogar);};await assert.rejects(()=>entrarChat(16));sqlite.exec(restaurar);}
+ await mutarSala(db,u(14),{acao:'sala-trancar',salaId:s.salaId,trancada:true});await assert.rejects(()=>entrarChat(16));await entrarChat(15);await mutarSala(db,u(14),{acao:'sala-trancar',salaId:s.salaId,trancada:false});
+ await mutarSala(db,u(14),{acao:'sala-encerrar',salaId:s.salaId});await assert.rejects(()=>entrarChat(15));
+});
+test('chat mantém limite atômico e tranca concorrente revoga nova entrada',async()=>{
+ const s=await criar(16,'grupo'),id=crypto.randomUUID(),entrarChat=i=>mutarSala(db,u(i),{acao:'sala-entrar-chat',mensagemId:id});sqlite.prepare('insert into chat_mensagens(id,autor_id,sala_id,criado_em) values(?,?,?,1)').run(id,'u16',s.salaId);
+ antesLote=()=>{antesLote=()=>{};sqlite.prepare('update salas set trancada=1 where id=?').run(s.salaId);};await assert.rejects(()=>entrarChat(17));sqlite.prepare('update salas set trancada=0 where id=?').run(s.salaId);
+ const resultados=await Promise.allSettled(Array.from({length:22},(_,i)=>i).filter(i=>i!==16).map(entrarChat));assert.equal(resultados.filter(r=>r.status==='fulfilled').length,11);assert.equal((await obterSala(db,u(16),s.salaId)).participantes,12);
+});

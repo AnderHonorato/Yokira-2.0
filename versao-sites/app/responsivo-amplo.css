@@ -1,0 +1,114 @@
+/* Largura útil contínua, com respiro proporcional em todas as telas. */
+:root{--respiro-pagina:clamp(14px,1.6vw,48px);--espaco-grade:clamp(14px,1.1vw,28px)}
+body .main-container,body .subbar-inner,body .footer-inner,body .footer-bottom{
+ width:calc(100% - var(--respiro-pagina)*2);max-width:none;
+ margin-inline:var(--respiro-pagina);min-width:0;
+}
+body .main-container>*,body .home-columns>*,body .home-intro>*,body .sc-secoes>*{min-width:0}
+body .anime-card,body .sc-agenda-item>div,body .sc-member>div{min-width:0}
+body .anime-card>strong,body .sc-member strong{overflow-wrap:anywhere}
+
+@media(min-width:981px){
+ body .topbar-inner{
+  width:calc(100% - var(--respiro-pagina)*2);max-width:none;
+  margin-inline:var(--respiro-pagina);padding-inline:0;
+  gap:clamp(18px,2vw,46px);
+ }
+body .main-nav{gap:clamp(14px,1.15vw,30px)}
+body .home-intro,body .home-columns{
+  grid-template-columns:minmax(0,1fr) clamp(260px,20vw,380px);
+  gap:clamp(24px,2vw,48px);
+ }
+body .intro-main{min-height:clamp(390px,25vw,560px)}
+body .intro-copy{max-width:650px}
+body .intro-copy h1{font-size:clamp(45px,3.4vw,76px)}
+body .intro-copy p{font-size:clamp(12px,.9vw,16px);max-width:450px}
+body .hero-actions .button{font-size:clamp(11px,.75vw,14px);min-height:44px}
+body .weekly-top{padding:24px 22px 0}
+body .weekly-top .top-mini{min-height:76px;gap:14px}
+body .weekly-top .top-mini b{font-size:12px;max-width:none;white-space:normal}
+body .weekly-top .top-mini small,body .weekly-top .top-mini strong{font-size:10px}
+body .weekly-top .top-mini img{width:40px;height:56px;flex:none}
+body .weekly-top .aside-link{font-size:12px;min-height:48px}
+body .game-tiles{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:var(--espaco-grade)}
+body .game-tile{min-height:90px;padding:18px;gap:14px}
+body .game-tile b{font-size:13px;line-height:1.45}
+body .game-tile small{font-size:11px;line-height:1.6}
+body .game-tile>span:nth-child(2){min-width:0}
+body .anime-grid.catalog-grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));
+  justify-content:space-between;gap:28px var(--espaco-grade);
+ }
+body .trending-section .anime-grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:var(--espaco-grade);
+ }
+body .anime-card{max-width:300px;width:100%}
+body .anime-card>strong{font-size:clamp(12px,.8vw,15px);line-height:1.5}
+body .card-meta{font-size:clamp(10px,.6vw,12px);flex-wrap:wrap}
+body .score{font-size:11px}
+body .air-badge{font-size:9px}
+body .sc-agenda-items{grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr))}
+body .sc-collection,body .sc-tier-pool{grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),220px));gap:var(--espaco-grade)}
+body .sc-games-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+body .sc-game-card p{font-size:13px}
+body .sc-rank-content h2{font-size:18px}
+body .sc-rank-content>p{font-size:13px}
+body .editorial-body h3{font-size:clamp(20px,1.3vw,30px)}
+body .editorial-body p{font-size:13px;line-height:1.75}
+body .editorial-body>.mono,body .read-more{font-size:11px}
+body .home-sidebar p{font-size:13px;line-height:1.75}
+body .home-sidebar .button,body .home-sidebar .text-link{font-size:12px;min-height:44px}
+body .season-row b{font-size:14px}
+body .season-row small,body .season-status{font-size:11px}
+body .footer-inner{gap:clamp(28px,3vw,90px)}
+body .footer-brand p{max-width:440px}
+body .footer-inner>div:not(:first-child)>a,body .footer-theme{font-size:12px;line-height:1.6}
+}
+
+@media(min-width:1600px){
+ body .sc-ranking{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}
+body .sc-rank-row{gap:18px;padding:20px 12px}
+body .sc-rank-row>img{flex:none}
+body .sc-members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36px}
+body .sc-member{min-width:0}
+body .sc-member:last-child{border-bottom:1px solid var(--border)}
+body .detail-intro{grid-template-columns:clamp(230px,16vw,340px) minmax(0,1fr);gap:48px}
+body .detail-poster{width:100%}
+body .detail-copy{max-width:1000px}
+body .detail-copy>p{max-width:850px;font-size:15px}
+}
+
+@media(min-width:2200px){
+ body .home-columns .editorial-section{
+  display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
+  column-gap:48px;align-content:start;
+ }
+body .home-columns .editorial-section>.section-title{grid-column:1/-1}
+body .home-columns .editorial-grid{align-self:start}
+body .home-columns .season-section{margin-top:0;padding-top:0;border-top:0}
+body .home-sidebar{display:grid;grid-template-columns:1fr;align-content:start}
+body .sc-stat-grid{gap:28px}
+body .sc-members{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media(min-width:2800px){
+ body .sc-ranking{grid-template-columns:repeat(3,minmax(0,1fr))}
+body .sc-rank-content h2{font-size:17px}
+body .sc-rank-row{gap:16px}
+}
+
+@media(min-width:601px) and (max-width:980px){
+ body .anime-grid.catalog-grid,body .trending-section .anime-grid{
+  grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:22px 16px;
+ }
+body .sc-collection,body .sc-tier-pool{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+}
+
+@media(max-width:600px){
+ body .sc-rank-row,body .sc-member{min-width:0}
+body .sc-rank-content h2,body .sc-member strong{overflow-wrap:anywhere}
+body .sc-rank-row .sc-rank-rating{flex:none}
+body .sc-member>b{flex:none}
+body .sc-toolbar{flex-wrap:wrap}
+body .sc-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

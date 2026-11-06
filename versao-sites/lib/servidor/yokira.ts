@@ -46,7 +46,7 @@ async function limitar(db: Db, usuarioId: string, janela: string, max: number) {
 export async function estadoPublico() {
     const db = getDb();
     const [membros, posts, totalMembros, totalAtividades] = await Promise.all([
-        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
+        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp, avatar: sql<string>`coalesce(${s.perfisSociais.avatar},'')` }).from(s.usuarios).leftJoin(s.perfisSociais,eq(s.perfisSociais.usuarioId,s.usuarios.id)).where(eq(s.usuarios.suspenso,false)).orderBy(desc(s.usuarios.xp),s.usuarios.id).limit(100),
         publicacoes(db, ''),
         db.select({ total: sql<number> `count(*)` }).from(s.usuarios),
         db.select({ total: sql<number> `(select count(*) from publicacoes)+(select count(*) from respostas)+(select count(*) from jogos)` }).from(s.usuarios).limit(1)
@@ -60,7 +60,7 @@ export async function estadoPublico() {
 export async function estado(db: Db, usuario: Usuario) {
     const metadados = new Map((await obterAcervo(db)).catalogo.map(item => [item.id, item]));
     const [membros, posts, minhaLista, progresso, jogos, totalMembros, totalAtividades] = await Promise.all([
-        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
+        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp, avatar: sql<string>`coalesce(${s.perfisSociais.avatar},'')` }).from(s.usuarios).leftJoin(s.perfisSociais,eq(s.perfisSociais.usuarioId,s.usuarios.id)).where(eq(s.usuarios.suspenso,false)).orderBy(desc(s.usuarios.xp),s.usuarios.id).limit(100),
         publicacoes(db, usuario.id),
         db.select().from(s.lista).where(eq(s.lista.usuarioId, usuario.id)).orderBy(desc(s.lista.atualizadoEm), desc(s.lista.criadoEm)).limit(200),
         db.select({ tituloId: s.progresso.tituloId, segundos: s.progresso.segundos }).from(s.progresso).where(eq(s.progresso.usuarioId, usuario.id)).limit(200),

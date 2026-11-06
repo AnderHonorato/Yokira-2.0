@@ -5,3 +5,4 @@ export * from './esquema-social';
 export * from './esquema-salas';
 export * from './esquema-conquistas';
 export * from './esquema-banners';
+export * from './esquema-chat';

@@ -5,8 +5,8 @@ import { ErroApi, identificador } from './validacao';
 import { acesso,ativoSocial,limiteSala } from './salas-base';
 import { obterEpisodiosPublicos } from './temporadas';
 
-type LinhaSala={id:string;titulo_id:string;episodio_id:string;dono_id:string;modo:'dupla'|'grupo';convite:string;pausado:number;posicao:number;revisao:number;atualizado_em:number;criado_em:number;participantes:number};
-const resumo=(s:LinhaSala):SalaResumo=>({id:s.id,tituloId:s.titulo_id,episodioId:s.episodio_id,donoId:s.dono_id,modo:s.modo,participantes:s.participantes,criadoEm:s.criado_em});
+type LinhaSala={id:string;titulo_id:string;episodio_id:string;dono_id:string;modo:'dupla'|'grupo';trancada:number;convite:string;pausado:number;posicao:number;revisao:number;atualizado_em:number;criado_em:number;participantes:number};
+const resumo=(s:LinhaSala):SalaResumo=>({id:s.id,tituloId:s.titulo_id,episodioId:s.episodio_id,donoId:s.dono_id,modo:s.modo,participantes:s.participantes,trancada:!!s.trancada,criadoEm:s.criado_em});
 export async function obterSalas(db:Db,usuario:Usuario):Promise<{salas:SalaResumo[]}> {
  if(usuario.suspenso)throw new ErroApi('Sua conta está suspensa.',403);
  await consumirLeitura(db,usuario.id,'listar',30,ativoSocial(usuario.id));

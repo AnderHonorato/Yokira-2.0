@@ -20,10 +20,24 @@ export async function criarSala(db:Db,usuario:Usuario,p:Record<string,unknown>,o
  if(!resultados[2].results.length)throw new ErroApi('Não foi possível criar a sala.',409);
  return {salaId:id,convite};
 }
-export async function entrarSala(db:Db,usuario:Usuario,p:Record<string,unknown>) {
+export async function entrarSalaPeloChat(db:Db,usuario:Usuario,p:Record<string,unknown>) {
+ const mensagemId=identificador(p.mensagemId);
+ const [sala]=await db.all<{convite:string}>(sql`select s.convite from chat_mensagens msg join salas s on s.id=msg.sala_id
+  where msg.id=${mensagemId} and ${conviteChatVisivel(usuario.id,mensagemId)}`);
+ if(!sala)throw new ErroApi('Convite do chat indisponível.',404);
+ return entrarSala(db,usuario,{convite:sala.convite},mensagemId);
+}
+function conviteChatVisivel(usuarioId:string,mensagemId:string) {
+ return sql`exists(select 1 from chat_mensagens convite join usuarios autor on autor.id=convite.autor_id
+  where convite.id=${mensagemId} and convite.sala_id=s.id and convite.autor_id=s.dono_id and convite.oculto=0 and autor.suspenso=0
+  and not exists(select 1 from bloqueios_sociais b where (b.autor_id=${usuarioId} and b.alvo_id=autor.id) or (b.alvo_id=${usuarioId} and b.autor_id=autor.id)))`;
+}
+export async function entrarSala(db:Db,usuario:Usuario,p:Record<string,unknown>,mensagemId?:string) {
  const convite=texto(p.convite,'Convite',64,64);
  if(!/^[a-f0-9]{64}$/.test(convite))throw new ErroApi('Convite inválido.');
  const permitido=sql`exists(select 1 from salas s where s.convite=${convite} and s.encerrada=0 and ${ativoSocial(usuario.id)} and ${donoAtivo()} and ${episodioSalaPublico()}
+ and (s.trancada=0 or exists(select 1 from sala_membros m where m.sala_id=s.id and m.usuario_id=${usuario.id} and m.ativo=1 and m.expulso=0))
+ and ${mensagemId?conviteChatVisivel(usuario.id,mensagemId):sql`1=1`}
  and not exists(select 1 from sala_membros m where m.sala_id=s.id and m.usuario_id=${usuario.id} and m.expulso=1)
  and not exists(select 1 from sala_membros m join bloqueios_sociais b on ((b.autor_id=${usuario.id} and b.alvo_id=m.usuario_id) or (b.alvo_id=${usuario.id} and b.autor_id=m.usuario_id)) where m.sala_id=s.id and m.ativo=1))`;
  const resultado=await executarSala(db,usuario,[limiteSala(usuario.id,'entrar',30,60000,ativoSocial(usuario.id)),
@@ -52,6 +66,11 @@ export async function controlarSala(db:Db,usuario:Usuario,p:Record<string,unknow
   await executarSala(db,usuario,[limiteSala(usuario.id,'sincronizar',30,10000,permitido),
    sql`update salas as s set pausado=${p.pausado?1:0},posicao=${p.posicao},revisao=revisao+1,atualizado_em=${Date.now()}
     where id=${salaId} and changes()>0 and ${donoSala(usuario.id)} and ${episodioSalaPublico()} and s.revisao=${revisao} returning revisao`]);
+ } else if(p.acao==='sala-trancar') {
+  if(typeof p.trancada!=='boolean')throw new ErroApi('Informe se a sala deve ficar trancada.');
+  await executarSala(db,usuario,[limiteSala(usuario.id,'trancar',20,60000,permitido),
+   sql`update salas as s set trancada=${p.trancada?1:0},atualizado_em=${Date.now()}
+    where id=${salaId} and changes()>0 and ${donoSala(usuario.id)} returning id`]);
  } else if(p.acao==='sala-encerrar') {
   await executarSala(db,usuario,[limiteSala(usuario.id,'encerrar',20,60000,permitido),
    sql`update salas as s set encerrada=1,pausado=1,revisao=revisao+1,atualizado_em=${Date.now()} where id=${salaId} and changes()>0 and ${donoSala(usuario.id)} returning id`]);

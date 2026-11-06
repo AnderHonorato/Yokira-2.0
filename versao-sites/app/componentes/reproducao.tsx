@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Player from './player';
+import {useAtividadeVideo} from './atividade-video';
 import './fontes-player.css';
 
 type Fonte = {id:string;nome:string;tipo:'direto'|'drive'|'incorporado';url:string;ordem:number;ativo:boolean};
@@ -44,6 +45,7 @@ export default function Reproducao({tituloId,episodioId,idioma,usuario,progresso
  const atual=episodios.find(item=>item.id===episodioId);
  const fontes=atual?.fontes?.filter(item=>item.ativo)|| (atual?.videoUrl?[{id:'principal',nome:'Servidor principal',tipo:'direto' as const,url:atual.videoUrl,ordem:1,ativo:true}]:[]);
  const fonte=fontes.find(item=>item.id===escolha)||fontes[0];
+ useAtividadeVideo(String(usuario?.id||''),atual?.id,!!atual&&!erro&&!carregando&&(fonte?.tipo==='direto'||incorporado===fonte?.id));
  const proximo=episodios[episodios.findIndex(item=>item.id===episodioId)+1];
  async function salvar(segundos:number){
   if(!usuario)return;
