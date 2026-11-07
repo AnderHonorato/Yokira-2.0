@@ -78,6 +78,7 @@ test('hall filtra coleção e salva a ordem dos destaques', async ({ page }, inf
   expect((await hall.locator('.hall-cartao').first().boundingBox())!.height).toBeLessThanOrEqual(
     96
   );
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page.screenshot({
     path: info.outputPath('hall-compacto.png'),
     fullPage: true,

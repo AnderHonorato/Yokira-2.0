@@ -81,6 +81,9 @@ FUNCIONALIDADES A PRESERVAR E CONCLUIR
   incorporados. Todas as fontes ativas ficam disponíveis para o usuário escolher.
 - Banners com personagens/cenários, ordem e intervalo configuráveis pelo admin.
 - Contas, @ único, sugestões, senhas fortes, amizades, bloqueios e privacidade.
+- Perfil compacto: capa baixa, XP junto ao nome, destaques em faixa e coleção
+  em linhas. O usuário rejeitou cards enormes e pedestais; não os reintroduza.
+  Foto/capa própria e privacidade ficam recolhidas até serem abertas.
 - Conquistas com raridades e emblemas animados, hall e três destaques; evolução
   visual de nível; celebração uma única vez e histórico seguro nas notificações.
 - Primeiro colocado dos rankings com animação no card e no retrato/avatar.
@@ -112,10 +115,13 @@ incrementais com schema/snapshots/journal coerentes. Não resete o banco real.
 E-mail de verificação/recuperação ainda depende de um serviço de envio real;
 players externos não oferecem sincronização universal de reprodução.
 
-Último estado confirmado nesta entrega: Sites versão 12, origem
-18a4d6b41ff196a3635a27c7738b7cce51debb18; 157 testes backend aprovados.
-CI visual aprovado, incluindo animação medida e telas de 320 a 3440 px:
-https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42292399005
+Último estado confirmado nesta entrega: Sites versão 14, origem
+13c2478b73ebe63e1a459bfdc834a2287fe08e3c; estrutura compacta do perfil publicada.
+157 testes backend aprovados no CI; 16 casos locais em Chromium de perfil e
+movimento passaram, incluindo 320–3440px. Capturas próprias/públicas inspecionadas.
+A versão 13 foi salva sem publicar; preserve a correção compacta da versão 14.
+Consulte o CI atual antes de declarar aprovação integral. Referência do backend:
+https://github.com/AnderHonorato/Yokira-2.0/actions/runs/42338846795
 Confira novamente o estado atual, pois pode haver alterações posteriores.
 
 Execute typecheck, testes relevantes, lint e build de produção. Inspecione a

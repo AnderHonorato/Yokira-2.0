@@ -21,18 +21,18 @@ do player não substitui episódios cadastrados.
 
 ## Recursos existentes
 
-| Área | Situação verificada |
-| --- | --- |
-| Identidade | Marca Yokira sem 2.0; PNG original ampliado na abertura, YOKIRA e título ao lado; cobra em loop. |
-| Telas | Barra inferior única no celular, abertura/banner compactos e layout amplo até 3440 px. |
-| Aparência | Dez cenários globais escolhidos somente por admin; personagens/cenários nos banners, ordem e intervalo configuráveis. |
-| Catálogo | Criação e edição de séries/filmes, temporadas, episódios, rascunhos, estreias e arquivamento. |
-| Reprodução | Seleção de múltiplas fontes por episódio: R2, URL direta/HLS, Drive e incorporado. |
-| Contas | Login por ChatGPT e e-mail/senha, @ único, sugestões, privacidade, amizades e bloqueios. |
-| Conquistas | Vinte feitos persistidos, raridades, hall com três destaques e reivindicação única das celebrações. |
-| Comunidade | Chat global visível sem login; contas ativas enviam textos/fotos; cartões e perfis respeitam privacidade. |
-| Salas | Dupla/grupo, conversa, convite público sem segredo exposto, compartilhamento repetido, trava e encerramento pelo dono. |
-| Administração | Papéis/suspensão, moderação de usuários, catálogo, publicações, respostas, chat e mensagens das salas, com auditoria. |
+| Área          | Situação verificada                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Identidade    | Marca Yokira sem 2.0; PNG original ampliado na abertura, YOKIRA e título ao lado; cobra em loop.                       |
+| Telas         | Barra inferior única no celular, abertura/banner compactos e layout amplo até 3440 px.                                 |
+| Aparência     | Dez cenários globais escolhidos somente por admin; personagens/cenários nos banners, ordem e intervalo configuráveis.  |
+| Catálogo      | Criação e edição de séries/filmes, temporadas, episódios, rascunhos, estreias e arquivamento.                          |
+| Reprodução    | Seleção de múltiplas fontes por episódio: R2, URL direta/HLS, Drive e incorporado.                                     |
+| Contas        | Login por ChatGPT e e-mail/senha, @ único, sugestões, privacidade, amizades e bloqueios.                               |
+| Conquistas    | Vinte feitos persistidos, raridades, hall com três destaques e reivindicação única das celebrações.                    |
+| Comunidade    | Chat global visível sem login; contas ativas enviam textos/fotos; cartões e perfis respeitam privacidade.              |
+| Salas         | Dupla/grupo, conversa, convite público sem segredo exposto, compartilhamento repetido, trava e encerramento pelo dono. |
+| Administração | Papéis/suspensão, moderação de usuários, catálogo, publicações, respostas, chat e mensagens das salas, com auditoria.  |
 
 ## Correções e complemento desta revisão
 
@@ -63,16 +63,16 @@ do player não substitui episódios cadastrados.
 
 ## O que falta criar ou completar
 
-| Prioridade | Pendência | Próxima entrega concreta |
-| --- | --- | --- |
-| Alta | Catálogo sem episódios/fontes reais publicados | Receber/localizar os vídeos ou links, cadastrar temporadas/episódios/fontes e validar reprodução real. Não inventar URLs. |
-| Alta | Categorias/gêneros sem gestão global | Cadastro independente, renomeação/fusão e organização de categorias, integrado aos títulos e filtros. Hoje cada título tem uma lista textual de gêneros. |
-| Alta | Verificação de e-mail e recuperação de senha | Configurar serviço de envio real e concluir verificação/redefinição com links seguros. Nenhum e-mail declarado concede admin. |
-| Média | Criar novos editoriais | Hoje admin edita editoriais existentes; falta criação completa integrada à listagem e leitura. |
-| Média | Gestão de banners arquivados pela interface | Disponibilizar arquivamento, listagem de arquivados e restauração com autorização/auditoria. Desativar e editar já existem. |
-| Média | Vídeos maiores e upload retomável | Superar o upload único de 100 MiB com partes/retomada, limites e limpeza; opcionalmente processar/transcodificar vídeo. |
-| Média | Envio de pacote HLS | Player HLS por URL já funciona; upload de playlist+segmentos e processamento ainda não existem. |
-| Dependente do provedor | Sincronização de players incorporados | O player nativo sincroniza; terceiros exigem API específica. A interface já explica a limitação. |
+| Prioridade             | Pendência                                      | Próxima entrega concreta                                                                                                                                 |
+| ---------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Alta                   | Catálogo sem episódios/fontes reais publicados | Receber/localizar os vídeos ou links, cadastrar temporadas/episódios/fontes e validar reprodução real. Não inventar URLs.                                |
+| Alta                   | Categorias/gêneros sem gestão global           | Cadastro independente, renomeação/fusão e organização de categorias, integrado aos títulos e filtros. Hoje cada título tem uma lista textual de gêneros. |
+| Alta                   | Verificação de e-mail e recuperação de senha   | Configurar serviço de envio real e concluir verificação/redefinição com links seguros. Nenhum e-mail declarado concede admin.                            |
+| Média                  | Criar novos editoriais                         | Hoje admin edita editoriais existentes; falta criação completa integrada à listagem e leitura.                                                           |
+| Média                  | Gestão de banners arquivados pela interface    | Disponibilizar arquivamento, listagem de arquivados e restauração com autorização/auditoria. Desativar e editar já existem.                              |
+| Média                  | Vídeos maiores e upload retomável              | Superar o upload único de 100 MiB com partes/retomada, limites e limpeza; opcionalmente processar/transcodificar vídeo.                                  |
+| Média                  | Envio de pacote HLS                            | Player HLS por URL já funciona; upload de playlist+segmentos e processamento ainda não existem.                                                          |
+| Dependente do provedor | Sincronização de players incorporados          | O player nativo sincroniza; terceiros exigem API específica. A interface já explica a limitação.                                                         |
 
 A ordem sugerida é publicar conteúdo real, completar categorias e recuperação de
 conta, depois editoriais e mídia avançada. Preservar o visual atual em todas as

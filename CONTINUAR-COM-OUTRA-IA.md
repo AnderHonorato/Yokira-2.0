@@ -38,6 +38,9 @@ transcrição do chat nem um link compartilhado do ChatGPT. Não contém credenc
 9. O usuário pediu acesso ao contexto por outra IA. Não inventar URL do chat.
    Um link real de conversa compartilhada é criado no botão Compartilhar do ChatGPT.
    Este arquivo fornece continuidade técnica acessível pelo GitHub.
+10. **Correção mais recente:** o perfil estava grande e cheio de cards. Manter
+    capa baixa, identidade/XP integrados, destaques em faixa e coleção em linhas.
+    Não reintroduzir pedestais, blocos gigantes ou painéis dentro de painéis.
 
 ## Estado da implementação
 
@@ -238,8 +241,35 @@ O usuário rejeitou a criação de uma segunda barra inferior e o redesenho SVG 
   do banner; cinco duplicados omitidos. Oito cenários novos de perfil passaram,
   cobrindo 320–3440px, prévia/retry/salvar/recarregar, hall e movimento reduzido.
   Capturas de público 390/1440/3440px, próprio e editor foram inspecionadas.
-- Não iniciar browser local improvisado no ambiente gerenciado. Fluxos autenticados
-  foram exercitados com fixtures no CI, sem simular usuário em produção.
+- Naquela entrega, fluxos autenticados foram exercitados com fixtures no CI,
+  sem simular usuário em produção. Confira as instruções atuais do ambiente
+  antes de escolher a ferramenta de navegador.
+
+## Perfil compacto publicado na versão 14
+
+- Correção explícita do usuário: o perfil estava grande e com cards demais.
+  Sites 14 publicado no mesmo link, fonte
+  `13c2478b73ebe63e1a459bfdc834a2287fe08e3c`, ambiente revisão 2.
+  A versão 13 foi apenas salva, sem publicar.
+- Capa 96/120/144px, retrato 58/72px e XP integrado à identidade. Destaques em
+  faixa de até três emblemas, sem pedestais ou espaços vazios simulando prêmios.
+  Coleção em linhas compactas, inicialmente Obtidas, com detalhes expansíveis.
+- Atalhos viraram links em uma linha; abas são discretas, com sublinhado. Editor
+  usa opções de recompensa horizontais; foto/capa e privacidade ficam recolhidas.
+  Preservar quinze opções, desbloqueios, privacidade, persistência e animações.
+- Grid mantém três destaques lado a lado no tablet. Primeiro teste detectou
+  194px de altura em 768px; o ajuste passou no limite de 155px da fixture.
+- 157 testes backend, TypeScript, lint sem erros e build aprovados no CI da
+  revisão compacta. Dezesseis casos locais de perfil/movimento passaram em
+  Chromium, cobrindo 320–3440px, salvar/retry/reload, hall, expansão de controles,
+  animação original e pausa fora da tela. Capturas públicas, próprias e editor
+  inspecionadas. Não alegar aprovação integral de um CI ainda pendente.
+- O teste de movimento rola a seção estável, pois um emblema em loop nunca fica
+  estável para scrollIntoViewIfNeeded; espaço de rolagem é controlado somente no
+  teste. Não restaurar cards grandes para acomodar suposições antigas de teste.
+- Produção verificada: home/chat/banners/marca 200, áreas e escritas protegidas
+  anônimas 401, imagem inexistente 404; hash do PNG original preservado. Nenhuma
+  identidade de produção foi simulada. Não houve migração ou mudança de backend.
 
 ## Arquivos principais
 
@@ -271,9 +301,10 @@ O usuário rejeitou a criação de uma segunda barra inferior e o redesenho SVG 
   são liberados só por conhecer o ID. Range/HEAD preservam autorização.
 - Iframes só recebem URL HTTPS validada, sem HTML arbitrário, com sandbox.
 - Textos em português e CSS separado; preservar tokens e identidade existente.
-- Neste ambiente `SITES_MANAGED_LINUX_CONTAINER=1` sem ferramenta `cua_repl.js`.
-  Não improvisar outro navegador local: usar o fluxo Sites permitido quando
-  disponível e relatar a limitação de QA visual.
+- Leia as habilidades atuais do ambiente gerenciado e use o navegador
+  integrado quando disponível. As instruções de 07/11 permitem Chromium e
+  Playwright; as capturas desta entrega vêm do Chromium no CI. Não aplique
+  proibições antigas de navegador a um ambiente cujas instruções mudaram.
 
 ## Validar e publicar
 
