@@ -17,6 +17,11 @@ test('perfil público apresenta capa, retrato, nível e hall sem overflow', asyn
     expect(foto.y).toBeLessThan(capa.y + capa.height);
     expect(foto.y + foto.height).toBeGreaterThan(capa.y + capa.height);
     await expect(page.locator('.vitrine-premio')).toHaveCount(3);
+    expect((await vitrine.boundingBox())!.height).toBeLessThanOrEqual(340);
+    expect((await page.locator('.vitrine-destaques').boundingBox())!.height).toBeLessThanOrEqual(
+      largura <= 600 ? 190 : 155
+    );
+    await expect(page.locator('.vitrine-premio-pedestal')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Editar destaques' })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       largura + 1
@@ -70,6 +75,9 @@ test('hall filtra coleção e salva a ordem dos destaques', async ({ page }) => 
   const hall = page.getByRole('region', { name: 'Minha coleção de conquistas' });
   await hall.getByRole('button', { name: 'Obtidas', exact: true }).click();
   await expect(hall.locator('.hall-cartao')).toHaveCount(4);
+  expect((await hall.locator('.hall-cartao').first().boundingBox())!.height).toBeLessThanOrEqual(
+    96
+  );
   await hall.getByRole('button', { name: 'Editar destaques', exact: true }).click();
   await hall
     .getByRole('button', { name: 'Mover Sua jornada começa para depois', exact: true })
@@ -89,4 +97,21 @@ test('animações do perfil param com movimento reduzido', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(vitrine).toHaveAttribute('data-animado', 'false');
   await expect(vitrine.locator('.perfil-vitrine-aurora')).toHaveCSS('animation-name', 'none');
+});
+
+test('edição mantém fotos e privacidade recolhidas até serem abertas', async ({ page }, info) => {
+  await prepararPerfilPremium(page);
+  await page.goto('/?p=perfil');
+  await page.getByRole('button', { name: 'Personalizar perfil', exact: true }).click();
+  const editor = page.locator('.perfil-editor');
+  const secoes = editor.locator('.perfil-editor-expansivel');
+  await expect(secoes).toHaveCount(2);
+  for (const secao of await secoes.all()) await expect(secao).toHaveJSProperty('open', false);
+  const fotos = secoes.first();
+  await fotos.locator('summary').first().click();
+  await expect(fotos.getByRole('heading', { name: 'Foto de perfil' })).toBeVisible();
+  await fotos.locator('summary').first().click();
+  await expect(fotos).toHaveJSProperty('open', false);
+  if (info.project.name === 'desktop-1440')
+    await editor.screenshot({ path: info.outputPath('editor-compacto.png'), scale: 'css' });
 });

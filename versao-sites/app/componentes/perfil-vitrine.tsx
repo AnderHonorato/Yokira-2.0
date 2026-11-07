@@ -1,6 +1,6 @@
 'use client';
 import {useState,type CSSProperties,type ReactNode} from 'react';
-import {LockKeyhole,ShieldCheck,Sparkles} from 'lucide-react';
+import {LockKeyhole,ShieldCheck} from 'lucide-react';
 import type {PerfilSocial} from '@/lib/social';
 import {recompensaPerfil,visualDoPerfil} from '@/lib/personalizacao-perfil';
 import {AvatarComunidade,AtividadeComunidade} from './cartao-perfil';
@@ -11,7 +11,7 @@ import './perfil-vitrine.css';
 
 export type PropsPerfilVitrine={perfil:PerfilSocial;proprio?:boolean;acoes?:ReactNode;previa?:boolean};
 /** A mesma vitrine representa o perfil próprio, sua prévia e a visita autorizada. */
-export default function PerfilVitrine({perfil,proprio=false,acoes,previa=false}:PropsPerfilVitrine){
+export default function PerfilVitrine({perfil,acoes,previa=false}:PropsPerfilVitrine){
  const visual=visualDoPerfil(perfil),{referencia,ativo}=useMovimentoVisivel<HTMLElement>();
  const [falhou,setFalhou]=useState('');
  const imagem=visual.capa==='pessoal'?perfil.banner:recompensaPerfil('capa',visual.capa)?.imagem;
@@ -24,16 +24,17 @@ export default function PerfilVitrine({perfil,proprio=false,acoes,previa=false}:
    <span className="perfil-vitrine-grade"/><span className="perfil-vitrine-aurora"/>
    <span className="perfil-vitrine-particulas">{Array.from({length:12},(_,i)=><i key={i} style={{'--x':`${(i*31+8)%100}%`,'--y':`${(i*17+13)%85}%`,'--atraso':`${i*-.8}s`,'--duracao':`${5+i%4}s`} as CSSProperties}/>)}</span>
   </div>
-  <div className="perfil-vitrine-faixa"><span><Sparkles size={13} aria-hidden="true"/>{previa?'Prévia da personalização':proprio?'Meu perfil':'Perfil da comunidade'}</span><span>{perfil.publico?<ShieldCheck size={13} aria-hidden="true"/>:<LockKeyhole size={13} aria-hidden="true"/>}{perfil.publico?'Público':'Privado'}</span></div>
+  <div className="perfil-vitrine-faixa">{previa&&<span>Prévia</span>}<span>{perfil.publico?<ShieldCheck size={13} aria-hidden="true"/>:<LockKeyhole size={13} aria-hidden="true"/>}{perfil.publico?'Público':'Privado'}</span></div>
   <div className="perfil-vitrine-corpo">
    <div className="perfil-vitrine-identidade">
     <span className="perfil-retrato" data-moldura={visual.moldura} data-animado={ativo}><AvatarComunidade nome={perfil.nome} avatar={perfil.avatar}/><span className="perfil-retrato-selo" aria-hidden="true">{nivel}</span></span>
-    <div className="perfil-vitrine-nome"><span className="perfil-vitrine-handle">@{perfil.handle}</span><h1>{perfil.nome}</h1><p>{faixa.nome} <span aria-hidden="true">·</span> Nível {nivel}</p></div>
+    <div className="perfil-vitrine-nome"><span className="perfil-vitrine-handle">@{perfil.handle}</span><h1>{perfil.nome}</h1></div>
+    <div className="perfil-vitrine-nivel"><EmblemaNivel nivel={nivel} tamanho={52} marca/><div><strong>Nível {nivel}<small>{xp.toLocaleString('pt-BR')} XP</small></strong><progress value={xp%100} max={100} aria-label={`Progresso para o nível ${nivel+1}`}/><p>{faixa.nome} · {100-xp%100} XP para subir</p></div></div>
     {acoes&&<div className="perfil-vitrine-acoes">{acoes}</div>}
    </div>
    <div className="perfil-vitrine-detalhes">
     <div className="perfil-vitrine-biografia">{perfil.bio&&<p>{perfil.bio}</p>}<span>Na comunidade desde {new Date(perfil.criadoEm).toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</span>{!perfil.publico&&<small>Visível para você e suas amizades aceitas.</small>}</div>
-    <div className="perfil-vitrine-nivel"><EmblemaNivel nivel={nivel} tamanho={110}/><div><span className="perfil-vitrine-legenda">EVOLUÇÃO</span><strong>Nível {nivel}<small>{xp.toLocaleString('pt-BR')} XP</small></strong><progress value={xp%100} max={100} aria-label={`Progresso para o nível ${nivel+1}`}/><p>{100-xp%100} XP para o nível {nivel+1}</p></div></div>
+
    </div>
    {perfil.atividade&&<div className="perfil-vitrine-atividade"><AtividadeComunidade atividade={perfil.atividade}/></div>}
   </div>

@@ -9,7 +9,7 @@ import './hall-conquistas.css';
 type Props={painel:PainelConquistas;onSalvar:(destaques:string[])=>Promise<void>};
 export default function HallConquistas({painel,onSalvar}:Props){
  const [editando,setEditando]=useState(false),[selecao,setSelecao]=useState<string[]>([]),[salvando,setSalvando]=useState(false),[erro,setErro]=useState('');
- const [filtro,setFiltro]=useState('todas'),[raridade,setRaridade]=useState('');
+ const [filtro,setFiltro]=useState('obtidas'),[raridade,setRaridade]=useState('');
  const destaques=editando?selecao:painel.destaques,obtidas=painel.conquistas.filter(c=>c.obtidaEm!==null).length;
  const escolhidas=destaques.flatMap(id=>painel.conquistas.filter(c=>c.badgeId===id));
  const itens=painel.conquistas.filter(c=>(filtro==='todas'||(filtro==='obtidas'?c.obtidaEm!==null:c.obtidaEm===null))&&(!raridade||c.raridade===raridade));
@@ -34,16 +34,16 @@ export default function HallConquistas({painel,onSalvar}:Props){
    </div>}/>
   {editando&&<div className="hall-edicao"><p>Escolha até três emblemas obtidos. Use as setas para definir a ordem pública.</p><button type="button" className="hall-acao" disabled={salvando} onClick={()=>{setEditando(false);setErro('');}}>Cancelar</button><button type="button" className="hall-acao hall-salvar" disabled={salvando} onClick={()=>void salvar()}>{salvando?'Salvando…':'Salvar destaques'}</button></div>}
   {erro&&<p className="hall-erro" role="alert">{erro}</p>}
-  <section className="hall-inventario" aria-labelledby="hall-colecao-titulo"><header className="hall-cabecalho"><div><span className="hall-sobretitulo">CONQUISTAS DA CONTA</span><h2 id="hall-colecao-titulo">Minha coleção</h2><p>{obtidas} de {painel.conquistas.length} emblemas obtidos</p></div><div className="hall-total"><strong>{obtidas}<small>/{painel.conquistas.length}</small></strong><progress value={obtidas} max={painel.conquistas.length||1} aria-label="Progresso da coleção"/></div></header>
+  <section className="hall-inventario" aria-labelledby="hall-colecao-titulo"><header className="hall-cabecalho"><div><h2 id="hall-colecao-titulo">Minha coleção</h2><p>{obtidas} de {painel.conquistas.length} emblemas obtidos</p></div><div className="hall-total"><progress value={obtidas} max={painel.conquistas.length||1} aria-label="Progresso da coleção"/></div></header>
    <div className="hall-filtros"><div role="group" aria-label="Filtrar conquistas">{[['todas','Todas'],['obtidas','Obtidas'],['bloqueadas','A conquistar']].map(([id,nome])=><button key={id} type="button" aria-pressed={filtro===id} onClick={()=>setFiltro(id)}>{nome}</button>)}</div><label>Raridade<select value={raridade} onChange={e=>setRaridade(e.target.value)}><option value="">Todas</option>{Object.entries(nomesRaridades).map(([id,nome])=><option key={id} value={id}>{nome}</option>)}</select></label></div>
    <div className="hall-colecao">{itens.map(item=>{
     const ganhou=item.obtidaEm!==null,selecionado=destaques.includes(item.badgeId);
     return <article className="hall-cartao" key={item.badgeId} data-obtida={ganhou} data-raridade={item.raridade} style={{'--premio-cor':item.cor} as CSSProperties} aria-label={item.titulo}>
-     <div className="hall-cartao-topo"><EmblemaConquista badgeId={item.badgeId} tamanho={76} animado={ganhou} rotulo={false}/><div className="hall-dados"><span className="hall-raridade">{nomesRaridades[item.raridade]} · {ganhou?'Obtida':'A conquistar'}</span><h3>{item.titulo}</h3>{selecionado&&<span className="hall-equipada"><Check size={11}/>Em destaque</span>}</div>
+     <div className="hall-cartao-topo"><EmblemaConquista badgeId={item.badgeId} tamanho={38} animado={ganhou} rotulo={false}/><div className="hall-dados"><span className="hall-raridade">{nomesRaridades[item.raridade]} · {ganhou?'Obtida':'A conquistar'}</span><h3>{item.titulo}</h3>{selecionado&&<span className="hall-equipada"><Check size={11}/>Em destaque</span>}</div>
       {editando&&<button type="button" className="hall-selecionar" disabled={!ganhou||salvando} aria-pressed={selecionado} aria-label={`${selecionado?'Remover':'Destacar'} ${item.titulo}`} onClick={()=>selecionar(item.badgeId)}>{!ganhou?<LockKeyhole size={17}/>:selecionado?<Check size={17}/>:<span aria-hidden="true">+</span>}</button>}
-     </div><p className="hall-descricao">{item.descricao}</p>
+     </div><details className="hall-detalhes"><summary aria-label={`Detalhes de ${item.titulo}`}>Detalhes</summary><p className="hall-descricao">{item.descricao}</p>
      {ganhou?<time className="hall-data" dateTime={new Date(item.obtidaEm!).toISOString()}>Obtida em {new Date(item.obtidaEm!).toLocaleDateString('pt-BR')}</time>:<div className="hall-progresso"><progress value={item.progresso} max={item.meta} aria-label={`${item.titulo}: ${item.progresso} de ${item.meta}`}/><small>{item.progresso} / {item.meta}</small></div>}
-    </article>;
+    </details></article>;
    })}</div>{!itens.length&&<p className="hall-sem-resultados">Nenhuma conquista neste filtro.</p>}
   </section>
  </section>;

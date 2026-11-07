@@ -52,19 +52,19 @@ function EditorPerfil({aoSalvar,navegar,aoPerfil,aoPrevia}:Props){
   {edicao&&<button type="button" className="perfil-ver-previa" onClick={()=>document.querySelector('.perfil-pagina .perfil-vitrine')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}>Ver prévia da vitrine</button>}
   {!edicao?<p role="status">{erro?<button type="button" onClick={()=>setTentativa(t=>t+1)}>Tentar novamente</button>:'Carregando seu perfil…'}</p>:<form onSubmit={salvar}>
    <PersonalizacaoPerfil valor={visualDoPerfil(edicao)} inventario={inventario} banner={edicao.banner} disabled={ocupado||imagemPendente} aoMudar={visual=>mudar({visual})}/>
-   <PerfilImagensEditor edicao={edicao} ocupado={ocupado} envios={envios} aoOcupar={(tipo,ativo)=>setEnvios(v=>({...v,[tipo]:ativo}))} aoMudar={mudar}/>
+   <details className="perfil-editor-expansivel"><summary>Foto e capa própria</summary><PerfilImagensEditor edicao={edicao} ocupado={ocupado} envios={envios} aoOcupar={(tipo,ativo)=>setEnvios(v=>({...v,[tipo]:ativo}))} aoMudar={mudar}/></details>
    <fieldset className="perfil-editor-grupo"><legend>Nome e apresentação</legend><div className="social-campos"><label>Nome público<input required minLength={2} maxLength={60} value={edicao.nome} disabled={ocupado} onChange={e=>mudar({nome:e.target.value})}/></label>
     <label>Identificador @<input required minLength={3} maxLength={24} pattern="[a-zA-Z0-9][a-zA-Z0-9_]{2,23}" autoCapitalize="none" spellCheck={false} aria-describedby="social-handle-ajuda" value={edicao.handle} disabled={ocupado} onChange={e=>{mudar({handle:e.target.value});versaoConsulta.current++;setConsulta('');}}/></label></div>
     <p id="social-handle-ajuda" className="social-ajuda">De 3 a 24 letras, números ou sublinhado. Letras maiúsculas são convertidas para minúsculas.</p>
     <div className="social-consulta"><button type="button" disabled={ocupado||imagemPendente} onClick={()=>void verificar()}>Verificar @</button><span role="status">{consulta}</span></div>
     <label>Biografia<textarea maxLength={280} rows={3} value={edicao.bio} disabled={ocupado} onChange={e=>mudar({bio:e.target.value})}/><small>{edicao.bio.length}/280</small></label>
    </fieldset>
-   <fieldset className="perfil-editor-grupo"><legend>Quem pode ver</legend><label className="social-checkbox"><input type="checkbox" checked={edicao.publico} disabled={ocupado} onChange={e=>mudar({publico:e.target.checked})}/><span>Permitir encontrar meu perfil na busca e abrir pelo @</span></label>
+   <details className="perfil-editor-expansivel"><summary>Privacidade e atividade</summary><fieldset className="perfil-editor-grupo"><legend className="sr-only">Quem pode ver</legend><label className="social-checkbox"><input type="checkbox" checked={edicao.publico} disabled={ocupado} onChange={e=>mudar({publico:e.target.checked})}/><span>Permitir encontrar meu perfil na busca e abrir pelo @</span></label>
     <p className="social-ajuda">Com o perfil privado, apenas você e suas amizades atuais podem abri-lo. Sua coleção e seu histórico permanecem pessoais.</p>
     <label className="social-checkbox"><input type="checkbox" checked={edicao.mostrarConquistas} disabled={ocupado} onChange={e=>mudar({mostrarConquistas:e.target.checked})}/><span>Mostrar minhas conquistas em destaque no perfil</span></label>
     <label className="social-checkbox"><input type="checkbox" checked={!!edicao.compartilharAtividade} disabled={ocupado} onChange={e=>mudar({compartilharAtividade:e.target.checked})}/><span>Compartilhar o anime e o episódio que estou assistindo</span></label>
     <p className="social-ajuda">Desativado por padrão. Quando ativado, apenas quem pode abrir seu perfil vê sua atividade mais recente.</p>
-   </fieldset>
+   </fieldset></details>
    <div className="social-final perfil-editor-salvar"><button type="submit" disabled={ocupado||imagemPendente}>{ocupado?'Salvando…':'Salvar perfil'}</button><span>{imagemPendente?'Aguarde o envio das imagens antes de salvar.':'As alterações só ficam públicas depois de salvar.'}</span></div>
   </form>}
  </section>;

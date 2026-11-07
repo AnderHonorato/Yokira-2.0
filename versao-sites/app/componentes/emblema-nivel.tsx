@@ -4,7 +4,7 @@ import './emblema-nivel.css';
 import {MarcaAnimada} from './marca-animada';
 import {useMovimentoVisivel} from './movimento-visivel';
 
-type Props = { nivel: number; tamanho?: number; animado?: boolean; rotulo?: string };
+type Props = { nivel: number; tamanho?: number; animado?: boolean; rotulo?: string; marca?:boolean };
 const faixas = [
  { inicio: 1, nome: 'Iniciante', cor: '#a5a9b8', apoio: '#667084' },
  { inicio: 5, nome: 'Explorador', cor: '#b9b8d0', apoio: '#8c6daf' },
@@ -25,8 +25,8 @@ export function perfilNivel(valor: number) {
  const cor = '#' + [1, 3, 5].map(posicao => Math.round(parseInt(faixa.cor.slice(posicao, posicao + 2), 16) * (1 - progresso * .12) + 255 * progresso * .12).toString(16).padStart(2, '0')).join('');
  return { ...faixa, cor, nivel, tier, progresso, particulas: Math.min(24, tier === 0 ? 1 + Math.floor(progresso * 4) : 2 + tier * 3 + Math.floor(progresso * 3)), intensidade: Math.min(1, .14 + tier * .1 + progresso * .09) };
 }
-export function EmblemaNivel({ nivel: valor, tamanho = 96, animado = true, rotulo }: Props) {
- const id = useId().replace(/:/g, ''),{referencia:referenciaMovimento,ativo:movimentoAtivo}=useMovimentoVisivel<HTMLSpanElement>(animado),comMarca=tamanho>=76;
+export function EmblemaNivel({ nivel: valor, tamanho = 96, animado = true, rotulo, marca }: Props) {
+ const id = useId().replace(/:/g, ''),{referencia:referenciaMovimento,ativo:movimentoAtivo}=useMovimentoVisivel<HTMLSpanElement>(animado),comMarca=marca??tamanho>=76;
  const { nivel, tier, cor, apoio, progresso, intensidade, particulas } = perfilNivel(valor);
  const estilo = { '--nivel-cor': cor, '--nivel-apoio': apoio, '--nivel-intensidade': intensidade, '--nivel-progresso': progresso, width: tamanho, height: tamanho } as CSSProperties;
  return <span ref={referenciaMovimento} className="emblema-nivel" data-tier={tier} data-marca-original={comMarca} data-animado={movimentoAtivo} style={estilo} role="img" aria-label={rotulo || `Nível ${nivel}`}>

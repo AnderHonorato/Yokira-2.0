@@ -1,6 +1,6 @@
 'use client';
 import {useId,useState} from 'react';
-import {Check,LockKeyhole,Sparkles} from 'lucide-react';
+import {Check,LockKeyhole} from 'lucide-react';
 import {nomesRaridades} from '@/lib/conquistas';
 import {type ItemInventarioPerfil,type TipoRecompensaPerfil,type VisualPerfil} from '@/lib/personalizacao-perfil';
 import {useMovimentoVisivel} from './movimento-visivel';
@@ -14,7 +14,7 @@ export default function PersonalizacaoPerfil({valor,inventario,banner,disabled=f
  const {referencia,ativo}=useMovimentoVisivel<HTMLDivElement>();
  const itens=inventario.filter(item=>item.tipo===tipo),liberadas=inventario.filter(item=>item.liberada).length;
  return <div ref={referencia} className="personalizacao-perfil" data-animado={ativo}>
-  <header className="personalizacao-cabecalho"><div><span className="personalizacao-legenda"><Sparkles size={14}/>PERSONALIZAÇÃO</span><h3>Personalizar vitrine</h3><p>Equipe as recompensas que conquistou. As alterações aparecem na prévia antes de salvar.</p></div><span className="personalizacao-contagem">{liberadas}/{inventario.length}<small>liberadas</small></span></header>
+  <header className="personalizacao-cabecalho"><div><h3>Recompensas</h3><p>Escolha uma opção para ver a prévia.</p></div><span className="personalizacao-contagem">{liberadas}/{inventario.length}<small>liberadas</small></span></header>
   <div className="personalizacao-abas" role="group" aria-label="Tipo de recompensa">{categorias.map(([id,nome])=><button key={id} type="button" aria-pressed={tipo===id} onClick={()=>setTipo(id)}>{nome}<span>{inventario.filter(item=>item.tipo===id&&item.liberada).length}</span></button>)}</div>
   <div className="personalizacao-grade">{itens.map(item=>{
    const pessoal=item.id==='pessoal',disponivel=pessoal?!!banner:item.liberada,selecionada=valor[tipo]===item.id;
