@@ -69,7 +69,7 @@ test('personalização tem prévia, bloqueia recompensa e preserva rascunho apó
     });
 });
 
-test('hall filtra coleção e salva a ordem dos destaques', async ({ page }) => {
+test('hall filtra coleção e salva a ordem dos destaques', async ({ page }, info) => {
   const { painel } = await prepararPerfilPremium(page);
   await page.goto('/?p=perfil');
   const hall = page.getByRole('region', { name: 'Minha coleção de conquistas' });
@@ -78,6 +78,11 @@ test('hall filtra coleção e salva a ordem dos destaques', async ({ page }) => 
   expect((await hall.locator('.hall-cartao').first().boundingBox())!.height).toBeLessThanOrEqual(
     96
   );
+  await page.screenshot({
+    path: info.outputPath('hall-compacto.png'),
+    fullPage: true,
+    scale: 'css'
+  });
   await hall.getByRole('button', { name: 'Editar destaques', exact: true }).click();
   await hall
     .getByRole('button', { name: 'Mover Sua jornada começa para depois', exact: true })

@@ -43,9 +43,17 @@ test('destaques do perfil e do cartão público animam somente enquanto visívei
   await page.setViewportSize({ width: 390, height: 500 });
   await page.goto('/?p=perfil-publico&handle=participante_qa');
   const destaque = page.locator('.social-destaques .emblema-conquista');
-  await destaque.scrollIntoViewIfNeeded();
+  const faixa = page.locator('.social-destaques');
+  // Isola a visibilidade da altura do perfil e evita aguardar um emblema em loop ficar estável.
+  await expect(destaque).toBeAttached();
+  await page.addStyleTag({
+    content: '.perfil-publico-pagina{padding-top:700px!important;padding-bottom:700px!important}'
+  });
+  await expect(destaque).not.toBeInViewport();
+  await expect(destaque).toHaveAttribute('data-animado', 'false');
+  await faixa.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   await expect(destaque).toHaveAttribute('data-animado', 'true');
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await expect(destaque).toHaveAttribute('data-animado', 'false');
   await page.goto('/');
   await page.getByRole('button', { name: 'Abrir chat global' }).click();
