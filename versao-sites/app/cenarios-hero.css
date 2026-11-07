@@ -1,95 +1,21 @@
-/* Galeria autoral anime: apenas o FUNDO do hero, sem alterar a paleta global. */
-.intro-cenarios{
-  position:absolute;
-  inset:-26px -18px;
-  z-index:-1;
-  overflow:hidden;
-  pointer-events:none;
-  contain:paint;
-  isolation:isolate;
-  mask-image:linear-gradient(90deg,transparent 0%,#000 18%,#000 95%,transparent 100%);
-}
-.cenario-camada{position:absolute;inset:0;will-change:opacity}
-.cenario-anterior{z-index:1;opacity:1}
-.cenario-atual{z-index:2;opacity:1;animation:yokira-cenario-entrar 1.8s ease-in-out both}
-.cenario-ilustracao{
-  position:absolute;
-  inset:-5%;
-  background-position:68% center;
-  background-size:cover;
-  background-repeat:no-repeat;
-  transform-origin:68% 56%;
-  animation:yokira-cenario-respirar 29s ease-in-out infinite alternate;
-  will-change:transform;
-}
-.intro-cenarios::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:5;
-  background:linear-gradient(90deg,var(--bg) 0%,transparent 31%,transparent 78%,var(--bg) 100%);
-  opacity:.42;
-}
-.cenario-nevoa{
-  position:absolute;
-  z-index:3;
-  inset:0;
-  background:radial-gradient(ellipse at 81% 72%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 48%);
-  opacity:.62;
-  animation:yokira-nevoa-viva 16s ease-in-out infinite alternate;
-}
-.cenario-luz{
-  position:absolute;
-  z-index:4;
-  inset:4%;
-  background-image:radial-gradient(circle,#ffffff8c 0 1px,transparent 2px),radial-gradient(circle,#b5c7ff88 0 1px,transparent 3px);
-  background-size:137px 179px,193px 163px;
-  background-position:7px 11px,50px 78px;
-  opacity:.30;
-  animation:yokira-fagulhas 12s linear infinite;
-  mix-blend-mode:screen;
-}
-@keyframes yokira-cenario-entrar{
-  from{opacity:0}
-  to{opacity:1}
-}
-@keyframes yokira-cenario-respirar{
-  from{transform:translate3d(-1%,0,0) scale(1.045)}
-  to{transform:translate3d(1.1%,-1.3%,0) scale(1.105)}
-}
-@keyframes yokira-nevoa-viva{
-  from{transform:translateX(-4%) scale(1);opacity:.4}
-  to{transform:translateX(5%) scale(1.13);opacity:.78}
-}
-@keyframes yokira-fagulhas{
-  from{background-position:7px 11px,50px 78px}
-  to{background-position:45px -120px,10px -100px}
-}
-
-/* Mais fluidez sem mexer na aparência do cabeçalho, botões ou cores. */
-@media (hover:hover) and (pointer:fine){
-  .anime-card,.game-tile,.editorial-card,.top-mini{
-    transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .28s ease,border-color .28s ease;
-  }
-  .anime-card:hover,.editorial-card:hover{transform:translateY(-5px)}
-  .game-tile:hover{transform:translateY(-3px)}
-  .top-mini:hover{transform:translateX(3px)}
-  .anime-card:hover .poster-wrap{
-    box-shadow:0 11px 30px #0004,0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);
-  }
-  .button-primary{position:relative;overflow:hidden}
-  .button-primary::after{
-    content:"";position:absolute;inset:-50%;
-    background:linear-gradient(100deg,transparent 40%,#fff3 50%,transparent 60%);
-    transform:translateX(-100%) rotate(9deg);
-    transition:transform .6s ease;
-    pointer-events:none;
-  }
-  .button-primary:hover::after{transform:translateX(100%) rotate(9deg)}
-}
-@media (max-width:980px){
-  .intro-cenarios{inset:0 -10px 0 -10px;mask-image:linear-gradient(90deg,transparent 0%,#000 31%,#000 99%)}
-  .cenario-ilustracao{background-position:72% center;transform-origin:70% center}
+/* Arte cinematográfica e atmosfera por cena; seleção exclusivamente administrativa. */
+.intro-cenarios{position:absolute;inset:-22px -18px;z-index:-1;overflow:hidden;pointer-events:none;contain:paint;isolation:isolate;border-radius:16px;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 93%,transparent)}
+.cenario-camada{position:absolute;inset:0}.cenario-anterior{z-index:0}.cenario-atual{z-index:1;animation:cenario-revelar 1.8s ease-out both}
+.cenario-ilustracao{position:absolute;inset:-4%;transform-origin:70% 55%;animation:cenario-cinematico 32s ease-in-out infinite alternate;will-change:transform}
+.cenario-ilustracao>img{display:block;width:100%;height:100%;object-fit:cover;object-position:66% center}
+.intro-cenarios::after{content:'';position:absolute;inset:0;z-index:5;background:linear-gradient(90deg,var(--bg),color-mix(in srgb,var(--bg) 78%,transparent) 22%,color-mix(in srgb,var(--bg) 12%,transparent) 67%,color-mix(in srgb,var(--bg) 35%,transparent));pointer-events:none}
+.cenario-atmosfera{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
+.cenario-aurora{position:absolute;inset:-25%;z-index:2;opacity:.14;mix-blend-mode:screen;background:conic-gradient(from 80deg at 70% 45%,transparent 5%,color-mix(in srgb,var(--accent) 45%,transparent) 16%,transparent 26%,color-mix(in srgb,var(--gold) 20%,transparent) 34%,transparent 43%);animation:cenario-aurora 26s ease-in-out infinite alternate;transform-origin:70% 45%}
+.cenario-nevoa{position:absolute;inset:0;z-index:3;background:radial-gradient(ellipse at 75% 85%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 65%);animation:cenario-nevoa 18s ease-in-out infinite alternate;opacity:.6}
+.cenario-raios{position:absolute;inset:-30%;z-index:3;opacity:.06;background:repeating-conic-gradient(from -30deg at 80% 0%,transparent 0deg 13deg,var(--text) 14deg 15deg,transparent 17deg 28deg);mix-blend-mode:screen;animation:cenario-raios 36s ease-in-out infinite alternate}
+.intro-copy{position:relative;z-index:1}.intro-main{padding-bottom:0;min-height:430px}.intro-copy h1{text-shadow:0 2px 24px var(--bg)}
+@keyframes cenario-revelar{from{opacity:0}to{opacity:1}}
+@keyframes cenario-cinematico{from{transform:scale(1.025) translate3d(0,0,0)}to{transform:scale(1.09) translate3d(-1%,-1%,0)}}
+@keyframes cenario-aurora{from{transform:rotate(-9deg);opacity:.1}to{transform:rotate(10deg);opacity:.22}}
+@keyframes cenario-nevoa{from{transform:translateX(-3%);opacity:.4}to{transform:translateX(5%);opacity:.75}}
+@keyframes cenario-raios{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+html[data-efeitos=suave] .cenario-aurora,html[data-efeitos=suave] .cenario-raios{display:none}html[data-efeitos=suave] .cenario-ilustracao{animation:none;will-change:auto}
+@media(max-width:980px){.intro-cenarios{inset:-12px -12px;border-radius:10px}.cenario-ilustracao>img{object-position:72% center}.intro-main{padding-bottom:0}
   /* Correção específica da seção abaixo de "O que vale descobrir". */
   .trending-section{min-width:0;max-width:100%;overflow:clip}
   .trending-section .section-title{min-width:0;flex-wrap:wrap}
@@ -105,13 +31,8 @@
     max-width:100%;min-width:0;overflow-wrap:anywhere;
   }
 }
-@media (max-width:480px){
-  .intro-cenarios{opacity:.88}
-  .trending-section .section-title{gap:8px}
-  .trending-section .section-title .text-link{max-width:100%;margin-left:0}
-}
-@media (prefers-reduced-motion:reduce){
-  .cenario-atual,.cenario-ilustracao,.cenario-nevoa,.cenario-luz{animation:none!important}
-  .cenario-camada,.anime-card,.game-tile,.top-mini,.editorial-card,.button-primary::after{transition:none!important;will-change:auto}
-  .cenario-atual{opacity:1}
-}
+
+@media(max-width:480px){.cenario-aurora,.cenario-raios{display:none}.intro-cenarios::after{background:linear-gradient(90deg,color-mix(in srgb,var(--bg) 96%,transparent),color-mix(in srgb,var(--bg) 64%,transparent) 45%,color-mix(in srgb,var(--bg) 20%,transparent))}.trending-section .section-title{gap:8px}.trending-section .section-title .text-link{max-width:100%;margin-left:0}}
+@media(prefers-reduced-motion:reduce){.intro-cenarios *{animation:none!important;transition:none!important;will-change:auto!important}.cenario-atmosfera{display:none}}
+
+.intro-cenarios[data-pausado=true] :is(.cenario-ilustracao,.cenario-aurora,.cenario-nevoa,.cenario-raios){animation-play-state:paused;will-change:auto}

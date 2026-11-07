@@ -3,28 +3,33 @@ import { getDb } from '../../db';
 import * as s from '../../db/schema';
 import { catalogo } from '../catalogo';
 import { situacoesColecao, type ItemColecao, type SituacaoColecao } from '../colecao';
+import { obterAcervo } from './catalogo-administrativo';
 import { dadosPublicos, type DadosJogo } from './jogos-publicos';
 import { ErroApi, identificador, inteiro, nomeInicial, texto } from './validacao';
+import { exigirAtivo, loteAtomico, promoverAdministradorConfigurado } from './permissoes';
+import { denunciar, moderar, titulosOcultos, exigirTituloDisponivel } from './moderacao';
+import { registrarNivelAlcancado } from './notificacoes';
+import { obterSessaoConta } from './autenticacao';
 type Db = ReturnType<typeof getDb>;
 type Usuario = typeof s.usuarios.$inferSelect;
 const dia = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const titulos = new Map(catalogo.map(item => [item.id, item]));
-function titulo(valor: unknown) { const id = identificador(valor); if (!titulos.has(id))
-    throw new ErroApi('Título não encontrado.', 404); return id; }
-function sorteio() { const ids = [...titulos.keys()]; return ids[crypto.getRandomValues(new Uint32Array(1))[0] % ids.length]; }
-function publico(usuario: Usuario) { return { id: usuario.id, nome: usuario.nome, papel: usuario.papel, xp:usuario.xp, nivel:Math.floor(usuario.xp/100)+1 }; }
+function publico(usuario: Usuario) { return { id: usuario.id, nome: usuario.nome, papel: usuario.papel, suspenso: usuario.suspenso, xp:usuario.xp, nivel:Math.floor(usuario.xp/100)+1 }; }
 function itemColecao(item: typeof s.lista.$inferSelect): ItemColecao {
     return { tituloId: item.tituloId, situacao: item.situacao, episodiosVistos: item.episodiosVistos, nota: item.nota,
         criadoEm: new Date(item.criadoEm).toISOString(), atualizadoEm: new Date(item.atualizadoEm || item.criadoEm).toISOString() };
 }
 export async function contexto(request: Request) {
-    const id = request.headers.get('oai-authenticated-user-id');
+    const chatgptId = request.headers.get('oai-authenticated-user-id');
+    const conta = chatgptId ? null : await obterSessaoConta(request);
+    const id = chatgptId || conta?.id;
     if (!id || id.length > 160)
         throw new ErroApi('Entre com sua conta para continuar.', 401);
+    if (chatgptId?.startsWith('conta:')) throw new ErroApi('Identidade inválida.', 401);
     const db = getDb();
-    await db.insert(s.usuarios).values({ id, nome: nomeInicial(request.headers), criadoEm: Date.now() }).onConflictDoNothing();
+    await db.insert(s.usuarios).values({ id, nome: conta?.nome || nomeInicial(request.headers), criadoEm: Date.now() }).onConflictDoNothing();
     const [usuario] = await db.select().from(s.usuarios).where(eq(s.usuarios.id, id)).limit(1);
-    return { db, usuario };
+    return { db, usuario: chatgptId ? await promoverAdministradorConfigurado(db, usuario, request.headers) : usuario };
 }
 async function limitar(db: Db, usuarioId: string, janela: string, max: number) {
     const [linha] = await db.insert(s.limites).values({ usuarioId, janela, quantidade: 1 }).onConflictDoUpdate({
@@ -41,7 +46,7 @@ async function limitar(db: Db, usuarioId: string, janela: string, max: number) {
 export async function estadoPublico() {
     const db = getDb();
     const [membros, posts, totalMembros, totalAtividades] = await Promise.all([
-        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
+        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp, avatar: sql<string>`coalesce(${s.perfisSociais.avatar},'')` }).from(s.usuarios).leftJoin(s.perfisSociais,eq(s.perfisSociais.usuarioId,s.usuarios.id)).where(eq(s.usuarios.suspenso,false)).orderBy(desc(s.usuarios.xp),s.usuarios.id).limit(100),
         publicacoes(db, ''),
         db.select({ total: sql<number> `count(*)` }).from(s.usuarios),
         db.select({ total: sql<number> `(select count(*) from publicacoes)+(select count(*) from respostas)+(select count(*) from jogos)` }).from(s.usuarios).limit(1)
@@ -49,12 +54,13 @@ export async function estadoPublico() {
     return {
         estatisticas: { membros: totalMembros[0]?.total || 0, atividades: totalAtividades[0]?.total || 0 },
         membros: membros.map(m => ({ ...m, nivel: Math.floor(m.xp / 100) + 1 })),
-        publicacoes: posts
+        publicacoes: posts, titulosOcultos: await titulosOcultos(db)
     };
 }
 export async function estado(db: Db, usuario: Usuario) {
+    const metadados = new Map((await obterAcervo(db)).catalogo.map(item => [item.id, item]));
     const [membros, posts, minhaLista, progresso, jogos, totalMembros, totalAtividades] = await Promise.all([
-        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp }).from(s.usuarios).orderBy(desc(s.usuarios.xp)).limit(100),
+        db.select({ id: s.usuarios.id, nome: s.usuarios.nome, xp: s.usuarios.xp, avatar: sql<string>`coalesce(${s.perfisSociais.avatar},'')` }).from(s.usuarios).leftJoin(s.perfisSociais,eq(s.perfisSociais.usuarioId,s.usuarios.id)).where(eq(s.usuarios.suspenso,false)).orderBy(desc(s.usuarios.xp),s.usuarios.id).limit(100),
         publicacoes(db, usuario.id),
         db.select().from(s.lista).where(eq(s.lista.usuarioId, usuario.id)).orderBy(desc(s.lista.atualizadoEm), desc(s.lista.criadoEm)).limit(200),
         db.select({ tituloId: s.progresso.tituloId, segundos: s.progresso.segundos }).from(s.progresso).where(eq(s.progresso.usuarioId, usuario.id)).limit(200),
@@ -62,27 +68,38 @@ export async function estado(db: Db, usuario: Usuario) {
         db.select({ total: sql<number> `count(*)` }).from(s.usuarios),
         db.select({ total: sql<number> `(select count(*) from publicacoes)+(select count(*) from respostas)+(select count(*) from jogos)` }).from(s.usuarios).limit(1)
     ]);
-    return { usuario: publico(usuario), estatisticas: { membros: totalMembros[0]?.total || 0, atividades: totalAtividades[0]?.total || 0 }, membros: membros.map(m => ({ ...m, nivel: Math.floor(m.xp / 100) + 1 })), publicacoes: posts, minhaLista: minhaLista.map(t => t.tituloId), colecao: minhaLista.map(itemColecao), progresso, jogos: jogos.map(j => jogoPublico(j)) };
+    return { usuario: publico(usuario), titulosOcultos: await titulosOcultos(db), estatisticas: { membros: totalMembros[0]?.total || 0, atividades: totalAtividades[0]?.total || 0 }, membros: membros.map(m => ({ ...m, nivel: Math.floor(m.xp / 100) + 1 })), publicacoes: posts, minhaLista: minhaLista.map(t => t.tituloId), colecao: minhaLista.map(itemColecao), progresso, jogos: jogos.map(j => jogoPublico(j, metadados)) };
 }
 export async function publicacoes(db: Db, usuarioId: string, id?: string) {
-    const posts = await db.select({ id: s.publicacoes.id, tipo: s.publicacoes.tipo, titulo: s.publicacoes.titulo, corpo: s.publicacoes.corpo, criadoEm: s.publicacoes.criadoEm, autor: { id: s.usuarios.id, nome: s.usuarios.nome } }).from(s.publicacoes).innerJoin(s.usuarios, eq(s.usuarios.id, s.publicacoes.autorId)).where(id ? eq(s.publicacoes.id, id) : undefined).orderBy(desc(s.publicacoes.criadoEm)).limit(id ? 1 : 50);
+    const posts = await db.select({ id: s.publicacoes.id, tipo: s.publicacoes.tipo, titulo: s.publicacoes.titulo, corpo: s.publicacoes.corpo, criadoEm: s.publicacoes.criadoEm, autor: { id: s.usuarios.id, nome: s.usuarios.nome } }).from(s.publicacoes).innerJoin(s.usuarios, eq(s.usuarios.id, s.publicacoes.autorId)).where(and(eq(s.publicacoes.oculto, false), id ? eq(s.publicacoes.id, id) : undefined)).orderBy(desc(s.publicacoes.criadoEm)).limit(id ? 1 : 50);
     if (!posts.length)
         return [];
     const ids = posts.map(p => p.id);
     const [opcoes, votos, contagens, respostas] = await Promise.all([
         db.select().from(s.opcoes).where(inArray(s.opcoes.publicacaoId, ids)),
         db.select({ publicacaoId: s.votos.publicacaoId, tituloId: s.votos.tituloId, total: sql<number> `count(*)`, meuVoto: sql<number> `max(case when ${s.votos.usuarioId}=${usuarioId} then 1 else 0 end)` }).from(s.votos).where(inArray(s.votos.publicacaoId, ids)).groupBy(s.votos.publicacaoId, s.votos.tituloId),
-        db.select({ publicacaoId: s.respostas.publicacaoId, total: sql<number> `count(*)` }).from(s.respostas).where(inArray(s.respostas.publicacaoId, ids)).groupBy(s.respostas.publicacaoId),
-        id ? db.select({ id: s.respostas.id, publicacaoId: s.respostas.publicacaoId, corpo: s.respostas.corpo, criadoEm: s.respostas.criadoEm, autor: { id: s.usuarios.id, nome: s.usuarios.nome } }).from(s.respostas).innerJoin(s.usuarios, eq(s.usuarios.id, s.respostas.autorId)).where(eq(s.respostas.publicacaoId, id)).orderBy(desc(s.respostas.criadoEm)).limit(200) : Promise.resolve([])
+        db.select({ publicacaoId: s.respostas.publicacaoId, total: sql<number> `count(*)` }).from(s.respostas).where(and(inArray(s.respostas.publicacaoId, ids), eq(s.respostas.oculto, false))).groupBy(s.respostas.publicacaoId),
+        id ? db.select({ id: s.respostas.id, publicacaoId: s.respostas.publicacaoId, corpo: s.respostas.corpo, criadoEm: s.respostas.criadoEm, autor: { id: s.usuarios.id, nome: s.usuarios.nome } }).from(s.respostas).innerJoin(s.usuarios, eq(s.usuarios.id, s.respostas.autorId)).where(and(eq(s.respostas.publicacaoId, id), eq(s.respostas.oculto, false))).orderBy(desc(s.respostas.criadoEm)).limit(200) : Promise.resolve([])
     ]);
     return posts.map(p => ({ ...p, criadoEm: new Date(p.criadoEm).toISOString(), respostas: contagens.find(r => r.publicacaoId === p.id)?.total || 0, votos: votos.filter(v => v.publicacaoId === p.id).reduce((total, v) => total + v.total, 0), opcoes: opcoes.filter(o => o.publicacaoId === p.id).map(o => { const voto = votos.find(v => v.publicacaoId === p.id && v.tituloId === o.tituloId); return { tituloId: o.tituloId, votos: voto?.total || 0, meuVoto: !!voto?.meuVoto }; }), ...(id ? { comentarios: respostas.map(r => ({ ...r, criadoEm: new Date(r.criadoEm).toISOString() })) } : {}) }));
 }
 export async function mutar(db: Db, usuario: Usuario, p: Record<string, unknown>) {
+    exigirAtivo(usuario);
     const acao = texto(p.acao, 'Ação', 1, 30);
     const agora = Date.now();
+    const acervo = ['lista', 'acompanhamento', 'progresso', 'publicar', 'votar'].includes(acao) ? await obterAcervo(db, true) : null;
+    const titulos = new Map((acervo?.catalogo || catalogo).map(item => [item.id, item]));
+    const titulo = (valor: unknown) => {
+        const id = identificador(valor);
+        if (!titulos.has(id)) throw new ErroApi('Título não encontrado.', 404);
+        return id;
+    };
     await limitar(db, usuario.id, `minuto:${Math.floor(agora / 60000)}`, 60);
+    if (acao === 'denunciar') return denunciar(db, usuario, p);
+    if (['suspender-usuario', 'alterar-papel', 'moderar-conteudo', 'resolver-denuncia', 'moderar-catalogo', 'editar-usuario', 'editar-conteudo'].includes(acao)) return moderar(db, usuario, p);
     if (acao === 'lista') {
         const tituloId = titulo(p.tituloId);
+        await exigirTituloDisponivel(db, tituloId);
         if (p.adicionado !== undefined && typeof p.adicionado !== 'boolean')
             throw new ErroApi('Escolha se o título deve ser adicionado ou removido.');
         const cond = and(eq(s.lista.usuarioId, usuario.id), eq(s.lista.tituloId, tituloId));
@@ -96,6 +113,7 @@ export async function mutar(db: Db, usuario: Usuario, p: Record<string, unknown>
     }
     if (acao === 'acompanhamento') {
         const tituloId = titulo(p.tituloId), meta = titulos.get(tituloId)!;
+        await exigirTituloDisponivel(db, tituloId);
         if (typeof p.situacao !== 'string' || !situacoesColecao.includes(p.situacao as SituacaoColecao))
             throw new ErroApi('Situação de acompanhamento inválida.');
         const situacao = p.situacao as SituacaoColecao;
@@ -108,6 +126,7 @@ export async function mutar(db: Db, usuario: Usuario, p: Record<string, unknown>
     }
     if (acao === 'progresso') {
         const tituloId = p.tituloId === 'demonstracao' ? 'demonstracao' : titulo(p.tituloId);
+        await exigirTituloDisponivel(db, tituloId);
         const segundos = inteiro(p.segundos, 'Progresso', 0, 86400);
         await db.insert(s.progresso).values({ usuarioId: usuario.id, tituloId, segundos, atualizadoEm: agora }).onConflictDoUpdate({ target: [s.progresso.usuarioId, s.progresso.tituloId], set: { segundos, atualizadoEm: agora } });
         return { ok: true };
@@ -121,7 +140,7 @@ export async function mutar(db: Db, usuario: Usuario, p: Record<string, unknown>
         const tipo = texto(p.tipo, 'Tipo', 1, 20);
         if (!['forum', 'editorial', 'lista'].includes(tipo))
             throw new ErroApi('Tipo inválido.');
-        if (tipo === 'editorial' && usuario.papel !== 'editor')
+        if (tipo === 'editorial' && !['editor', 'administrador'].includes(usuario.papel))
             throw new ErroApi('Apenas a equipe editorial pode publicar editoriais.', 403);
         const tituloTexto = texto(p.titulo, 'Título', 3, 160), corpo = texto(p.corpo, 'Conteúdo', 3, 10000);
         let tituloIds: string[] = [];
@@ -129,43 +148,68 @@ export async function mutar(db: Db, usuario: Usuario, p: Record<string, unknown>
             if (!Array.isArray(p.tituloIds) || p.tituloIds.length < 2 || p.tituloIds.length > 20)
                 throw new ErroApi('Escolha entre 2 e 20 títulos.');
             tituloIds = [...new Set(p.tituloIds.map(titulo))];
+            await Promise.all(tituloIds.map(id => exigirTituloDisponivel(db, id)));
             if (tituloIds.length < 2)
                 throw new ErroApi('Escolha títulos diferentes.');
         }
         await limitar(db, usuario.id, `publicar:${dia()}`, 20);
         const id = crypto.randomUUID();
-        const ins = db.insert(s.publicacoes).values({ id, autorId: usuario.id, tipo, titulo: tituloTexto, corpo, criadoEm: agora });
-        if (tituloIds.length)
-            await db.batch([ins, db.insert(s.opcoes).values(tituloIds.map(tituloId => ({ publicacaoId: id, tituloId }))), db.update(s.usuarios).set({ xp: sql `${s.usuarios.xp}+10` }).where(eq(s.usuarios.id, usuario.id))]);
-        else
-            await db.batch([ins, db.update(s.usuarios).set({ xp: sql `${s.usuarios.xp}+10` }).where(eq(s.usuarios.id, usuario.id))]);
+        const ins = sql`insert into publicacoes(id,autor_id,tipo,titulo,corpo,criado_em)
+            select ${id},${usuario.id},${tipo},${tituloTexto},${corpo},${agora}
+            where exists(select 1 from usuarios where id=${usuario.id} and suspenso=0
+                and (${tipo}<>'editorial' or papel in ('editor','administrador'))) returning id`;
+        const [salvo] = await loteAtomico(db, [ins,
+            sql`update usuarios set xp=xp+10 where id=${usuario.id} and changes()>0`,
+            registrarNivelAlcancado(usuario.id, 10, `/?p=${tipo === 'lista' ? 'listas' : 'forum'}&post=${id}`),
+            ...tituloIds.map(tituloId => sql`insert into opcoes(publicacao_id,titulo_id)
+                select ${id},${tituloId} where exists(select 1 from publicacoes where id=${id} and autor_id=${usuario.id})`)
+        ]);
+        if (!salvo.results.length) throw new ErroApi('Sua permissão de publicação não está mais ativa.', 403);
         return { ok: true, id };
     }
     if (acao === 'responder') {
         const publicacaoId = identificador(p.publicacaoId), corpo = texto(p.corpo, 'Resposta', 1, 4000);
-        const [post] = await db.select({ id: s.publicacoes.id }).from(s.publicacoes).where(eq(s.publicacoes.id, publicacaoId)).limit(1);
+        const [post] = await db.select({ id: s.publicacoes.id }).from(s.publicacoes).where(and(eq(s.publicacoes.id, publicacaoId), eq(s.publicacoes.oculto, false))).limit(1);
         if (!post)
             throw new ErroApi('Publicação não encontrada.', 404);
         await limitar(db, usuario.id, `responder:${dia()}`, 100);
         const id = crypto.randomUUID();
-        await db.batch([db.insert(s.respostas).values({ id, publicacaoId, autorId: usuario.id, corpo, criadoEm: agora }), db.update(s.usuarios).set({ xp: sql `${s.usuarios.xp}+2` }).where(eq(s.usuarios.id, usuario.id))]);
+        const [salvo] = await loteAtomico(db, [
+            sql`insert into respostas(id,publicacao_id,autor_id,corpo,criado_em) select ${id},${publicacaoId},${usuario.id},${corpo},${agora}
+                where exists(select 1 from publicacoes where id=${publicacaoId} and oculto=0)
+                and exists(select 1 from usuarios where id=${usuario.id} and suspenso=0) returning id`,
+            sql`update usuarios set xp=xp+2 where id=${usuario.id} and changes()>0`,
+            registrarNivelAlcancado(usuario.id, 2, `/?p=forum&post=${publicacaoId}`)
+        ]);
+        if (!salvo.results.length) throw new ErroApi('Publicação indisponível.', 404);
         return { ok: true, id };
     }
     if (acao === 'votar') {
         const publicacaoId = identificador(p.publicacaoId), tituloId = titulo(p.tituloId);
-        const [opcao] = await db.select().from(s.opcoes).where(and(eq(s.opcoes.publicacaoId, publicacaoId), eq(s.opcoes.tituloId, tituloId))).limit(1);
+        await exigirTituloDisponivel(db, tituloId);
+        const [opcao] = await db.select().from(s.opcoes).innerJoin(s.publicacoes, eq(s.publicacoes.id, s.opcoes.publicacaoId)).where(and(eq(s.opcoes.publicacaoId, publicacaoId), eq(s.opcoes.tituloId, tituloId), eq(s.publicacoes.oculto, false))).limit(1);
         if (!opcao)
             throw new ErroApi('Opção de voto inválida.');
-        await db.insert(s.votos).values({ publicacaoId, usuarioId: usuario.id, tituloId }).onConflictDoUpdate({ target: [s.votos.publicacaoId, s.votos.usuarioId], set: { tituloId } });
+        const [salvo] = await loteAtomico(db, [sql`insert into votos(publicacao_id,usuario_id,titulo_id)
+            select ${publicacaoId},${usuario.id},${tituloId} where exists(select 1 from publicacoes where id=${publicacaoId} and oculto=0)
+            and exists(select 1 from usuarios where id=${usuario.id} and suspenso=0)
+            on conflict(publicacao_id,usuario_id) do update set titulo_id=excluded.titulo_id returning publicacao_id`]);
+        if (!salvo.results.length) throw new ErroApi('Publicação indisponível.', 404);
         return { ok: true, tituloId };
     }
     if (acao === 'jogo')
         return jogar(db, usuario, p);
     throw new ErroApi('Ação desconhecida.');
 }
-function jogoPublico(jogo: typeof s.jogos.$inferSelect) { return dadosPublicos(jogo, id => titulos.get(id)?.sinopse); }
+function jogoPublico(jogo: typeof s.jogos.$inferSelect, metadados: Map<string, {sinopse: string}> = titulos) { return dadosPublicos(jogo, id => metadados.get(id)?.sinopse); }
 async function jogar(db: Db, usuario: Usuario, p: Record<string, unknown>) {
     const modo = texto(p.modo, 'Modo', 1, 20), agora = Date.now();
+    const acervo = await obterAcervo(db);
+    const titulos = new Map(acervo.catalogo.map(item => [item.id, item]));
+    const titulo = (valor: unknown) => { const id = identificador(valor); if (!titulos.has(id)) throw new ErroApi('Título indisponível.', 404); return id; };
+    const sorteio = () => { const ids = [...titulos.keys()]; return ids[crypto.getRandomValues(new Uint32Array(1))[0] % ids.length]; };
+    const minimo = modo === 'quiz' ? 4 : modo === 'torneio' ? 8 : modo === 'duelo' ? 2 : 1;
+    if (titulos.size < minimo) throw new ErroApi('Ainda não há títulos publicados suficientes para este jogo.', 409);
     if (modo === 'adivinhe') {
         const id = `${usuario.id}:adivinhe:${dia()}`;
         let [jogo] = await db.select().from(s.jogos).where(and(eq(s.jogos.id, id), eq(s.jogos.usuarioId, usuario.id))).limit(1);
@@ -178,9 +222,9 @@ async function jogar(db: Db, usuario: Usuario, p: Record<string, unknown>) {
         if (p.tituloId !== undefined) {
             const palpite = titulo(p.tituloId), dados = JSON.parse(jogo.dados) as DadosJogo;
             if (dados.concluido)
-                return { ok: true, jogo: jogoPublico(jogo) };
+                return { ok: true, jogo: jogoPublico(jogo, titulos) };
             if (dados.tentativas!.some(t => t.tituloId === palpite))
-                return { ok: true, jogo: jogoPublico(jogo) };
+                return { ok: true, jogo: jogoPublico(jogo, titulos) };
             const acertou = palpite === dados.respostaId;
             dados.tentativas!.push({ tituloId: palpite, acertou });
             dados.ganhou = acertou;
@@ -191,7 +235,7 @@ async function jogar(db: Db, usuario: Usuario, p: Record<string, unknown>) {
                 throw new ErroApi('O jogo mudou em outra aba. Atualize e tente novamente.', 409);
             jogo = alterados[0];
         }
-        return { ok: true, jogo: jogoPublico(jogo) };
+        return { ok: true, jogo: jogoPublico(jogo, titulos) };
     }
     if (modo === 'quiz' || modo === 'torneio') {
         const id = `${usuario.id}:${modo}:${dia()}`;
@@ -213,7 +257,7 @@ async function jogar(db: Db, usuario: Usuario, p: Record<string, unknown>) {
         if (p.tituloId !== undefined) {
             const escolhido = titulo(p.tituloId), dados = JSON.parse(jogo.dados) as DadosJogo;
             if (dados.concluido)
-                return { ok: true, jogo: jogoPublico(jogo) };
+                return { ok: true, jogo: jogoPublico(jogo, titulos) };
             if (p.versao !== undefined && inteiro(p.versao, 'Versão', 0, 100) !== dados.versao)
                 throw new ErroApi('O jogo mudou. Atualize e tente novamente.', 409);
             if (modo === 'quiz') {
@@ -249,7 +293,7 @@ async function jogar(db: Db, usuario: Usuario, p: Record<string, unknown>) {
                 throw new ErroApi('O jogo mudou em outra aba. Atualize e tente novamente.', 409);
             jogo = alterados[0];
         }
-        return { ok: true, jogo: jogoPublico(jogo) };
+        return { ok: true, jogo: jogoPublico(jogo, titulos) };
     }
     if (modo === 'gacha') {
         const restantes = await limitar(db, usuario.id, `gacha:${dia()}`, 3), tituloId = sorteio(), id = crypto.randomUUID();

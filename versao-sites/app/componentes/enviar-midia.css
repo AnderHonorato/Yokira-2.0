@@ -1,0 +1,9 @@
+.enviar-midia { display:grid;gap:12px;margin:10px 0;color:var(--text); }
+.enviar-midia-acoes { display:flex;flex-wrap:wrap;gap:10px; }
+.enviar-midia .button { min-height:44px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font:inherit; }
+.enviar-midia .button:hover { border-color:var(--accent); }
+.enviar-midia-ajuda { color:var(--dim);font-size:12px;line-height:1.65;font-weight:400; }
+.enviar-midia-progresso { display:flex;align-items:center;gap:12px;color:var(--dim);font-size:13px; }
+.enviar-midia progress { width:min(280px,60%);height:12px;accent-color:var(--accent); }
+.enviar-midia-mensagem { padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;line-height:1.6;overflow-wrap:anywhere; }
+@media(max-width:640px) { .enviar-midia-acoes .button { flex:1; }.enviar-midia-progresso { flex-wrap:wrap; } }

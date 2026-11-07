@@ -1,0 +1,20 @@
+.celebracao-emblema{position:absolute;inset:0;display:grid;place-items:center;animation:celebracao-forjar 1.1s .1s cubic-bezier(.12,.75,.2,1) both}
+.celebracao-emblema>.emblema-nivel,.celebracao-emblema>.emblema-conquista{max-width:85%;max-height:100%}
+.celebracao-aurora{opacity:calc(var(--festa-intensidade) * var(--festa-brilho))}
+.celebracao[data-tier="0"]{background:linear-gradient(180deg,#14131d,transparent 70%)}
+.celebracao[data-tier="0"] .celebracao-palco{height:200px}
+.celebracao[data-tier="0"] .celebracao-emblema{animation:celebracao-subir .5s ease both}
+.celebracao[data-tier="0"] .celebracao-conteudo h2{font-size:30px}
+.celebracao[data-tier="0"] .celebracao-contador{font-size:44px;height:44px}
+.celebracao[data-tier="0"] .celebracao-continuar{background:#645777;border-color:#a79cba50;box-shadow:none}
+.celebracao[data-tier="0"] .celebracao-nivel{gap:14px}
+.celebracao[data-tier="1"] .celebracao-orbita{width:210px;height:210px;margin:-105px 0 0 -105px;opacity:.5}
+.celebracao[data-tier="1"] .celebracao-palco{height:235px}
+.celebracao[data-tier="2"] .celebracao-palco{height:250px}
+.celebracao[data-tier="5"] .celebracao-palco,.celebracao[data-tier="6"] .celebracao-palco,.celebracao[data-tier="7"] .celebracao-palco{height:290px}
+.celebracao-continuar.button{background:linear-gradient(120deg,color-mix(in srgb,var(--energia) 55%,#412369),color-mix(in srgb,var(--energia-secundaria) 40%,#382053));border-color:color-mix(in srgb,var(--energia) 50%,transparent)}
+.celebracao[data-pausa=true] .celebracao-emblema{animation:none;opacity:1;transform:none}
+.celebracao[data-pausa=true] .nivel-reflexo{display:none}
+@media(max-width:420px){.celebracao-palco{max-width:100%}.celebracao[data-tier="0"] .celebracao-palco{height:175px}.celebracao[data-tier="0"] .celebracao-conteudo h2{font-size:27px}.celebracao[data-tier="5"] .celebracao-palco,.celebracao[data-tier="6"] .celebracao-palco,.celebracao[data-tier="7"] .celebracao-palco{height:265px}.celebracao-evolucao{max-width:86px;overflow-wrap:anywhere}}
+@media(max-height:700px){.celebracao[data-tier] .celebracao-palco{height:195px}.celebracao-emblema>.emblema-nivel{width:175px!important;height:175px!important}.celebracao[data-tier="0"] .celebracao-palco{height:160px}.celebracao[data-tier="0"] .celebracao-emblema>.emblema-nivel{width:150px!important;height:150px!important}}
+@media(prefers-reduced-motion:reduce){.celebracao-emblema{animation:none;opacity:1;transform:none}}

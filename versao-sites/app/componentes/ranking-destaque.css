@@ -1,0 +1,47 @@
+/* O primeiro colocado mantém presença em todos os rankings. */
+.ranking-primeiro{position:relative;isolation:isolate}
+.ranking-primeiro::before{
+ content:'';position:absolute;inset:3px 0;border-radius:7px;
+ border:1px solid color-mix(in srgb,var(--gold) 38%,transparent);
+ background:linear-gradient(110deg,color-mix(in srgb,var(--gold) 9%,transparent),transparent 70%);
+ opacity:.65;pointer-events:none;z-index:-1;
+}
+.ranking-primeiro>img,.ranking-primeiro>.sc-avatar{
+ transform-origin:50% 60%;
+}
+.ranking-primeiro .rank-number,.ranking-primeiro .sc-rank{color:var(--gold)}
+.sc-member.ranking-primeiro{padding-inline:12px}
+.sc-member.ranking-primeiro>.sc-avatar{border-color:var(--gold)}
+
+@media(prefers-reduced-motion:no-preference){
+ .ranking-primeiro{animation:ranking-presenca 6s ease-in-out infinite}
+ .ranking-primeiro::before{animation:ranking-aura 6s ease-in-out infinite}
+ .ranking-primeiro>img,.ranking-primeiro>.sc-avatar{
+  animation:ranking-retrato 6s ease-in-out infinite;
+  transition:transform .35s ease;
+ }
+ .ranking-primeiro:hover,.ranking-primeiro:focus-visible{animation-play-state:paused}
+ .ranking-primeiro:hover>img,.ranking-primeiro:focus-visible>img,
+ .ranking-primeiro:hover>.sc-avatar{animation-play-state:paused}
+ @keyframes ranking-presenca{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-2px)}
+ }
+ @keyframes ranking-aura{
+  0%,100%{opacity:.45}
+  50%{opacity:1}
+ }
+ @keyframes ranking-retrato{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-2px) scale(1.045)}
+ }
+}
+
+@media(prefers-reduced-motion:reduce){
+ .ranking-primeiro,.ranking-primeiro::before,
+ .ranking-primeiro>img,.ranking-primeiro>.sc-avatar{
+  animation:none;transition:none;transform:none;
+ }
+}
+
+.sc-member>.sc-avatar{position:relative}.sc-member>.sc-avatar>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}

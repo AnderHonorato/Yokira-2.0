@@ -22,6 +22,125 @@
       "when": 1793588345192,
       "tag": "0002_abandoned_sharon_ventura",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793851960243,
+      "tag": "0003_moderacao",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793852082775,
+      "tag": "0004_disponibilidade_catalogo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1793852683130,
+      "tag": "0005_catalogo_administrativo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1793852706477,
+      "tag": "0006_temporadas",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1793852719206,
+      "tag": "0007_notificacoes",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1793852972683,
+      "tag": "0008_fontes_episodio",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1793875213205,
+      "tag": "0009_midia",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1793876314723,
+      "tag": "0010_aparencia_global",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1793920354086,
+      "tag": "0011_contas",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1793920354087,
+      "tag": "0012_social",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1793920354089,
+      "tag": "0013_salas",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1793920354091,
+      "tag": "0014_conquistas",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1793920354092,
+      "tag": "0015_banners",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1793932053090,
+      "tag": "0016_comunidade_global",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1793961159247,
+      "tag": "0017_ciclo_salas",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1793961310339,
+      "tag": "0018_notificacoes_sociais",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1793998191409,
+      "tag": "0019_personalizacao_perfil",
+      "breakpoints": true
     }
   ]
 }

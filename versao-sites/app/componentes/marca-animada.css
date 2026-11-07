@@ -1,0 +1,14 @@
+.marca-animada{display:block;flex:none;overflow:visible;filter:drop-shadow(0 0 3px #813cd730)}
+.marca-cobra-original{transform-origin:128px 61px}
+.marca-animada[data-animado=true] .marca-cobra-original{animation:marca-original-respirar 6s ease-in-out infinite}
+@keyframes marca-original-respirar{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(3px,-2.5px) rotate(2deg)}}
+@media(prefers-reduced-motion:reduce){.marca-cobra-original{animation:none!important;transform:none}}
+.marca-cabeca-original{transform-origin:125px 76px}.marca-animada[data-animado=true] .marca-cabeca-original{animation:marca-original-cabeca 6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes marca-original-cabeca{0%,100%{transform:translate(0,0) rotate(0deg)}35%{transform:translate(5px,-4px) rotate(-5deg)}65%{transform:translate(-2px,3px) rotate(2deg)}}
+@media(prefers-reduced-motion:reduce){.marca-cabeca-original{animation:none!important;transform:none}}
+
+/* A abertura usa os mesmos pixels da marca com uma cadência mais visível. */
+.marca-animada[data-destaque=true][data-animado=true] .marca-cobra-original{animation:marca-cobra-destaque 3.2s ease-in-out infinite}
+.marca-animada[data-destaque=true][data-animado=true] .marca-cabeca-original{animation:marca-cabeca-destaque 3.2s ease-in-out infinite}
+@keyframes marca-cobra-destaque{0%,100%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(6px,-5px) rotate(4deg)}65%{transform:translate(-4px,4px) rotate(-3deg)}}
+@keyframes marca-cabeca-destaque{0%,100%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(10px,-7px) rotate(-9deg)}65%{transform:translate(-4px,5px) rotate(5deg)}}

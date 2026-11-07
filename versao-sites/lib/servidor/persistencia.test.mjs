@@ -49,3 +49,17 @@ test('migração de acompanhamento preserva títulos, usuários e datas da lista
  assert.throws(()=>db.prepare('UPDATE lista SET episodios_vistos=?').run(-1),/CHECK constraint/);
  db.close();
 });
+
+test('migração de moderação preserva usuários e conteúdos legados visíveis',()=>{
+ const db=new DatabaseSync(':memory:');db.exec('PRAGMA foreign_keys=ON');
+ const pasta=new URL('../../drizzle/',import.meta.url);const arquivos=readdirSync(pasta).filter(p=>p.endsWith('.sql')).sort();
+ for(const arquivo of arquivos.filter(p=>p<'0003'))db.exec(readFileSync(new URL(arquivo,pasta),'utf8'));
+ db.prepare('INSERT INTO usuarios(id,nome,papel,xp,criado_em) VALUES(?,?,?,?,?)').run('legado','Pessoa legada','editor',25,1000);
+ db.prepare('INSERT INTO publicacoes(id,autor_id,tipo,titulo,corpo,criado_em) VALUES(?,?,?,?,?,?)').run('post-legado','legado','forum','Título legado','Texto legado',2000);
+ db.prepare('INSERT INTO respostas(id,publicacao_id,autor_id,corpo,criado_em) VALUES(?,?,?,?,?)').run('resposta-legada','post-legado','legado','Resposta legada',3000);
+ for(const arquivo of arquivos.filter(p=>p>='0003'))db.exec(readFileSync(new URL(arquivo,pasta),'utf8'));
+ assert.deepEqual({...db.prepare('SELECT nome,papel,xp,suspenso FROM usuarios WHERE id=?').get('legado')},{nome:'Pessoa legada',papel:'editor',xp:25,suspenso:0});
+ assert.deepEqual({...db.prepare('SELECT titulo,corpo,oculto FROM publicacoes WHERE id=?').get('post-legado')},{titulo:'Título legado',corpo:'Texto legado',oculto:0});
+ assert.equal(db.prepare('SELECT oculto FROM respostas WHERE id=?').get('resposta-legada').oculto,0);
+ assert.deepEqual(db.prepare('PRAGMA foreign_key_check').all(),[]);db.close();
+});

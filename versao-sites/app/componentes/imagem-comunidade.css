@@ -1,0 +1,5 @@
+.imagem-comunidade { display: grid; gap: .65rem; min-width: 0; }
+.imagem-comunidade-acoes { display: flex; flex-wrap: wrap; gap: .5rem; }
+.imagem-comunidade-previa { display: block; width: auto; max-width: min(100%, 22rem); max-height: 12rem; border-radius: .8rem; object-fit: contain; background: #10131b; }
+.imagem-comunidade progress { width: min(100%, 22rem); accent-color: var(--cor-destaque, #b4a5ff); }
+.imagem-comunidade-ajuda, .imagem-comunidade-status { margin: 0; font-size: .85rem; line-height: 1.5; color: var(--texto-secundario, #c8c8d0); overflow-wrap: anywhere; }

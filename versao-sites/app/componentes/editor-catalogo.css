@@ -1,0 +1,27 @@
+.editor-acervo { width:min(1060px,100%); margin:0 auto; padding:40px 24px 70px; color:var(--text,#ececf4); }
+.editor-acervo-cabecalho { margin-bottom:28px; }
+.editor-acervo-cabecalho>span { color:#a88de9; font-size:11px; font-weight:700; letter-spacing:.16em; }
+.editor-acervo h1 { margin:10px 0 12px; font-size:clamp(28px,4vw,40px); }
+.editor-acervo-cabecalho p,.editor-acervo-ajuda,.editor-acervo small,.editor-acervo-acoes span { color:#b4b2c2; line-height:1.6; }
+.editor-acervo-cabecalho a { display:inline-block; margin-top:12px; color:#c5adff; text-decoration:underline; text-underline-offset:4px; }
+.editor-acervo-selecao,.editor-acervo-campos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+.editor-acervo-selecao { padding:22px; margin-bottom:24px; border:1px solid #363342; border-radius:14px; background:#15131e; }
+.editor-acervo label { display:flex; flex-direction:column; gap:8px; min-width:0; font-size:13px; font-weight:600; }
+.editor-acervo input:not([type=checkbox]),.editor-acervo select,.editor-acervo textarea { width:100%; min-width:0; min-height:44px; padding:11px 12px; border:1px solid #494354; border-radius:8px; background:#111019; color:#f3effb; font:inherit; font-weight:400; }
+.editor-acervo textarea { resize:vertical; line-height:1.65; }
+.editor-acervo input:focus-visible,.editor-acervo select:focus-visible,.editor-acervo textarea:focus-visible,.editor-acervo button:focus-visible,.editor-acervo a:focus-visible { outline:2px solid #c0a4fb; outline-offset:3px; }
+.editor-acervo select { text-overflow:ellipsis; }
+.editor-acervo small { font-size:12px; font-weight:400; overflow-wrap:anywhere; }
+.editor-acervo fieldset { min-width:0; margin:0; padding:24px; border:1px solid #363342; border-radius:14px; }
+.editor-acervo legend { padding:0 8px; font-size:18px; font-weight:700; }
+.editor-acervo-ajuda { margin:0 0 22px; font-size:13px; }
+.editor-acervo-longo { grid-column:1/-1; }
+.editor-acervo .editor-acervo-disponibilidade { flex-direction:row; align-items:center; margin-top:28px; margin-bottom:8px; gap:12px; }
+.editor-acervo-disponibilidade input { width:20px; height:20px; accent-color:#9666e9; flex:none; }
+.editor-acervo-acoes { display:flex; align-items:center; flex-wrap:wrap; gap:16px; margin-top:22px; }
+.editor-acervo-acoes span { font-size:13px; }
+.editor-acervo-aviso { padding:16px 20px; background:#20192d; border:1px solid #635079; border-radius:10px; margin:20px 0; overflow-wrap:anywhere; }
+.editor-acervo-aviso p { margin:0; }
+.editor-acervo button:disabled,.editor-acervo fieldset:disabled,.editor-acervo select:disabled { opacity:.65; cursor:wait; }
+@media(max-width:640px) { .editor-acervo { padding:28px 16px 50px; } .editor-acervo-selecao,.editor-acervo-campos { grid-template-columns:minmax(0,1fr); gap:18px; } .editor-acervo-selecao,.editor-acervo fieldset { padding:18px 14px; } .editor-acervo-acoes .button { width:100%; } }
+.editor-acervo-novo { margin:0 0 20px; }

@@ -1,0 +1,19 @@
+.episodios-publicos { margin-top:34px;color:#edeaf5; }
+.episodios-publicos-cabecalho { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-bottom:20px; }
+.episodios-publicos h2 { font-size:22px;margin:0; }
+.episodios-publicos label { display:flex;align-items:center;gap:12px;color:#b8b4c7;font-size:13px; }
+.episodios-publicos select { max-width:260px;min-height:44px;background:#181420;color:#f2ecff;border:1px solid #454050;border-radius:8px;padding:10px 12px;font:inherit; }
+.episodios-publicos-lista { display:grid;gap:12px; }
+.episodios-publicos-item { display:flex;align-items:center;gap:18px;width:100%;padding:16px;border:1px solid #302a3e;border-radius:12px;background:#15111d;color:inherit;text-align:left;cursor:pointer;transition:border-color .18s,background .18s; }
+.episodios-publicos-item:hover { border-color:#8c65bc;background:#1c1528; }
+.episodios-publicos-item:focus-visible,.episodios-publicos select:focus-visible { outline:2px solid #c0a4fb;outline-offset:3px; }
+.episodios-publicos-arte { position:relative;display:grid;place-items:center;flex:none;width:140px;aspect-ratio:16/9;border-radius:7px;overflow:hidden;background:#30223f;color:#fff; }
+.episodios-publicos-arte img { position:absolute;width:100%;height:100%;object-fit:cover;opacity:.55; }
+.episodios-publicos-arte svg { position:relative;filter:drop-shadow(0 2px 5px #000); }
+.episodios-publicos-texto { display:flex;flex:1;min-width:0;flex-direction:column;gap:7px; }
+.episodios-publicos-texto small { color:#ba9ae3;font-size:12px; }
+.episodios-publicos-texto strong { font-size:15px; }
+.episodios-publicos-texto>span { display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.6;color:#b4aebf; }
+.episodios-publicos-assistir { color:#c9a9ed;font-size:13px;font-weight:600; }
+.episodios-publicos-vazio,.episodios-publicos>p { color:#b4aebf;line-height:1.6; }
+@media(max-width:600px) { .episodios-publicos-item { gap:12px;padding:12px; }.episodios-publicos-arte { width:90px; }.episodios-publicos-assistir { display:none; }.episodios-publicos-texto>span { -webkit-line-clamp:2;font-size:12px; }.episodios-publicos label { width:100%; }.episodios-publicos select { flex:1;max-width:100%; } }

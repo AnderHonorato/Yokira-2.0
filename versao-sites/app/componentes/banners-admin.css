@@ -1,0 +1,11 @@
+.banners-admin{display:grid;gap:22px;margin-top:24px;min-width:0}
+.banners-admin header p,.banners-editor>p,.banners-lista p{color:var(--dim);font-size:13px;line-height:1.7;margin-top:7px}
+.banners-admin label{display:grid;gap:8px;font-size:13px;min-width:0}
+.banners-admin input:not([type=checkbox]),.banners-admin select,.banners-admin textarea{width:100%;min-height:44px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px;color:var(--text)}
+.banners-configuracao,.banners-editor{display:grid;gap:16px;padding:22px;border:1px solid var(--border);background:var(--card);border-radius:12px}
+.banners-campos{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.banners-admin .banners-ativo{display:flex;align-items:center;gap:10px;min-height:44px}
+.banners-lista{display:grid;gap:14px}.banners-lista article{display:flex;align-items:center;gap:16px;min-width:0;padding:14px;border:1px solid var(--border);border-radius:12px}
+.banners-lista img{width:120px;height:70px;object-fit:cover;border-radius:7px}.banners-lista article>div{min-width:0;flex:1}.banners-lista h3{font-size:15px;overflow-wrap:anywhere}
+.banners-admin .button{min-height:44px;justify-self:start}
+@media(max-width:600px){.banners-campos{grid-template-columns:1fr}.banners-configuracao,.banners-editor{padding:16px}.banners-lista article{flex-wrap:wrap}.banners-lista img{width:90px;height:58px}.banners-lista article .button{margin-left:auto}}
