@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - main-ChatGPT
+      - 'sol/**'
   push:
     branches:
       - main-ChatGPT
@@ -38,6 +39,9 @@ jobs:
 
       - name: Bloquear vulnerabilidades altas ou críticas em produção
         run: pnpm audit --prod --audit-level=high
+
+      - name: Validar migracoes D1 do zero e falhas de esquema
+        run: pnpm run test:migrations
 
       - name: Checar os tipos da aplicação publicada
         run: pnpm run typecheck
