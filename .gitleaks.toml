@@ -1,0 +1,4 @@
+title = "Yokira - verificacao de segredos"
+[extend]
+useDefault = true
+# Nao inclua credenciais reais nem isencoes globais neste arquivo.
