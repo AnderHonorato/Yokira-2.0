@@ -1,0 +1,21 @@
+name: Protecao contra vazamento de segredos
+on:
+  pull_request:
+    branches: [main, main-ChatGPT, 'sol/**', 'audit/**']
+  push:
+    branches: [main, main-ChatGPT, 'sol/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gitleaks:
+    name: Detectar credenciais acidentalmente versionadas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks (historico e alteracoes)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
