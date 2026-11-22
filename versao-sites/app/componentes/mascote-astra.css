@@ -1,0 +1,25 @@
+/* Generated using AppDeploy UI skill */
+.astra-faixa{--astra-foco:#b989ff;position:relative;display:grid;grid-template-columns:88px minmax(0,1fr) auto;align-items:center;gap:18px;padding:10px 22px 10px 12px;min-height:104px;margin:6px 0 16px;border:1px solid color-mix(in srgb,var(--astra-foco) 28%,var(--border));border-radius:10px;background:radial-gradient(ellipse at 90% 0%,#7e38cd1a,transparent 62%),linear-gradient(105deg,#190f28f0,#101322e8 48%,var(--surface));box-shadow:0 10px 35px #00000012;isolation:isolate;overflow:hidden}
+.astra-faixa:after{content:'';pointer-events:none;position:absolute;inset:auto 0 0;height:1px;background:linear-gradient(90deg,transparent,#b989ff64,transparent)}
+.astra-avatar-botao{position:relative;width:82px;height:82px;display:grid;place-items:center;border-radius:12px;isolation:isolate;transition:transform .28s ease}
+.astra-avatar-botao:hover{transform:translateY(-3px) scale(1.035)}
+.astra-avatar-botao:focus-visible,.astra-alternar:focus-visible,.astra-acoes button:focus-visible{outline:2px solid #d4b0ff;outline-offset:3px}
+.astra-avatar-botao img{position:relative;z-index:1;display:block;width:82px;height:82px;object-fit:contain;mix-blend-mode:screen;border-radius:10px}
+.astra-avatar-brilho{position:absolute;inset:15%;background:#9d55e955;filter:blur(22px);border-radius:50%;animation:astra-pulsar 4.5s ease-in-out infinite}
+.astra-avatar-selo{position:absolute;z-index:2;right:2px;top:2px;color:#ddc1ff;text-shadow:0 0 12px #b66eff;font-size:16px}
+.astra-eyebrow{font-size:9px;line-height:1.3;font-weight:750;letter-spacing:.13em;color:#d6affc;display:flex;align-items:center;gap:6px}
+.astra-estrela{width:7px;height:7px;background:#dcb6ff;transform:rotate(45deg);box-shadow:0 0 11px #c17eff}
+.astra-conteudo h2{font-size:clamp(14px,1.25vw,19px);font-weight:660;letter-spacing:-.02em;color:#f4efff;line-height:1.3;margin:5px 0}
+.astra-conteudo>p{color:#bdb8c9;font-size:10px;line-height:1.5}
+.astra-alternar{display:inline-flex;align-items:center;gap:12px;color:#e5d8fa;padding:9px 13px;font-size:10px;font-weight:650;border:1px solid #a766db5d;border-radius:6px;background:#8a4bd11a;transition:background .2s ease;white-space:nowrap}
+.astra-alternar:hover{background:#8a4bd136}
+.astra-alternar>span{font-size:17px;line-height:1;font-weight:400}
+.astra-detalhes{padding:9px 0 4px}
+.astra-detalhes[hidden]{display:none}
+.astra-detalhes p{color:#d9d0e5;font-size:10px;margin:0 0 8px}
+.astra-acoes{display:flex;gap:8px;flex-wrap:wrap}
+.astra-acoes button{font-size:10px;color:#faf5ff;background:#6f36ad;border:1px solid #b989ff72;border-radius:6px;padding:7px 12px}
+.astra-acoes button+button{background:#ffffff0f}
+@keyframes astra-pulsar{0%,100%{opacity:.45;transform:scale(.9)}50%{opacity:.85;transform:scale(1.1)}}
+@media(max-width:760px){.astra-faixa{grid-template-columns:62px 1fr;padding:9px 11px;gap:10px;min-height:86px;margin:10px 0}.astra-avatar-botao,.astra-avatar-botao img{width:60px;height:60px}.astra-conteudo h2{font-size:13px}.astra-conteudo>p{font-size:10px}.astra-eyebrow{font-size:8px}.astra-alternar{grid-column:2;justify-self:start;padding:6px 9px;margin-top:-4px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){.astra-avatar-brilho{animation:none}.astra-avatar-botao{transition:none}.astra-avatar-botao:hover{transform:none}}
